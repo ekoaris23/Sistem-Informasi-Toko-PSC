@@ -91,12 +91,12 @@
                     </div>
                     <div class="p-3 bg-yellow-500/10 text-yellow-600 rounded-full"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-600 flex items-center justify-between">
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-purple-600 flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Siap Diambil</p>
-                        <p id="stat-done" class="text-2xl font-bold text-blue-600">0</p>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Klaim Garansi</p>
+                        <p id="stat-garansi" class="text-2xl font-bold text-purple-600">0</p>
                     </div>
-                    <div class="p-3 bg-blue-600/10 text-blue-600 rounded-full"><i class="fa-solid fa-circle-check text-xl"></i></div>
+                    <div class="p-3 bg-purple-600/10 text-purple-600 rounded-full"><i class="fa-solid fa-shield-halved text-xl"></i></div>
                 </div>
                 <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-600 flex items-center justify-between">
                     <div>
@@ -173,6 +173,7 @@
                             <select id="filterStatus" onchange="renderServices()" class="border rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-none">
                                 <option value="ALL">Semua Status</option>
                                 <option value="Proses">Proses</option>
+                                <option value="Garansi">Garansi</option>
                                 <option value="Selesai">Selesai</option>
                                 <option value="Diambil">Diambil</option>
                             </select>
@@ -271,7 +272,7 @@
                                     <th class="p-3">Nama Barang</th>
                                     <th class="p-3">Harga Jual</th>
                                     <th class="p-3">Sisa Stok</th>
-                                    <th class="p-3 text-center">Aksi</th>
+                                    <th class="p-3 text-center">Aksi & Retur</th>
                                 </tr>
                             </thead>
                             <tbody id="stock-table-body" class="divide-y divide-gray-100">
@@ -449,12 +450,18 @@
                 if (matchSearch && matchStatus) {
                     count++;
                     let badgeColor = 'bg-yellow-100 text-yellow-800 border-yellow-300';
+                    if (item.status === 'Garansi') badgeColor = 'bg-purple-100 text-purple-800 border-purple-300';
                     if (item.status === 'Selesai') badgeColor = 'bg-blue-100 text-blue-800 border-blue-300';
                     if (item.status === 'Diambil') badgeColor = 'bg-green-100 text-green-800 border-green-300';
 
                     const cleanPhone = item.customerPhone.replace(/[^0-9]/g, '');
                     const waMessage = encodeURIComponent(`Halo Kak ${item.customerName}, kami dari PSC Service menginformasikan status unit servis ${item.deviceUnit} saat ini: *${item.status}*. Biaya: Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}. Tgl Masuk: ${formatDate(item.createdAt)}. Terima kasih!`);
                     const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
+
+                    const garansiButton = item.status === 'Diambil' ? 
+                        `<button onclick="claimGaransi('${key}')" class="p-1.5 text-purple-600 hover:bg-purple-50 rounded" title="Klaim Garansi Servis">
+                            <i class="fa-solid fa-shield-halved text-base"></i>
+                        </button>` : '';
 
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-gray-50 transition border-b';
@@ -483,12 +490,14 @@
                             <div class="flex items-center justify-center space-x-2">
                                 <select onchange="updateStatus('${key}', this.value)" class="text-xs border rounded p-1 bg-white focus:outline-none">
                                     <option value="Proses" ${item.status === 'Proses' ? 'selected' : ''}>Proses</option>
+                                    <option value="Garansi" ${item.status === 'Garansi' ? 'selected' : ''}>Garansi</option>
                                     <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
                                     <option value="Diambil" ${item.status === 'Diambil' ? 'selected' : ''}>Diambil</option>
                                 </select>
                                 <a href="${waLink}" target="_blank" class="p-1.5 text-green-600 hover:bg-green-50 rounded" title="Kirim WA">
                                     <i class="fa-brands fa-whatsapp text-base"></i>
                                 </a>
+                                ${garansiButton}
                                 <button onclick="openInvoiceModal('${key}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded" title="Cetak Nota">
                                     <i class="fa-solid fa-receipt text-base"></i>
                                 </button>
@@ -504,6 +513,30 @@
 
             if (count === 0) {
                 tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400">Tidak ada data servis ditemukan.</td></tr>`;
+            }
+        };
+
+        // Klaim Garansi Automatis
+        window.claimGaransi = (key) => {
+            const item = rawServices[key];
+            if (!item) return;
+
+            if (confirm(`Buat tiket klaim garansi untuk ${item.customerName} (${item.deviceUnit})?`)) {
+                const now = Date.now();
+                const garansiOrder = {
+                    customerName: item.customerName,
+                    customerPhone: item.customerPhone,
+                    deviceUnit: item.deviceUnit,
+                    deviceIssue: `[KLAIM GARANSI] ${item.deviceIssue}`,
+                    estimatedCost: 0,
+                    status: 'Garansi',
+                    createdAt: now,
+                    completedAt: null
+                };
+
+                push(servicesRef, garansiOrder).then(() => {
+                    alert('Tiket Klaim Garansi Berhasil Dibuat (Biaya Rp 0)!');
+                });
             }
         };
 
@@ -526,12 +559,19 @@
                     <td class="p-3 font-semibold text-gray-800">${item.name}</td>
                     <td class="p-3 text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
                     <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500' : 'text-gray-700'}">${item.qty} Pcs</td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteStock('${key}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="returnStock('${key}')" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" title="+1 Retur Barang">+1 Retur</button>
+                        <button onclick="deleteStock('${key}')" class="text-red-500 hover:text-red-700 p-1" title="Hapus Item"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
                 tableBody.appendChild(tr);
             });
+        };
+
+        window.returnStock = (key) => {
+            const currentQty = rawStocks[key]?.qty || 0;
+            update(ref(db, `inventory_stocks/${key}`), { qty: currentQty + 1 });
+            alert('Stok berhasil ditambah +1 karena retur barang.');
         };
 
         // Render POS Grid Items
@@ -643,7 +683,7 @@
             if (newStatus === 'Selesai' || newStatus === 'Diambil') {
                 updateData.completedAt = Date.now(); // Rekam tanggal keluar
             } else {
-                updateData.completedAt = null; // Reset jika kembali ke Proses
+                updateData.completedAt = null; // Reset jika kembali ke Proses/Garansi
             }
             update(ref(db, `service_orders/${id}`), updateData);
         };
@@ -690,13 +730,17 @@
             const keys = Object.keys(rawServices);
             let total = keys.length;
             let process = 0;
+            let garansi = 0;
             let done = 0;
+            let taken = 0;
             let revenue = 0;
 
             keys.forEach(k => {
                 const s = rawServices[k];
                 if (s.status === 'Proses') process++;
+                if (s.status === 'Garansi') garansi++;
                 if (s.status === 'Selesai') done++;
+                if (s.status === 'Diambil') taken++;
                 if (s.status === 'Selesai' || s.status === 'Diambil') {
                     revenue += Number(s.estimatedCost || 0);
                 }
@@ -704,13 +748,13 @@
 
             document.getElementById('stat-total').textContent = total;
             document.getElementById('stat-process').textContent = process;
-            document.getElementById('stat-done').textContent = done;
+            document.getElementById('stat-garansi').textContent = garansi;
             document.getElementById('stat-revenue').textContent = `Rp ${revenue.toLocaleString('id-ID')}`;
 
-            renderCharts(process, done, total - process - done, revenue);
+            renderCharts(process, garansi, done, taken, revenue);
         };
 
-        function renderCharts(process, done, taken, revenue) {
+        function renderCharts(process, garansi, done, taken, revenue) {
             const ctx1 = document.getElementById('chartStatus').getContext('2d');
             const ctx2 = document.getElementById('chartRevenue').getContext('2d');
 
@@ -720,10 +764,10 @@
             chartStatusInstance = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Proses', 'Selesai', 'Diambil'],
+                    labels: ['Proses', 'Garansi', 'Selesai', 'Diambil'],
                     datasets: [{
-                        data: [process, done, taken],
-                        backgroundColor: ['#eab308', '#2563eb', '#16a34a']
+                        data: [process, garansi, done, taken],
+                        backgroundColor: ['#eab308', '#9333ea', '#2563eb', '#16a34a']
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
