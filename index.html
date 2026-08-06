@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSC Service System</title>
+    <title>PSC Service System - Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,52 +21,138 @@
             }
         }
     </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800">
+<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col">
 
     <!-- Header / Navbar -->
-    <header class="bg-maroon-700 text-white p-4 shadow-md">
+    <header class="bg-maroon-700 text-white p-4 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide">PSC SERVICE SYSTEM</h1>
-            <span id="status-badge" class="text-xs bg-yellow-500 text-black px-2 py-1 rounded font-semibold">Connecting...</span>
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-wrench text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wider">PSC SERVICE SYSTEM</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="status-badge" class="text-xs bg-yellow-500 text-black font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span> Connecting...
+                </span>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 md:p-6 flex-grow">
         
-        <!-- Form Input Data -->
-        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-maroon-700">
-            <h2 class="text-lg font-bold mb-4 text-maroon-700">Tambah Data Layanan / Barang</h2>
-            <form id="service-form" class="space-y-4">
+        <!-- Quick Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-maroon-700 flex items-center justify-between">
                 <div>
-                    <label class="block text-sm font-medium mb-1">Nama Pelanggan / Item</label>
-                    <input type="text" id="itemName" required class="w-full border rounded p-2 focus:outline-none focus:border-maroon-700" placeholder="Contoh: Laptop Asus - Servis LCD">
+                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Servis</p>
+                    <p id="stat-total" class="text-2xl font-bold text-gray-800">0</p>
                 </div>
+                <div class="p-3 bg-maroon-600/10 text-maroon-700 rounded-full">
+                    <i class="fa-solid fa-laptop-medical text-xl"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-500 flex items-center justify-between">
                 <div>
-                    <label class="block text-sm font-medium mb-1">Biaya / Harga (Rp)</label>
-                    <input type="number" id="itemPrice" required class="w-full border rounded p-2 focus:outline-none focus:border-maroon-700" placeholder="150000">
+                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Dalam Proses</p>
+                    <p id="stat-process" class="text-2xl font-bold text-yellow-600">0</p>
                 </div>
-                <button type="submit" class="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-2 rounded transition">Simpan Data</button>
-            </form>
+                <div class="p-3 bg-yellow-500/10 text-yellow-600 rounded-full">
+                    <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-600 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Pendapatan</p>
+                    <p id="stat-revenue" class="text-2xl font-bold text-green-600">Rp 0</p>
+                </div>
+                <div class="p-3 bg-green-600/10 text-green-600 rounded-full">
+                    <i class="fa-solid fa-wallet text-xl"></i>
+                </div>
+            </div>
         </div>
 
-        <!-- Realtime Data List -->
-        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-maroon-700">
-            <h2 class="text-lg font-bold mb-4 text-maroon-700">Daftar Layanan Realtime</h2>
-            <ul id="data-list" class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
-                <li class="py-3 text-gray-500 text-center">Memuat data...</li>
-            </ul>
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left Column: Form Input Servis -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle"></i> Input Servis Baru
+                </h2>
+                <form id="service-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Pelanggan</label>
+                        <input type="text" id="customerName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Eko Aris">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">No. WhatsApp / HP</label>
+                        <input type="tel" id="customerPhone" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="08123456789">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Perangkat / Unit</label>
+                        <input type="text" id="deviceUnit" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Laptop Asus ROG / HP Samsung S21">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Kerusakan / Keluhan</label>
+                        <textarea id="deviceIssue" required rows="2" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Mati total, ganti baterai & install OS"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Estimasi Biaya (Rp)</label>
+                        <input type="number" id="estimatedCost" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="350000">
+                    </div>
+
+                    <button type="submit" class="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Simpan Data Servis
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Daftar Servis Active -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Daftar Servis Pelanggan
+                    </h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b">
+                            <tr>
+                                <th class="p-3">Pelanggan</th>
+                                <th class="p-3">Unit & Keluhan</th>
+                                <th class="p-3">Biaya</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="service-table-body" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-gray-400">Memuat data servis...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
+    </div>
 
-    </main>
-
-    <!-- Firebase SDK (ES Module Integration) -->
+    <!-- Firebase SDK (ES Module) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Konfigurasi Firebase Anda
         const firebaseConfig = {
             apiKey: "AIzaSyCUv1FoZD1AhcD8FxeOvaTZ9XZJ_D3i3zc",
             authDomain: "psc-service-system.firebaseapp.com",
@@ -77,56 +163,120 @@
             appId: "1:1060022500226:web:bde4e4328e8e3d7ed1ed9b"
         };
 
-        // Inisialisasi Firebase & Realtime Database
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const servicesRef = ref(db, 'services');
+        const servicesRef = ref(db, 'service_orders');
 
-        // Status Indikator
         const statusBadge = document.getElementById('status-badge');
 
-        // Simpan Data
+        // Form Submit Handler
         document.getElementById('service-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('itemName').value;
-            const price = document.getElementById('itemPrice').value;
+            
+            const newOrder = {
+                customerName: document.getElementById('customerName').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                deviceUnit: document.getElementById('deviceUnit').value,
+                deviceIssue: document.getElementById('deviceIssue').value,
+                estimatedCost: parseInt(document.getElementById('estimatedCost').value) || 0,
+                status: 'Proses', // Default status
+                createdAt: Date.now()
+            };
 
-            push(servicesRef, {
-                name: name,
-                price: parseInt(price),
-                timestamp: Date.now()
-            }).then(() => {
+            push(servicesRef, newOrder).then(() => {
                 document.getElementById('service-form').reset();
             });
         });
 
-        // Baca Data Realtime
+        // Realtime Data Listener
         onValue(servicesRef, (snapshot) => {
-            statusBadge.textContent = 'Terhubung Realtime';
-            statusBadge.className = 'text-xs bg-green-500 text-white px-2 py-1 rounded font-semibold';
-            
-            const listElement = document.getElementById('data-list');
-            listElement.innerHTML = '';
+            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400"></span> Terhubung Realtime`;
+            statusBadge.className = 'text-xs bg-green-700 text-white font-semibold px-3 py-1 rounded-full flex items-center gap-1.5';
+
+            const tableBody = document.getElementById('service-table-body');
+            tableBody.innerHTML = '';
 
             const data = snapshot.val();
+
+            let totalOrders = 0;
+            let totalInProcess = 0;
+            let totalRevenue = 0;
+
             if (data) {
-                Object.keys(data).forEach((key) => {
+                const keys = Object.keys(data).reverse(); // Urutkan dari yang terbaru
+                totalOrders = keys.length;
+
+                keys.forEach((key) => {
                     const item = data[key];
-                    const li = document.createElement('li');
-                    li.className = 'py-3 flex justify-between items-center';
-                    li.innerHTML = `
-                        <span class="font-medium">${item.name}</span>
-                        <span class="text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</span>
+                    
+                    if (item.status === 'Proses') totalInProcess++;
+                    if (item.status === 'Selesai' || item.status === 'Diambil') {
+                        totalRevenue += Number(item.estimatedCost || 0);
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50 transition border-b';
+
+                    let badgeColor = 'bg-yellow-100 text-yellow-800 border-yellow-300';
+                    if (item.status === 'Selesai') badgeColor = 'bg-blue-100 text-blue-800 border-blue-300';
+                    if (item.status === 'Diambil') badgeColor = 'bg-green-100 text-green-800 border-green-300';
+
+                    tr.innerHTML = `
+                        <td class="p-3">
+                            <div class="font-bold text-gray-800">${item.customerName}</div>
+                            <div class="text-xs text-gray-500"><i class="fa-brands fa-whatsapp text-green-600"></i> ${item.customerPhone}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-semibold text-gray-700">${item.deviceUnit}</div>
+                            <div class="text-xs text-gray-500 italic">${item.deviceIssue}</div>
+                        </td>
+                        <td class="p-3 font-bold text-maroon-700">
+                            Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 text-xs font-semibold border rounded-full ${badgeColor}">
+                                ${item.status}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                <select onchange="updateStatus('${key}', this.value)" class="text-xs border rounded p-1 bg-white focus:outline-none">
+                                    <option value="Proses" ${item.status === 'Proses' ? 'selected' : ''}>Proses</option>
+                                    <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                    <option value="Diambil" ${item.status === 'Diambil' ? 'selected' : ''}>Diambil</option>
+                                </select>
+                                <button onclick="deleteOrder('${key}') text-red-500 hover:text-red-700 p-1" title="Hapus">
+                                    <i class="fa-solid fa-trash-can text-red-500 hover:text-red-700"></i>
+                                </button>
+                            </div>
+                        </td>
                     `;
-                    listElement.appendChild(li);
+                    tableBody.appendChild(tr);
                 });
             } else {
-                listElement.innerHTML = '<li class="py-3 text-gray-400 text-center">Belum ada data.</li>';
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-gray-400">Belum ada data servis tersimpan.</td>
+                    </tr>
+                `;
             }
-        }, (error) => {
-            statusBadge.textContent = 'Gagal Konek';
-            statusBadge.className = 'text-xs bg-red-500 text-white px-2 py-1 rounded font-semibold';
+
+            // Update Cards
+            document.getElementById('stat-total').textContent = totalOrders;
+            document.getElementById('stat-process').textContent = totalInProcess;
+            document.getElementById('stat-revenue').textContent = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
         });
+
+        // Global functions for inline HTML events
+        window.updateStatus = (id, newStatus) => {
+            update(ref(db, `service_orders/${id}`), { status: newStatus });
+        };
+
+        window.deleteOrder = (id) => {
+            if (confirm('Apakah Anda yakin ingin menghapus data servis ini?')) {
+                remove(ref(db, `service_orders/${id}`));
+            }
+        };
     </script>
 </body>
 </html>
