@@ -49,6 +49,9 @@
                 <span id="owner-indicator" class="text-xs bg-amber-500/20 text-amber-200 border border-amber-400/30 font-semibold px-3 py-1 rounded-full hidden">
                     <i class="fa-solid fa-user-shield"></i> Owner Access
                 </span>
+                <button id="owner-logout-btn" onclick="logoutOwner()" class="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-full hidden flex items-center gap-1 shadow transition">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout Owner
+                </button>
                 <span id="status-badge" class="text-xs bg-yellow-500 text-black font-semibold px-3 py-1 rounded-full flex items-center gap-1.5 shadow">
                     <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span> Connecting...
                 </span>
@@ -609,6 +612,8 @@
 
         let cart = [];
         let isOwnerLoggedIn = false;
+        let inactivityTimer = null;
+        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Menit dalam milidetik
 
         let chartStatusInstance = null;
         let chartRevenueInstance = null;
@@ -640,6 +645,31 @@
             document.getElementById('login-modal').classList.add('hidden');
         };
 
+        // Logout Owner Logic
+        window.logoutOwner = () => {
+            isOwnerLoggedIn = false;
+            clearTimeout(inactivityTimer);
+            document.getElementById('owner-indicator').classList.add('hidden');
+            document.getElementById('owner-logout-btn').classList.add('hidden');
+            alert('Session Owner telah berakhir / Logout berhasil.');
+            switchTab('dashboard');
+        };
+
+        // Reset Inactivity Timer
+        window.resetInactivityTimer = () => {
+            if (!isOwnerLoggedIn) return;
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert('Tidak ada aktivitas selama 5 menit. Akses Owner otomatis di-logout demi keamanan.');
+                logoutOwner();
+            }, INACTIVITY_LIMIT);
+        };
+
+        // Event Listeners for Activity Tracking
+        ['mousemove', 'keydown', 'click', 'scroll'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer);
+        });
+
         document.getElementById('owner-login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('ownerUser').value;
@@ -649,7 +679,10 @@
                 isOwnerLoggedIn = true;
                 closeLoginModal();
                 document.getElementById('owner-indicator').classList.remove('hidden');
+                document.getElementById('owner-logout-btn').classList.remove('hidden');
+                document.getElementById('owner-login-form').reset();
                 switchTab('owner');
+                resetInactivityTimer();
             } else {
                 alert('Username atau Password Owner Salah!');
             }
