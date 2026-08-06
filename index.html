@@ -76,7 +76,6 @@
         
         <!-- ================= TAB 1: DASHBOARD ================= -->
         <section id="page-dashboard" class="tab-page space-y-6">
-            <!-- Stats Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-maroon-700 flex items-center justify-between">
                     <div>
@@ -108,7 +107,6 @@
                 </div>
             </div>
 
-            <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
                     <h3 class="text-sm font-bold text-maroon-700 mb-4 flex items-center gap-2">
@@ -170,7 +168,6 @@
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-list-check"></i> Daftar Servis Pelanggan
                         </h2>
-                        <!-- Filter & Search -->
                         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                             <input type="text" id="searchService" onkeyup="renderServices()" placeholder="Cari Pelanggan/Unit..." class="border rounded-lg px-3 py-1.5 text-xs w-full sm:w-48 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                             <select id="filterStatus" onchange="renderServices()" class="border rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-none">
@@ -188,6 +185,7 @@
                                 <tr>
                                     <th class="p-3">Pelanggan</th>
                                     <th class="p-3">Unit & Keluhan</th>
+                                    <th class="p-3">Tanggal Masuk / Keluar</th>
                                     <th class="p-3">Biaya</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3 text-center">Aksi & Nota</th>
@@ -195,7 +193,7 @@
                             </thead>
                             <tbody id="service-table-body" class="divide-y divide-gray-100">
                                 <tr>
-                                    <td colspan="5" class="p-4 text-center text-gray-400">Memuat data servis...</td>
+                                    <td colspan="6" class="p-4 text-center text-gray-400">Memuat data servis...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -207,16 +205,12 @@
         <!-- ================= TAB 3: KASIR / POS ================= -->
         <section id="page-pos" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Pilihan Barang -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-cart-plus"></i> Transaksi Penjualan Barang / Aksesoris
                     </h2>
-                    <div id="pos-items-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[450px] overflow-y-auto p-1">
-                        <!-- Iterated items -->
-                    </div>
+                    <div id="pos-items-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[450px] overflow-y-auto p-1"></div>
                 </div>
-                <!-- Keranjang & Checkout -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between">
                     <div>
                         <h3 class="text-md font-bold text-maroon-700 mb-3 border-b pb-2 flex items-center justify-between">
@@ -243,7 +237,6 @@
         <!-- ================= TAB 4: STOK SPAREPART ================= -->
         <section id="page-stok" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Form Tambah Stok -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-box-open"></i> Tambah Item / Sparepart
@@ -267,7 +260,6 @@
                     </form>
                 </div>
 
-                <!-- Tabel Stok -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-boxes-stacked"></i> Inventaris Stok Barang
@@ -307,7 +299,9 @@
                     <div class="flex justify-between"><span>Pelanggan:</span><span id="inv-customer" class="font-bold"></span></div>
                     <div class="flex justify-between"><span>No. WA:</span><span id="inv-phone"></span></div>
                     <div class="flex justify-between"><span>Perangkat:</span><span id="inv-device" class="font-bold"></span></div>
-                    <div class="flex justify-between border-b pb-2"><span>Keluhan:</span><span id="inv-issue"></span></div>
+                    <div class="flex justify-between"><span>Keluhan:</span><span id="inv-issue"></span></div>
+                    <div class="flex justify-between text-gray-600"><span>Tgl Masuk:</span><span id="inv-date-in" class="font-medium"></span></div>
+                    <div class="flex justify-between text-gray-600 border-b pb-2"><span>Tgl Keluar:</span><span id="inv-date-out" class="font-medium"></span></div>
                     <div class="flex justify-between pt-2 text-sm font-bold">
                         <span>Total Biaya:</span>
                         <span id="inv-cost" class="text-maroon-700"></span>
@@ -355,7 +349,6 @@
         let rawStocks = {};
         let cart = [];
 
-        // Chart instances
         let chartStatusInstance = null;
         let chartRevenueInstance = null;
 
@@ -373,7 +366,14 @@
             activeBtn.classList.remove('border-transparent');
         };
 
-        // Initialize Realtime Data Listeners
+        // Format Date Helper
+        const formatDate = (timestamp) => {
+            if (!timestamp) return '-';
+            return new Date(timestamp).toLocaleDateString('id-ID', {
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        };
+
         const statusBadge = document.getElementById('status-badge');
 
         onValue(servicesRef, (snapshot) => {
@@ -394,9 +394,10 @@
             renderPOSItems();
         });
 
-        // Form Submit Servis
+        // Form Submit Servis (Pencatatan Tanggal Masuk)
         document.getElementById('service-form').addEventListener('submit', (e) => {
             e.preventDefault();
+            const now = Date.now();
             const newOrder = {
                 customerName: document.getElementById('customerName').value,
                 customerPhone: document.getElementById('customerPhone').value,
@@ -404,7 +405,8 @@
                 deviceIssue: document.getElementById('deviceIssue').value,
                 estimatedCost: parseInt(document.getElementById('estimatedCost').value) || 0,
                 status: 'Proses',
-                createdAt: Date.now()
+                createdAt: now,       // Tanggal Masuk
+                completedAt: null     // Tanggal Keluar/Selesai
             };
 
             push(servicesRef, newOrder).then(() => {
@@ -451,7 +453,7 @@
                     if (item.status === 'Diambil') badgeColor = 'bg-green-100 text-green-800 border-green-300';
 
                     const cleanPhone = item.customerPhone.replace(/[^0-9]/g, '');
-                    const waMessage = encodeURIComponent(`Halo Kak ${item.customerName}, kami dari PSC Service menginformasikan status unit servis ${item.deviceUnit} saat ini: *${item.status}*. Biaya: Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}. Terima kasih!`);
+                    const waMessage = encodeURIComponent(`Halo Kak ${item.customerName}, kami dari PSC Service menginformasikan status unit servis ${item.deviceUnit} saat ini: *${item.status}*. Biaya: Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}. Tgl Masuk: ${formatDate(item.createdAt)}. Terima kasih!`);
                     const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
 
                     const tr = document.createElement('tr');
@@ -464,6 +466,10 @@
                         <td class="p-3">
                             <div class="font-semibold text-gray-700">${item.deviceUnit}</div>
                             <div class="text-xs text-gray-500 italic">${item.deviceIssue}</div>
+                        </td>
+                        <td class="p-3 text-xs">
+                            <div class="text-gray-700"><strong>Masuk:</strong> ${formatDate(item.createdAt)}</div>
+                            <div class="text-gray-500 mt-0.5"><strong>Keluar:</strong> ${formatDate(item.completedAt)}</div>
                         </td>
                         <td class="p-3 font-bold text-maroon-700">
                             Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}
@@ -497,7 +503,7 @@
             });
 
             if (count === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">Tidak ada data servis ditemukan.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400">Tidak ada data servis ditemukan.</td></tr>`;
             }
         };
 
@@ -620,7 +626,6 @@
                 return;
             }
 
-            // Deduct inventory
             cart.forEach(c => {
                 const currentQty = rawStocks[c.key]?.qty || 0;
                 const newQty = Math.max(0, currentQty - c.qty);
@@ -632,9 +637,15 @@
             renderCart();
         };
 
-        // Actions
+        // Update Status & Tanggal Keluar
         window.updateStatus = (id, newStatus) => {
-            update(ref(db, `service_orders/${id}`), { status: newStatus });
+            const updateData = { status: newStatus };
+            if (newStatus === 'Selesai' || newStatus === 'Diambil') {
+                updateData.completedAt = Date.now(); // Rekam tanggal keluar
+            } else {
+                updateData.completedAt = null; // Reset jika kembali ke Proses
+            }
+            update(ref(db, `service_orders/${id}`), updateData);
         };
 
         window.deleteOrder = (id) => {
@@ -649,12 +660,12 @@
             }
         };
 
-        // Modal Invoice
+        // Modal Invoice (Menampilkan Tanggal Masuk & Keluar)
         window.openInvoiceModal = (id) => {
             const item = rawServices[id];
             if (!item) return;
 
-            document.getElementById('inv-date').textContent = new Date(item.createdAt || Date.now()).toLocaleDateString('id-ID', {
+            document.getElementById('inv-date').textContent = new Date().toLocaleDateString('id-ID', {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
             document.getElementById('inv-id').textContent = `#PSC-${id.substring(1, 6).toUpperCase()}`;
@@ -662,6 +673,8 @@
             document.getElementById('inv-phone').textContent = item.customerPhone;
             document.getElementById('inv-device').textContent = item.deviceUnit;
             document.getElementById('inv-issue').textContent = item.deviceIssue;
+            document.getElementById('inv-date-in').textContent = formatDate(item.createdAt);
+            document.getElementById('inv-date-out').textContent = formatDate(item.completedAt);
             document.getElementById('inv-cost').textContent = `Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}`;
             document.getElementById('inv-status').textContent = item.status;
 
@@ -694,7 +707,6 @@
             document.getElementById('stat-done').textContent = done;
             document.getElementById('stat-revenue').textContent = `Rp ${revenue.toLocaleString('id-ID')}`;
 
-            // Render Chart.js
             renderCharts(process, done, total - process - done, revenue);
         };
 
