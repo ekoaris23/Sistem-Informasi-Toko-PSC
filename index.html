@@ -3,547 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi PSC Service - Paramount Star Computer</title>
-    
-    <!-- Link to Taskbar Icon (Menggunakan file image_1.png yang Anda kirim) -->
-    <link rel="icon" type="image/png" href="favicon.png">
-    
-    <!-- Tailwind CSS CDN -->
+    <title>PSC Service System</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- FontAwesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Tailwind Custom Configuration (Setting Tema Warna Maroon) -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        psc: {
-                            maroon: {
-                                DEFAULT: '#800000', // Warna Maroon Utama
-                                light: '#a03333',
-                                dark: '#600000',
-                                superdark: '#300000',
-                                accent: '#b91c1c'
-                            }
+                        maroon: {
+                            600: '#800000',
+                            700: '#660000',
+                            800: '#4D0000',
                         }
                     }
                 }
             }
         }
     </script>
-    
-    <!-- Custom Style for Active States -->
-    <style>
-        .nav-active {
-            background-color: #a03333 !important; /* psc-maroon-light */
-            color: white !important;
-        }
-    </style>
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+<body class="bg-gray-100 min-h-screen text-gray-800">
 
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar Navigation (Warna Maroon Superdark) -->
-        <aside class="w-64 bg-psc-maroon-superdark text-white flex flex-col justify-between p-4 shadow-lg">
-            <div>
-                <!-- Bagian Logo (Menggunakan file image_0.png yang Anda kirim) -->
-                <div class="flex flex-col items-center gap-3 px-2 py-4 border-b border-psc-maroon-dark mb-6">
-                    <img src="logo.png" alt="Logo PSC Service" class="w-auto h-24 object-contain rounded-md shadow-md">
-                    <h1 class="font-bold text-lg leading-tight text-center text-gray-100">
-                        PSC Service
-                        <br>
-                        <span class="text-xs font-normal text-gray-300">Paramount Star Computer</span>
-                    </h1>
-                </div>
+    <!-- Header / Navbar -->
+    <header class="bg-maroon-700 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wide">PSC SERVICE SYSTEM</h1>
+            <span id="status-badge" class="text-xs bg-yellow-500 text-black px-2 py-1 rounded font-semibold">Connecting...</span>
+        </div>
+    </header>
 
-                <nav class="space-y-2">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-active w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition">
-                        <i class="fa-solid fa-chart-line w-5"></i> Dashboard
-                    </button>
-                    <button onclick="switchTab('produk')" id="nav-produk" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-psc-maroon-dark hover:text-white transition">
-                        <i class="fa-solid fa-boxes-stacked w-5"></i> Database Produk
-                    </button>
-                    <button onclick="switchTab('service')" id="nav-service" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-psc-maroon-dark hover:text-white transition">
-                        <i class="fa-solid fa-screwdriver-wrench w-5"></i> Barang Service
-                    </button>
-                    <button onclick="switchTab('customer')" id="nav-customer" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-psc-maroon-dark hover:text-white transition">
-                        <i class="fa-solid fa-users w-5"></i> Database Customer
-                    </button>
-                </nav>
-            </div>
-
-            <div class="border-t border-psc-maroon-dark pt-4 px-2 text-xs text-gray-400 text-center">
-                &copy; 2026 PSC Service<br>Sistem Aktif (Lokal)
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto p-8">
-            
-            <!-- SECTION 1: DASHBOARD -->
-            <section id="sec-dashboard" class="space-y-6">
-                <div class="flex justify-between items-center border-b border-gray-200 pb-4">
-                    <div>
-                        <h2 class="text-3xl font-extrabold text-psc-maroon-dark">Ringkasan Operasional PSC Service</h2>
-                        <p class="text-sm text-gray-600">Statistik penjualan dan status unit service masuk hari ini.</p>
-                    </div>
-                </div>
-
-                <!-- Metrics Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Unit Service Aktif</p>
-                            <h3 class="text-3xl font-bold text-psc-maroon-dark mt-1" id="stat-service-aktif">12 Unit</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-psc-maroon-accent text-white rounded-lg flex items-center justify-center text-xl shadow-inner">
-                            <i class="fa-solid fa-laptop-medical"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Penjualan Aksesoris</p>
-                            <h3 class="text-2xl font-bold text-gray-800 mt-1">Rp 4.250.000</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center text-xl border">
-                            <i class="fa-solid fa-mouse"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Laptop Second Terjual</p>
-                            <h3 class="text-2xl font-bold text-gray-800 mt-1">3 Unit</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center text-xl border">
-                            <i class="fa-solid fa-laptop"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Pelanggan</p>
-                            <h3 class="text-2xl font-bold text-gray-800 mt-1" id="stat-total-customer">48 Orang</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center text-xl border">
-                            <i class="fa-solid fa-user-group"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                        <h3 class="font-bold text-lg text-psc-maroon-superdark mb-4">Grafik Penjualan Bulanan</h3>
-                        <canvas id="salesChart" height="200"></canvas>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                        <h3 class="font-bold text-lg text-psc-maroon-superdark mb-4">Komposisi Unit Service Masuk</h3>
-                        <canvas id="serviceChart" height="200"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 2: DATABASE PRODUK -->
-            <section id="sec-produk" class="hidden space-y-6">
-                <div class="flex justify-between items-center border-b border-gray-200 pb-4">
-                    <div>
-                        <h2 class="text-3xl font-extrabold text-psc-maroon-dark">Database Produk</h2>
-                        <p class="text-sm text-gray-600">Katalog stok aksesoris, sparepart, dan unit laptop second.</p>
-                    </div>
-                    <button onclick="toggleModal('modal-produk')" class="bg-psc-maroon hover:bg-psc-maroon-dark text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow transition">
-                        <i class="fa-solid fa-plus"></i> Tambah Produk
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-psc-maroon-superdark border-b border-psc-maroon-dark text-xs text-gray-200 uppercase tracking-wider">
-                            <tr>
-                                <th class="p-4">Kode</th>
-                                <th class="p-4">Nama Produk</th>
-                                <th class="p-4">Kategori</th>
-                                <th class="p-4">Harga Jual</th>
-                                <th class="p-4">Stok</th>
-                                <th class="p-4">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-produk-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Data dimasukkan via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECTION 3: DATABASE BARANG SERVICE -->
-            <section id="sec-service" class="hidden space-y-6">
-                <div class="flex justify-between items-center border-b border-gray-200 pb-4">
-                    <div>
-                        <h2 class="text-3xl font-extrabold text-psc-maroon-dark">Database Barang Service</h2>
-                        <p class="text-sm text-gray-600">Pencatatan unit Laptop & MacBook untuk perbaikan PSC Service.</p>
-                    </div>
-                    <button onclick="toggleModal('modal-service')" class="bg-psc-maroon hover:bg-psc-maroon-dark text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow transition">
-                        <i class="fa-solid fa-plus"></i> Penerimaan Service Baru
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-psc-maroon-superdark border-b border-psc-maroon-dark text-xs text-gray-200 uppercase tracking-wider">
-                            <tr>
-                                <th class="p-4">No. Tanda Terima</th>
-                                <th class="p-4">Pemilik</th>
-                                <th class="p-4">Perangkat</th>
-                                <th class="p-4">Keluhan</th>
-                                <th class="p-4">Estimasi Biaya</th>
-                                <th class="p-4">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-service-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Data dimasukkan via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECTION 4: DATABASE CUSTOMER -->
-            <section id="sec-customer" class="hidden space-y-6">
-                <div class="flex justify-between items-center border-b border-gray-200 pb-4">
-                    <div>
-                        <h2 class="text-3xl font-extrabold text-psc-maroon-dark">Database Customer PSC</h2>
-                        <p class="text-sm text-gray-600">Riwayat kontak dan riwayat transaksi pelanggan.</p>
-                    </div>
-                    <button onclick="toggleModal('modal-customer')" class="bg-psc-maroon hover:bg-psc-maroon-dark text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow transition">
-                        <i class="fa-solid fa-plus"></i> Tambah Customer
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-psc-maroon-superdark border-b border-psc-maroon-dark text-xs text-gray-200 uppercase tracking-wider">
-                            <tr>
-                                <th class="p-4">ID Customer</th>
-                                <th class="p-4">Nama Pelanggan</th>
-                                <th class="p-4">WhatsApp / HP</th>
-                                <th class="p-4">Kategori Pelanggan</th>
-                                <th class="p-4">Catatan Riwayat</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-customer-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Data dimasukkan via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- [MODALS (Form Tambah Data) - Tetap sama seperti sebelumnya, hanya ganti style tombol] -->
-    <!-- MODAL FORM PRODUK -->
-    <div id="modal-produk" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
-            <h3 class="font-bold text-xl text-psc-maroon-dark border-b pb-2">Tambah Produk Baru</h3>
-            <form id="form-produk" onsubmit="addProduk(event)" class="space-y-3">
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Form Input Data -->
+        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-maroon-700">
+            <h2 class="text-lg font-bold mb-4 text-maroon-700">Tambah Data Layanan / Barang</h2>
+            <form id="service-form" class="space-y-4">
                 <div>
-                    <label class="text-xs font-semibold text-gray-600">Nama Produk</label>
-                    <input type="text" id="p-nama" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
+                    <label class="block text-sm font-medium mb-1">Nama Pelanggan / Item</label>
+                    <input type="text" id="itemName" required class="w-full border rounded p-2 focus:outline-none focus:border-maroon-700" placeholder="Contoh: Laptop Asus - Servis LCD">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold text-gray-600">Kategori</label>
-                    <select id="p-kategori" class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                        <option value="Aksesoris">Aksesoris Laptop</option>
-                        <option value="Sparepart">Sparepart / Komponen</option>
-                        <option value="Laptop Second">Laptop Second</option>
-                    </select>
+                    <label class="block text-sm font-medium mb-1">Biaya / Harga (Rp)</label>
+                    <input type="number" id="itemPrice" required class="w-full border rounded p-2 focus:outline-none focus:border-maroon-700" placeholder="150000">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Harga (Rp)</label>
-                        <input type="number" id="p-harga" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Stok</label>
-                        <input type="number" id="p-stok" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                    </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-5">
-                    <button type="button" onclick="toggleModal('modal-produk')" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-psc-maroon text-white rounded-lg text-sm font-semibold hover:bg-psc-maroon-dark transition shadow">Simpan Data Produk</button>
-                </div>
+                <button type="submit" class="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-2 rounded transition">Simpan Data</button>
             </form>
         </div>
-    </div>
 
-    <!-- MODAL FORM SERVICE -->
-    <div id="modal-service" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
-            <h3 class="font-bold text-xl text-psc-maroon-dark border-b pb-2">Terima Unit Service Baru</h3>
-            <form id="form-service" onsubmit="addService(event)" class="space-y-3">
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Nama Pemilik</label>
-                    <input type="text" id="s-pemilik" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Perangkat (Merk/Model)</label>
-                    <input type="text" id="s-perangkat" placeholder="Contoh: MacBook Air M1 / Asus ROG" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Keluhan Kerusakan</label>
-                    <textarea id="s-keluhan" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300" rows="2"></textarea>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Estimasi Biaya (Rp)</label>
-                    <input type="number" id="s-biaya" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Status Awal</label>
-                    <select id="s-status" class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                        <option value="Diterima">Diterima</option>
-                        <option value="Proses Pengecekan">Proses Pengecekan</option>
-                        <option value="Proses Perbaikan">Proses Perbaikan</option>
-                    </select>
-                </div>
-                <div class="flex justify-end gap-2 pt-5">
-                    <button type="button" onclick="toggleModal('modal-service')" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-psc-maroon text-white rounded-lg text-sm font-semibold hover:bg-psc-maroon-dark transition shadow">Simpan Unit Service</button>
-                </div>
-            </form>
+        <!-- Realtime Data List -->
+        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-maroon-700">
+            <h2 class="text-lg font-bold mb-4 text-maroon-700">Daftar Layanan Realtime</h2>
+            <ul id="data-list" class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
+                <li class="py-3 text-gray-500 text-center">Memuat data...</li>
+            </ul>
         </div>
-    </div>
 
-    <!-- MODAL FORM CUSTOMER -->
-    <div id="modal-customer" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
-            <h3 class="font-bold text-xl text-psc-maroon-dark border-b pb-2">Tambah Customer PSC</h3>
-            <form id="form-customer" onsubmit="addCustomer(event)" class="space-y-3">
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Nama Pelanggan</label>
-                    <input type="text" id="c-nama" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">No. WhatsApp / Telp</label>
-                    <input type="text" id="c-hp" required class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600">Kategori Transaksi Utama</label>
-                    <select id="c-kategori" class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-psc-maroon-accent outline-none border-gray-300">
-                        <option value="Service & Pembelian">Service & Pembelian</option>
-                        <option value="Customer Service">Customer Service</option>
-                        <option value="Pembelian Produk">Pembelian Produk</option>
-                    </select>
-                </div>
-                <div class="flex justify-end gap-2 pt-5">
-                    <button type="button" onclick="toggleModal('modal-customer')" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-psc-maroon text-white rounded-lg text-sm font-semibold hover:bg-psc-maroon-dark transition shadow">Simpan Customer</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    </main>
 
-    <!-- JavaScript Logic (Hanya ganti Chart colors) -->
-    <script>
-        // Sample Initial Data (Sama)
-        let produkList = [
-            { kode: 'PRD-001', nama: 'Logitech Wireless Mouse M170', kategori: 'Aksesoris', harga: 145000, stok: 12 },
-            { kode: 'PRD-002', nama: 'Keyboard Mechanical Keychron K2', kategori: 'Aksesoris', harga: 1250000, stok: 4 },
-            { kode: 'PRD-003', nama: 'MacBook Pro 13 2017 i5 8/256GB Second', kategori: 'Laptop Second', harga: 6800000, stok: 1 },
-            { kode: 'PRD-004', nama: 'SSD NVMe Samsung 980 500GB', kategori: 'Sparepart', harga: 750000, stok: 8 }
-        ];
+    <!-- Firebase SDK (ES Module Integration) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        let serviceList = [
-            { nota: 'SVC-2026-001', pemilik: 'Budi Santoso', perangkat: 'MacBook Air M1 2020', keluhan: 'Mati total tersemprot air', biaya: 1500000, status: 'Proses Perbaikan' },
-            { nota: 'SVC-2026-002', pemilik: 'Siti Rahma', perangkat: 'Lenovo IdeaPad Slim 3', keluhan: 'Ganti Keyboard & Fan Cleaning', biaya: 450000, status: 'Selesai' },
-            { nota: 'SVC-2026-003', pemilik: 'Ahmad Fauzi', perangkat: 'Asus TUF Gaming FX505', keluhan: 'Install ulang OS & Upgrade SSD', biaya: 350000, status: 'Diterima' }
-        ];
-
-        let customerList = [
-            { id: 'CUST-01', nama: 'Budi Santoso', hp: '081234567890', kategori: 'Customer Service', catatan: 'Service MacBook Air M1' },
-            { id: 'CUST-02', nama: 'Siti Rahma', hp: '085712345678', kategori: 'Service & Pembelian', catatan: 'Service Lenovo + Beli Mousepad' },
-            { id: 'CUST-03', nama: 'Deni Kurniawan', hp: '081987654321', kategori: 'Pembelian Produk', catatan: 'Beli Laptop Second Asus' }
-        ];
-
-        // Tab Switching Logic
-        function switchTab(tab) {
-            ['dashboard', 'produk', 'service', 'customer'].forEach(t => {
-                document.getElementById(`sec-${t}`).classList.add('hidden');
-                document.getElementById(`nav-${t}`).classList.remove('nav-active');
-                document.getElementById(`nav-${t}`).classList.add('text-gray-300');
-            });
-
-            document.getElementById(`sec-${tab}`).classList.remove('hidden');
-            document.getElementById(`nav-${tab}`).classList.add('nav-active');
-            document.getElementById(`nav-${tab}`).classList.remove('text-gray-300');
-        }
-
-        // Modal Handler
-        function toggleModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.toggle('hidden');
-        }
-
-        // Render Functions (Ganti Badge style ke Maroon)
-        function renderProduk() {
-            const tbody = document.getElementById('table-produk-body');
-            tbody.innerHTML = produkList.map(p => `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-4 font-mono text-xs text-gray-500">${p.kode}</td>
-                    <td class="p-4 font-semibold text-psc-maroon-dark">${p.nama}</td>
-                    <td class="p-4"><span class="bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-full">${p.kategori}</span></td>
-                    <td class="p-4">Rp ${p.harga.toLocaleString('id-ID')}</td>
-                    <td class="p-4 font-bold text-base">${p.stok}</td>
-                    <td class="p-4">${p.stok > 0 ? '<span class="text-emerald-600 bg-emerald-50 text-xs px-2 py-1 rounded">Tersedia</span>' : '<span class="text-rose-600 bg-rose-50 text-xs px-2 py-1 rounded habit">Habis</span>'}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderService() {
-            const tbody = document.getElementById('table-service-body');
-            tbody.innerHTML = serviceList.map(s => {
-                let badgeStyle = 'bg-amber-50 text-amber-700';
-                if(s.status === 'Selesai') badgeStyle = 'bg-emerald-50 text-emerald-700';
-                if(s.status === 'Diterima') badgeStyle = 'bg-blue-50 text-blue-700';
-                if(s.status === 'Proses Perbaikan') badgeStyle = 'bg-psc-maroon-light text-white';
-
-                return `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-4 font-mono text-xs text-psc-maroon-dark font-bold">${s.nota}</td>
-                    <td class="p-4 font-medium text-gray-800">${s.pemilik}</td>
-                    <td class="p-4 font-semibold">${s.perangkat}</td>
-                    <td class="p-4 text-gray-600 max-w-xs">${s.keluhan}</td>
-                    <td class="p-4 font-semibold">Rp ${s.biaya.toLocaleString('id-ID')}</td>
-                    <td class="p-4"><span class="${badgeStyle} text-xs px-2.5 py-1 rounded-full font-medium">${s.status}</span></td>
-                </tr>
-            `}).join('');
-            
-            document.getElementById('stat-service-aktif').innerText = serviceList.filter(s => s.status !== 'Selesai').length + ' Unit';
-        }
-
-        function renderCustomer() {
-            const tbody = document.getElementById('table-customer-body');
-            tbody.innerHTML = customerList.map(c => `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-4 font-mono text-xs text-gray-500">${c.id}</td>
-                    <td class="p-4 font-semibold text-psc-maroon-dark">${c.nama}</td>
-                    <td class="p-4 font-mono text-xs text-gray-600">${c.hp}</td>
-                    <td class="p-4"><span class="bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-full font-medium">${c.kategori}</span></td>
-                    <td class="p-4 text-gray-500">${c.catatan}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('stat-total-customer').innerText = customerList.length + ' Orang';
-        }
-
-        // Add Forms Handlers (Sama)
-        function addProduk(e) {
-            e.preventDefault();
-            const newP = {
-                kode: 'PRD-00' + (produkList.length + 1),
-                nama: document.getElementById('p-nama').value,
-                kategori: document.getElementById('p-kategori').value,
-                harga: parseInt(document.getElementById('p-harga').value),
-                stok: parseInt(document.getElementById('p-stok').value)
-            };
-            produkList.push(newP);
-            renderProduk();
-            toggleModal('modal-produk');
-            document.getElementById('form-produk').reset();
-        }
-
-        function addService(e) {
-            e.preventDefault();
-            const newS = {
-                nota: 'SVC-2026-00' + (serviceList.length + 1),
-                pemilik: document.getElementById('s-pemilik').value,
-                perangkat: document.getElementById('s-perangkat').value,
-                keluhan: document.getElementById('s-keluhan').value,
-                biaya: parseInt(document.getElementById('s-biaya').value),
-                status: document.getElementById('s-status').value
-            };
-            serviceList.push(newS);
-            renderService();
-            toggleModal('modal-service');
-            document.getElementById('form-service').reset();
-        }
-
-        function addCustomer(e) {
-            e.preventDefault();
-            const newC = {
-                id: 'CUST-0' + (customerList.length + 1),
-                nama: document.getElementById('c-nama').value,
-                hp: document.getElementById('c-hp').value,
-                kategori: document.getElementById('c-kategori').value,
-                catatan: 'Customer baru ditambahkan'
-            };
-            customerList.push(newC);
-            renderCustomer();
-            toggleModal('modal-customer');
-            document.getElementById('form-customer').reset();
-        }
-
-        // Chart.js Initialization (Menggunakan warna Maroon)
-        function initCharts() {
-            // Sales Chart (Line)
-            const ctxSales = document.getElementById('salesChart').getContext('2d');
-            new Chart(ctxSales, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-                    datasets: [
-                        {
-                            label: 'Aksesoris & Sparepart (Rp)',
-                            data: [2100000, 3200000, 2800000, 4100000, 3900000, 4250000],
-                            borderColor: '#b91c1c', // Maroon accent
-                            backgroundColor: 'rgba(185, 28, 28, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Laptop Second (Rp)',
-                            data: [5000000, 8500000, 6000000, 12000000, 7500000, 18000000],
-                            borderColor: '#300000', // Maroon superdark
-                            borderWidth: 2,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: { 
-                    responsive: true,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-
-            // Service Breakdown Chart (Doughnut)
-            const ctxService = document.getElementById('serviceChart').getContext('2d');
-            new Chart(ctxService, {
-                type: 'doughnut',
-                data: {
-                    labels: ['MacBook (Apple)', 'Laptop Windows', 'Hardware', 'Software'],
-                    datasets: [{
-                        data: [35, 45, 12, 8],
-                        backgroundColor: ['#800000', '#a03333', '#300000', '#600000'], // Maroon Palette
-                        borderWidth: 1
-                    }]
-                },
-                options: { 
-                    responsive: true,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-        }
-
-        // Initialize App
-        window.onload = () => {
-            renderProduk();
-            renderService();
-            renderCustomer();
-            initCharts();
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUv1FoZD1AhcD8FxeOvaTZ9XZJ_D3i3zc",
+            authDomain: "psc-service-system.firebaseapp.com",
+            databaseURL: "https://psc-service-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "psc-service-system",
+            storageBucket: "psc-service-system.firebasestorage.app",
+            messagingSenderId: "1060022500226",
+            appId: "1:1060022500226:web:bde4e4328e8e3d7ed1ed9b"
         };
+
+        // Inisialisasi Firebase & Realtime Database
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const servicesRef = ref(db, 'services');
+
+        // Status Indikator
+        const statusBadge = document.getElementById('status-badge');
+
+        // Simpan Data
+        document.getElementById('service-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('itemName').value;
+            const price = document.getElementById('itemPrice').value;
+
+            push(servicesRef, {
+                name: name,
+                price: parseInt(price),
+                timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('service-form').reset();
+            });
+        });
+
+        // Baca Data Realtime
+        onValue(servicesRef, (snapshot) => {
+            statusBadge.textContent = 'Terhubung Realtime';
+            statusBadge.className = 'text-xs bg-green-500 text-white px-2 py-1 rounded font-semibold';
+            
+            const listElement = document.getElementById('data-list');
+            listElement.innerHTML = '';
+
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach((key) => {
+                    const item = data[key];
+                    const li = document.createElement('li');
+                    li.className = 'py-3 flex justify-between items-center';
+                    li.innerHTML = `
+                        <span class="font-medium">${item.name}</span>
+                        <span class="text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</span>
+                    `;
+                    listElement.appendChild(li);
+                });
+            } else {
+                listElement.innerHTML = '<li class="py-3 text-gray-400 text-center">Belum ada data.</li>';
+            }
+        }, (error) => {
+            statusBadge.textContent = 'Gagal Konek';
+            statusBadge.className = 'text-xs bg-red-500 text-white px-2 py-1 rounded font-semibold';
+        });
     </script>
 </body>
 </html>
