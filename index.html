@@ -25,6 +25,8 @@
     </script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .kanban-scroll::-webkit-scrollbar {
             height: 8px;
@@ -57,7 +59,7 @@
         </div>
     </header>
 
-    <!-- Navigation Tabs (CRM Paling Kiri, Laptop Dijual Gabung ke Produk) -->
+    <!-- Navigation Tabs -->
     <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-[68px] z-30">
         <div class="container mx-auto flex overflow-x-auto text-sm font-medium text-gray-600">
             <button onclick="switchTab('customer')" id="tab-customer" class="tab-btn px-5 py-3 border-b-2 border-maroon-700 text-maroon-700 font-bold flex items-center gap-2 whitespace-nowrap">
@@ -145,9 +147,9 @@
             </div>
         </section>
 
-        <!-- ================= TAB 2: ALUR SERVICE LAPTOP (TRELLO KANBAN STYLE) ================= -->
+        <!-- ================= TAB 2: ALUR SERVICE LAPTOP ================= -->
         <section id="page-service" class="tab-page hidden space-y-6">
-            <!-- Modal / Section Input Service Baru -->
+            <!-- Form Input Service Baru -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-md font-bold text-maroon-700 flex items-center gap-2">
@@ -200,7 +202,7 @@
             </div>
 
             <!-- TRELLO BOARD LAYOUT -->
-            <div class="bg-slate-800 p-4 rounded-2xl shadow-inner min-h-[600px]">
+            <div class="bg-slate-800 p-4 rounded-2xl shadow-inner min-h-[500px]">
                 <div class="flex justify-between items-center mb-4 text-white">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-kanban text-amber-400 text-xl"></i>
@@ -213,7 +215,6 @@
 
                 <!-- Trello Columns Container -->
                 <div class="flex gap-4 overflow-x-auto pb-4 kanban-scroll items-start">
-                    
                     <!-- Col 1: Service Masuk -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
                         <div class="flex justify-between items-center mb-3">
@@ -276,7 +277,71 @@
                         </div>
                         <div id="col-batal" class="space-y-3 min-h-[150px]"></div>
                     </div>
+                </div>
+            </div>
 
+            <!-- TABEL RANGKUMAN SERVICE -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-md font-bold text-maroon-700 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list"></i> Tabel Rangkuman Data Service Toko PSC
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-gray-600">
+                        <thead class="uppercase bg-gray-50 text-gray-500 border-b">
+                            <tr>
+                                <th class="p-3">ID Service</th>
+                                <th class="p-3">Nama Customer</th>
+                                <th class="p-3">Type Laptop</th>
+                                <th class="p-3">Kendala / Kerusakan Laptop</th>
+                                <th class="p-3">Nominal Biaya</th>
+                                <th class="p-3">Status Saat Ini</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-service-table" class="divide-y divide-gray-100">
+                            <tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data rangkuman service.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GRAFIK & RINGKASAN SERVICE BESERTA NOMINAL NYA -->
+            <div class="space-y-4">
+                <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Laporan & Ringkasan Nominal Service
+                </h3>
+
+                <!-- Ringkasan Stats (Harian, Mingguan, Bulanan, Tahunan) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-amber-500">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Harian</p>
+                        <p id="sum-daily" class="text-xl font-bold text-gray-800 mt-1">Rp 0</p>
+                        <span class="text-[10px] text-gray-400">Hari ini</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Mingguan</p>
+                        <p id="sum-weekly" class="text-xl font-bold text-blue-600 mt-1">Rp 0</p>
+                        <span class="text-[10px] text-gray-400">7 hari terakhir</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-600">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Bulanan</p>
+                        <p id="sum-monthly" class="text-xl font-bold text-green-600 mt-1">Rp 0</p>
+                        <span class="text-[10px] text-gray-400">Bulan ini</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-purple-600">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Tahunan</p>
+                        <p id="sum-yearly" class="text-xl font-bold text-purple-600 mt-1">Rp 0</p>
+                        <span class="text-[10px] text-gray-400">Tahun ini</span>
+                    </div>
+                </div>
+
+                <!-- Grafik Omset Service -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                    <h4 class="text-xs font-bold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-bar text-maroon-700"></i> Grafik Omset Service (Harian, Mingguan, Bulanan & Tahunan)
+                    </h4>
+                    <div class="h-64">
+                        <canvas id="chartRevenueReport"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -389,7 +454,7 @@
 
     </main>
 
-    <!-- FIREBASE REALTIME DATABASE SCRIPT (KODE ASLI LAMA) -->
+    <!-- FIREBASE REALTIME DATABASE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -417,6 +482,7 @@
         let rawServices = {};
         let rawStocks = {};
         let rawEmployees = {};
+        let chartInstance = null;
 
         const statusBadge = document.getElementById('status-badge');
 
@@ -433,6 +499,8 @@
 
             rawServices = snapshot.val() || {};
             renderServices();
+            renderSummaryTable();
+            renderFinancialReports();
         });
 
         onValue(stocksRef, (snapshot) => {
@@ -464,7 +532,7 @@
             return new Date(timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // 1. Submit CRM Customer
+        // Submit CRM Customer
         document.getElementById('customer-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newCust = {
@@ -482,7 +550,6 @@
             });
         });
 
-        // Auto-Fill Dropdown Customer di Service Form
         function populateCrmDropdown() {
             const dropdown = document.getElementById('selectCrmCustomer');
             dropdown.innerHTML = '<option value="">-- Pilih Customer (CRM) --</option>';
@@ -507,7 +574,7 @@
             }
         };
 
-        // 2. Submit Service Card (Trello)
+        // Submit Service Card (Trello)
         document.getElementById('service-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const custKey = document.getElementById('selectCrmCustomer').value;
@@ -600,6 +667,82 @@
             document.getElementById('cnt-batal').textContent = counts['Batal'];
         };
 
+        // Render Summary Service Table
+        function renderSummaryTable() {
+            const tableBody = document.getElementById('summary-service-table');
+            tableBody.innerHTML = '';
+            const keys = Object.keys(rawServices).reverse();
+
+            if (keys.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada data service.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const s = rawServices[k];
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-gray-500">#PSC-${k.substring(1, 6).toUpperCase()}</td>
+                    <td class="p-3 font-bold text-gray-800">${s.customerName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${s.deviceUnit}</td>
+                    <td class="p-3 text-gray-600 italic">${s.deviceIssue}</td>
+                    <td class="p-3 font-bold text-maroon-700">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold bg-slate-100 text-slate-700 rounded-full border">${s.status || 'Service Masuk'}</span></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Render Financial Reports & Chart
+        function renderFinancialReports() {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())).getTime();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            const startOfYear = new Date(now.getFullYear(), 0, 1).getTime();
+
+            let daily = 0, weekly = 0, monthly = 0, yearly = 0;
+
+            Object.keys(rawServices).forEach(k => {
+                const s = rawServices[k];
+                const cost = Number(s.estimatedCost) || 0;
+                const time = s.createdAt || 0;
+
+                if (time >= startOfDay) daily += cost;
+                if (time >= startOfWeek) weekly += cost;
+                if (time >= startOfMonth) monthly += cost;
+                if (time >= startOfYear) yearly += cost;
+            });
+
+            document.getElementById('sum-daily').textContent = `Rp ${daily.toLocaleString('id-ID')}`;
+            document.getElementById('sum-weekly').textContent = `Rp ${weekly.toLocaleString('id-ID')}`;
+            document.getElementById('sum-monthly').textContent = `Rp ${monthly.toLocaleString('id-ID')}`;
+            document.getElementById('sum-yearly').textContent = `Rp ${yearly.toLocaleString('id-ID')}`;
+
+            // Render Chart.js
+            const ctx = document.getElementById('chartRevenueReport').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Harian', 'Mingguan', 'Bulanan', 'Tahunan'],
+                    datasets: [{
+                        label: 'Total Nominal Service (Rp)',
+                        data: [daily, weekly, monthly, yearly],
+                        backgroundColor: ['#f59e0b', '#3b82f6', '#16a34a', '#9333ea'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
         // Render Customers CRM
         window.renderCustomers = () => {
             const body = document.getElementById('customer-table-body');
@@ -634,14 +777,13 @@
             });
         };
 
-        // Update Status & Garansi / Batal (Rp 0)
         window.updateStatus = (id, newStatus) => {
             const updateData = { status: newStatus };
             if (newStatus === 'Batal' || newStatus === 'Garansi') updateData.estimatedCost = 0;
             update(ref(db, `service_orders/${id}`), updateData);
         };
 
-        // 3. Submit Stok Produk / Laptop / Sparepart
+        // Submit Stok Produk / Laptop / Sparepart
         document.getElementById('stock-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newStock = {
@@ -656,7 +798,6 @@
             });
         });
 
-        // Render Stok Table
         window.renderStocks = () => {
             const tableBody = document.getElementById('stock-table-body');
             tableBody.innerHTML = '';
@@ -680,7 +821,7 @@
             });
         };
 
-        // 4. Submit Karyawan
+        // Submit Karyawan
         document.getElementById('emp-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newEmp = {
