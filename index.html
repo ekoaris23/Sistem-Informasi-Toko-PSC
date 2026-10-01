@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSC Service System - Full Dashboard & Owner Portal</title>
+    <title>Sistem Informasi Toko PSC - Paramount Star Computer</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,9 +12,11 @@
                 extend: {
                     colors: {
                         maroon: {
+                            50: '#fdf2f2',
+                            100: '#fde8e8',
                             600: '#800000',
                             700: '#660000',
-                            800: '#4D0000',
+                            800: '#4d0000',
                         }
                     }
                 }
@@ -25,13 +27,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @media print {
-            body * { visibility: hidden; }
-            #printable-invoice, #printable-invoice *, #printable-payslip, #printable-payslip * { visibility: visible; }
-            #printable-invoice, #printable-payslip { position: absolute; left: 0; top: 0; width: 100%; }
-        }
-    </style>
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col font-sans">
 
@@ -39,21 +34,17 @@
     <header class="bg-maroon-700 text-white p-4 shadow-lg sticky top-0 z-40">
         <div class="container mx-auto flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-wrench text-2xl text-yellow-400"></i>
+                <div class="p-2 bg-amber-400 text-maroon-800 rounded-lg font-bold">
+                    <i class="fa-solid fa-laptop-code text-xl"></i>
+                </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-wider leading-none">PSC SERVICE SYSTEM</h1>
-                    <span class="text-xs text-gray-200">Sistem Informasi Operasional & Owner Dashboard</span>
+                    <h1 class="text-xl font-bold tracking-wider leading-none">PARAMOUNT STAR COMPUTER</h1>
+                    <span class="text-xs text-amber-300 font-medium">Sistem Informasi Service & Toko PSC - Jatinangor</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="owner-indicator" class="text-xs bg-amber-500/20 text-amber-200 border border-amber-400/30 font-semibold px-3 py-1 rounded-full hidden">
-                    <i class="fa-solid fa-user-shield"></i> Owner Access
-                </span>
-                <button id="owner-logout-btn" onclick="logoutOwner()" class="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded-full hidden flex items-center gap-1 shadow transition">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout Owner
-                </button>
                 <span id="status-badge" class="text-xs bg-yellow-500 text-black font-semibold px-3 py-1 rounded-full flex items-center gap-1.5 shadow">
-                    <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span> Connecting...
+                    <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span> Connecting Firebase...
                 </span>
             </div>
         </div>
@@ -62,119 +53,84 @@
     <!-- Navigation Tabs -->
     <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-[68px] z-30">
         <div class="container mx-auto flex overflow-x-auto text-sm font-medium text-gray-600">
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-5 py-3 border-b-2 border-maroon-700 text-maroon-700 font-bold flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-chart-line"></i> Dashboard & Grafik
+            <button onclick="switchTab('service')" id="tab-service" class="tab-btn px-5 py-3 border-b-2 border-maroon-700 text-maroon-700 font-bold flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Alur Service Laptop
             </button>
-            <button onclick="switchTab('servis')" id="tab-servis" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-laptop-medical"></i> Layanan Servis
+            <button onclick="switchTab('customer')" id="tab-customer" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-address-book"></i> Database Customer (CRM)
             </button>
-            <button onclick="switchTab('pos')" id="tab-pos" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-cash-register"></i> Kasir / POS
+            <button onclick="switchTab('laptop')" id="tab-laptop" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-laptop"></i> Laptop Dijual
             </button>
-            <button onclick="switchTab('stok')" id="tab-stok" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-boxes-stacked"></i> Stok Sparepart
+            <button onclick="switchTab('product')" id="tab-product" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-boxes-stacked"></i> Produk & Sparepart
             </button>
-            <!-- Tab Owner Proteksi Password -->
-            <button onclick="handleOwnerTabAccess()" id="tab-owner" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-amber-700 text-amber-600 font-semibold flex items-center gap-2 whitespace-nowrap bg-amber-50/50">
-                <i class="fa-solid fa-user-lock"></i> Menu Owner
+            <button onclick="switchTab('karyawan')" id="tab-karyawan" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-users-gear"></i> Karyawan & Joblist
             </button>
         </div>
     </nav>
 
     <!-- Main Content Container -->
     <main class="container mx-auto p-4 md:p-6 flex-grow">
-        
-        <!-- ================= TAB 1: DASHBOARD ================= -->
-        <section id="page-dashboard" class="tab-page space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-maroon-700 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Servis</p>
-                        <p id="stat-total" class="text-2xl font-bold text-gray-800">0</p>
-                    </div>
-                    <div class="p-3 bg-maroon-600/10 text-maroon-700 rounded-full"><i class="fa-solid fa-laptop-medical text-xl"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-yellow-500 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Dalam Proses</p>
-                        <p id="stat-process" class="text-2xl font-bold text-yellow-600">0</p>
-                    </div>
-                    <div class="p-3 bg-yellow-500/10 text-yellow-600 rounded-full"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-purple-600 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Klaim Garansi</p>
-                        <p id="stat-garansi" class="text-2xl font-bold text-purple-600">0</p>
-                    </div>
-                    <div class="p-3 bg-purple-600/10 text-purple-600 rounded-full"><i class="fa-solid fa-shield-halved text-xl"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-600 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Omset</p>
-                        <p id="stat-revenue" class="text-2xl font-bold text-green-600">Rp 0</p>
-                    </div>
-                    <div class="p-3 bg-green-600/10 text-green-600 rounded-full"><i class="fa-solid fa-wallet text-xl"></i></div>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                    <h3 class="text-sm font-bold text-maroon-700 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-bar"></i> Status Servis Pelanggan
-                    </h3>
-                    <div class="h-64 flex items-center justify-center">
-                        <canvas id="chartStatus"></canvas>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                    <h3 class="text-sm font-bold text-maroon-700 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line"></i> Ringkasan Penjualan & Servis
-                    </h3>
-                    <div class="h-64 flex items-center justify-center">
-                        <canvas id="chartRevenue"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= TAB 2: LAYANAN SERVIS ================= -->
-        <section id="page-servis" class="tab-page hidden space-y-6">
+        <!-- ================= TAB 1: ALUR SERVICE LAPTOP ================= -->
+        <section id="page-service" class="tab-page space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Input Service -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
-                        <i class="fa-solid fa-plus-circle"></i> Input Servis Baru
+                        <i class="fa-solid fa-plus-circle"></i> Terima Unit Service
                     </h2>
-                    <form id="service-form" class="space-y-4">
+                    <form id="service-form" class="space-y-3">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Pelanggan</label>
-                            <input type="text" id="customerName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Eko Aris">
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Customer</label>
+                            <input type="text" id="customerName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Nama Customer">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">No. WhatsApp / HP</label>
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">No. WhatsApp</label>
                             <input type="tel" id="customerPhone" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="628123456789">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Perangkat / Unit</label>
-                            <input type="text" id="deviceUnit" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Laptop Asus ROG / HP Samsung S21">
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Perangkat / Type Unit</label>
+                            <input type="text" id="deviceUnit" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="MacBook Pro M1 / Asus ROG">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Kerusakan / Keluhan</label>
-                            <textarea id="deviceIssue" required rows="2" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Mati total, ganti baterai & install OS"></textarea>
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Keluhan / Kerusakan</label>
+                            <textarea id="deviceIssue" required rows="2" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Mati total / No Display / Reball IC"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Metode Datang</label>
+                                <select id="arrivalType" class="w-full border rounded-lg p-2 text-xs bg-white">
+                                    <option value="Langsung ke Toko">Langsung ke Toko</option>
+                                    <option value="Pickup Tim PSC">Pickup Tim PSC</option>
+                                    <option value="Onsite (Di Tempat)">Onsite (Di Tempat)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Penanganan</label>
+                                <select id="techType" class="w-full border rounded-lg p-2 text-xs bg-white">
+                                    <option value="Teknisi Internal">Teknisi Internal</option>
+                                    <option value="Teknisi Vendor">Teknisi Vendor</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Estimasi Biaya (Rp)</label>
                             <input type="number" id="estimatedCost" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="350000">
                         </div>
                         <button type="submit" class="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> Simpan Data Servis
+                            <i class="fa-solid fa-paper-plane"></i> Proses Unit Service
                         </button>
                     </form>
                 </div>
 
+                <!-- Daftar Servis Pelanggan -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check"></i> Daftar Servis Pelanggan
+                            <i class="fa-solid fa-list-check"></i> Daftar Monitoring Service Toko PSC
                         </h2>
                         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                             <input type="text" id="searchService" onkeyup="renderServices()" placeholder="Cari Pelanggan/Unit..." class="border rounded-lg px-3 py-1.5 text-xs w-full sm:w-48 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
@@ -183,7 +139,8 @@
                                 <option value="Proses">Proses</option>
                                 <option value="Garansi">Garansi</option>
                                 <option value="Selesai">Selesai</option>
-                                <option value="Diambil">Diambil</option>
+                                <option value="Diambil">Diambil / Lunas</option>
+                                <option value="Batal">Batal (Kembali Rp 0)</option>
                             </select>
                         </div>
                     </div>
@@ -193,11 +150,11 @@
                             <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b">
                                 <tr>
                                     <th class="p-3">Pelanggan</th>
-                                    <th class="p-3">Unit & Keluhan</th>
-                                    <th class="p-3">Tanggal Masuk / Keluar</th>
+                                    <th class="p-3">Perangkat & Keluhan</th>
+                                    <th class="p-3">Penanganan</th>
                                     <th class="p-3">Biaya</th>
                                     <th class="p-3">Status</th>
-                                    <th class="p-3 text-center">Aksi & Nota</th>
+                                    <th class="p-3 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="service-table-body" class="divide-y divide-gray-100">
@@ -209,49 +166,58 @@
             </div>
         </section>
 
-        <!-- ================= TAB 3: KASIR / POS ================= -->
-        <section id="page-pos" class="tab-page hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-cart-plus"></i> Transaksi Penjualan Barang / Aksesoris
+        <!-- ================= TAB 2: DATABASE CUSTOMER (CRM) ================= -->
+        <section id="page-customer" class="tab-page hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
+                        <i class="fa-solid fa-users"></i> Database Customer Chatting & Prospek Repeat Order
                     </h2>
-                    <div id="pos-items-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[450px] overflow-y-auto p-1"></div>
+                    <span class="text-xs text-gray-500">Otomatis terisi dari data transaksi WA</span>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-md font-bold text-maroon-700 mb-3 border-b pb-2 flex items-center justify-between">
-                            <span><i class="fa-solid fa-shopping-cart"></i> Keranjang Belanja</span>
-                            <button onclick="clearCart()" class="text-xs text-red-500 hover:underline">Kosongkan</button>
-                        </h3>
-                        <div id="cart-list" class="space-y-2 max-h-60 overflow-y-auto text-sm divide-y">
-                            <p class="text-xs text-gray-400 text-center py-4">Keranjang masih kosong.</p>
-                        </div>
-                    </div>
-                    <div class="border-t pt-4 mt-4 space-y-3">
-                        <div class="flex justify-between font-bold text-lg">
-                            <span>Total:</span>
-                            <span id="cart-total" class="text-maroon-700">Rp 0</span>
-                        </div>
-                        <button onclick="checkoutPOS()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-cash-register"></i> Bayar & Simpan Transaksi
-                        </button>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b">
+                            <tr>
+                                <th class="p-3">Nama</th>
+                                <th class="p-3">WhatsApp</th>
+                                <th class="p-3">Label WA</th>
+                                <th class="p-3">Perangkat</th>
+                                <th class="p-3">Tgl Chat</th>
+                                <th class="p-3 text-center">Aksi WA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-table-body" class="divide-y divide-gray-100">
+                            <tr><td colspan="6" class="p-4 text-center text-gray-400">Memuat database customer...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
-        <!-- ================= TAB 4: STOK SPAREPART ================= -->
-        <section id="page-stok" class="tab-page hidden space-y-6">
+        <!-- ================= TAB 3: LAPTOP DIJUAL ================= -->
+        <section id="page-laptop" class="tab-page hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-laptop"></i> Katalog Laptop Bekas & Baru PSC
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="laptop-grid">
+                    <p class="text-xs text-gray-400 col-span-3">Katalog laptop siap tampil di sini.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: PRODUK & SPAREPART ================= -->
+        <section id="page-product" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
-                        <i class="fa-solid fa-box-open"></i> Tambah Item / Sparepart
+                        <i class="fa-solid fa-box-open"></i> Tambah Aksesoris / Sparepart
                     </h2>
                     <form id="stock-form" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Barang / Sparepart</label>
-                            <input type="text" id="stockName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="SSD NVMe 256GB / Baterai Asus X441">
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Barang</label>
+                            <input type="text" id="stockName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="SSD NVMe 256GB / Battery MacBook">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Harga Jual (Rp)</label>
@@ -262,14 +228,14 @@
                             <input type="number" id="stockQty" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="5">
                         </div>
                         <button type="submit" class="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Simpan Stok Barang
+                            <i class="fa-solid fa-plus"></i> Simpan Sparepart
                         </button>
                     </form>
                 </div>
 
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-boxes-stacked"></i> Inventaris Stok Barang
+                        <i class="fa-solid fa-boxes-stacked"></i> Stok Produk & Sparepart Store
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-600">
@@ -278,7 +244,7 @@
                                     <th class="p-3">Nama Barang</th>
                                     <th class="p-3">Harga Jual</th>
                                     <th class="p-3">Sisa Stok</th>
-                                    <th class="p-3 text-center">Aksi & Retur</th>
+                                    <th class="p-3 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="stock-table-body" class="divide-y divide-gray-100">
@@ -290,185 +256,49 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: OWNER DASHBOARD ================= -->
-        <section id="page-owner" class="tab-page hidden space-y-6">
-            <!-- Ringkasan Keuangan Laba Bersih -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-emerald-600">
-                    <p class="text-xs text-gray-500 font-semibold uppercase">Total Omset Servis</p>
-                    <p id="owner-stat-omset" class="text-2xl font-bold text-gray-800">Rp 0</p>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-rose-600">
-                    <p class="text-xs text-gray-500 font-semibold uppercase">Total Purchasing (Pengeluaran)</p>
-                    <p id="owner-stat-purchasing" class="text-2xl font-bold text-rose-600">Rp 0</p>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-600">
-                    <p class="text-xs text-gray-500 font-semibold uppercase">Estimasi Laba Bersih</p>
-                    <p id="owner-stat-laba" class="text-2xl font-bold text-blue-600">Rp 0</p>
-                </div>
-            </div>
-
-            <!-- Sub Navigation Menu Owner -->
-            <div class="flex border-b border-gray-200 bg-white rounded-xl shadow-sm overflow-x-auto">
-                <button onclick="switchOwnerSubTab('karyawan')" id="btn-owner-karyawan" class="px-5 py-3 text-sm font-bold border-b-2 border-maroon-700 text-maroon-700 whitespace-nowrap"><i class="fa-solid fa-users"></i> Data Karyawan</button>
-                <button onclick="switchOwnerSubTab('purchasing')" id="btn-owner-purchasing" class="px-5 py-3 text-sm font-medium text-gray-600 hover:text-maroon-700 border-b-2 border-transparent whitespace-nowrap"><i class="fa-solid fa-cart-shopping"></i> Purchasing & Laptop Second</button>
-                <button onclick="switchOwnerSubTab('teknisi')" id="btn-owner-teknisi" class="px-5 py-3 text-sm font-medium text-gray-600 hover:text-maroon-700 border-b-2 border-transparent whitespace-nowrap"><i class="fa-solid fa-user-gear"></i> Teknisi Panggilan</button>
-                <button onclick="switchOwnerSubTab('supplier')" id="btn-owner-supplier" class="px-5 py-3 text-sm font-medium text-gray-600 hover:text-maroon-700 border-b-2 border-transparent whitespace-nowrap"><i class="fa-solid fa-store"></i> Database Toko Sparepart</button>
-            </div>
-
-            <!-- Owner Sub-Page 1: Data Karyawan -->
-            <div id="owner-karyawan" class="owner-subpage space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-user-plus"></i> Tambah Karyawan</h3>
-                        <form id="emp-form" class="space-y-3">
-                            <div><label class="text-xs font-semibold">Nama Lengkap</label><input type="text" id="empName" required class="w-full border rounded p-2 text-xs"></div>
-                            <div><label class="text-xs font-semibold">Alamat</label><input type="text" id="empAddress" required class="w-full border rounded p-2 text-xs"></div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-xs font-semibold">Tanggal Lahir</label><input type="date" id="empDob" required class="w-full border rounded p-2 text-xs"></div>
-                                <div><label class="text-xs font-semibold">Lulusan / Pendidikan</label><input type="text" id="empEdu" required class="w-full border rounded p-2 text-xs" placeholder="SMK / D3 / S1"></div>
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold">Bagian / Divisi</label>
-                                <select id="empRole" class="w-full border rounded p-2 text-xs bg-white">
-                                    <option value="Teknisi Utama">Teknisi Utama</option>
-                                    <option value="Teknisi Assistant">Teknisi Assistant</option>
-                                    <option value="Sales & Kasir">Sales & Kasir</option>
-                                    <option value="Admin Operasional">Admin Operasional</option>
-                                </select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-xs font-semibold">Gaji Pokok (Rp)</label><input type="number" id="empSalary" required class="w-full border rounded p-2 text-xs" placeholder="2500000"></div>
-                                <div><label class="text-xs font-semibold">Tunjangan (Rp)</label><input type="number" id="empAllowance" required class="w-full border rounded p-2 text-xs" placeholder="500000"></div>
-                            </div>
-                            <button type="submit" class="w-full bg-maroon-700 text-white font-bold py-2.5 rounded text-xs shadow hover:bg-maroon-800"><i class="fa-solid fa-save"></i> Simpan Data Karyawan</button>
-                        </form>
-                    </div>
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-address-book"></i> Daftar Karyawan Toko</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-gray-50 border-b uppercase font-semibold text-gray-500">
-                                    <tr>
-                                        <th class="p-2.5">Nama / Bagian</th>
-                                        <th class="p-2.5">Pendidikan & Tgl Lahir</th>
-                                        <th class="p-2.5">Gaji & Tunjangan</th>
-                                        <th class="p-2.5 text-center">Aksi & Slip</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="emp-table-body" class="divide-y divide-gray-100">
-                                    <tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada data karyawan.</td></tr>
-                                </tbody>
-                            </table>
+        <!-- ================= TAB 5: KARYAWAN & JOBLIST ================= -->
+        <section id="page-karyawan" class="tab-page hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-user-plus"></i> Tambah Karyawan</h3>
+                    <form id="emp-form" class="space-y-3">
+                        <div><label class="text-xs font-semibold">Nama Lengkap</label><input type="text" id="empName" required class="w-full border rounded p-2 text-xs"></div>
+                        <div><label class="text-xs font-semibold">Alamat</label><input type="text" id="empAddress" required class="w-full border rounded p-2 text-xs"></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="text-xs font-semibold">Tanggal Lahir</label><input type="date" id="empDob" required class="w-full border rounded p-2 text-xs"></div>
+                            <div><label class="text-xs font-semibold">Pendidikan</label><input type="text" id="empEdu" required class="w-full border rounded p-2 text-xs" placeholder="SMK/D3/S1"></div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Owner Sub-Page 2: Purchasing & Laptop Second -->
-            <div id="owner-purchasing" class="owner-subpage hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-cart-plus"></i> Catat Purchasing Baru</h3>
-                        <form id="purchase-form" class="space-y-3">
-                            <div>
-                                <label class="text-xs font-semibold">Kategori Pembelian</label>
-                                <select id="purCategory" class="w-full border rounded p-2 text-xs bg-white">
-                                    <option value="Laptop Second">Laptop Second</option>
-                                    <option value="Sparepart Grosir">Sparepart Grosir</option>
-                                    <option value="Peralatan Servis">Peralatan Servis</option>
-                                </select>
-                            </div>
-                            <div><label class="text-xs font-semibold">Nama Item / Unit</label><input type="text" id="purItem" required class="w-full border rounded p-2 text-xs" placeholder="Laptop ThinkPad X270 Bekas"></div>
-                            <div><label class="text-xs font-semibold">Harga Beli (Rp)</label><input type="number" id="purCost" required class="w-full border rounded p-2 text-xs" placeholder="1800000"></div>
-                            <div><label class="text-xs font-semibold">Catatan / Kondisi</label><input type="text" id="purNote" class="w-full border rounded p-2 text-xs" placeholder="Mulus, kelengkapan unit + charger"></div>
-                            <button type="submit" class="w-full bg-maroon-700 text-white font-bold py-2.5 rounded text-xs shadow hover:bg-maroon-800"><i class="fa-solid fa-plus"></i> Simpan Pembelian</button>
-                        </form>
-                    </div>
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-receipt"></i> Riwayat Purchasing Barang</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-gray-50 border-b uppercase font-semibold text-gray-500">
-                                    <tr>
-                                        <th class="p-2.5">Kategori & Nama Barang</th>
-                                        <th class="p-2.5">Harga Beli</th>
-                                        <th class="p-2.5">Catatan</th>
-                                        <th class="p-2.5 text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pur-table-body" class="divide-y divide-gray-100">
-                                    <tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada catatan purchasing.</td></tr>
-                                </tbody>
-                            </table>
+                        <div>
+                            <label class="text-xs font-semibold">Bagian / Divisi</label>
+                            <select id="empRole" class="w-full border rounded p-2 text-xs bg-white">
+                                <option value="Teknisi Utama">Teknisi Utama</option>
+                                <option value="Teknisi Assistant">Teknisi Assistant</option>
+                                <option value="Admin & Customer Service">Admin & Customer Service</option>
+                            </select>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Owner Sub-Page 3: Database Teknisi Panggilan -->
-            <div id="owner-teknisi" class="owner-subpage hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-user-gear"></i> Tambah Teknisi Panggilan</h3>
-                        <form id="tech-form" class="space-y-3">
-                            <div><label class="text-xs font-semibold">Nama Teknisi</label><input type="text" id="techName" required class="w-full border rounded p-2 text-xs" placeholder="Budi - Specialist Reball"></div>
-                            <div><label class="text-xs font-semibold">Keahlian Khusus</label><input type="text" id="techSkill" required class="w-full border rounded p-2 text-xs" placeholder="Servis Mobo, Reball IC, BGA, Flash BIOS"></div>
-                            <div><label class="text-xs font-semibold">No. WhatsApp / HP</label><input type="tel" id="techPhone" required class="w-full border rounded p-2 text-xs" placeholder="628129876543"></div>
-                            <button type="submit" class="w-full bg-maroon-700 text-white font-bold py-2.5 rounded text-xs shadow hover:bg-maroon-800"><i class="fa-solid fa-plus"></i> Simpan Teknisi</button>
-                        </form>
-                    </div>
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-list-check"></i> Database Teknisi Ahli / Panggilan</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-gray-50 border-b uppercase font-semibold text-gray-500">
-                                    <tr>
-                                        <th class="p-2.5">Nama</th>
-                                        <th class="p-2.5">Keahlian Khusus</th>
-                                        <th class="p-2.5">Kontak</th>
-                                        <th class="p-2.5 text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tech-table-body" class="divide-y divide-gray-100">
-                                    <tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada data teknisi panggilan.</td></tr>
-                                </tbody>
-                            </table>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="text-xs font-semibold">Gaji Pokok (Rp)</label><input type="number" id="empSalary" required class="w-full border rounded p-2 text-xs" placeholder="2500000"></div>
+                            <div><label class="text-xs font-semibold">Tunjangan (Rp)</label><input type="number" id="empAllowance" required class="w-full border rounded p-2 text-xs" placeholder="500000"></div>
                         </div>
-                    </div>
+                        <button type="submit" class="w-full bg-maroon-700 text-white font-bold py-2.5 rounded text-xs shadow hover:bg-maroon-800"><i class="fa-solid fa-save"></i> Simpan Data Karyawan</button>
+                    </form>
                 </div>
-            </div>
-
-            <!-- Owner Sub-Page 4: Database Toko Sparepart -->
-            <div id="owner-supplier" class="owner-subpage hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-store"></i> Tambah Toko Supplier</h3>
-                        <form id="supp-form" class="space-y-3">
-                            <div><label class="text-xs font-semibold">Nama Toko Supplier</label><input type="text" id="suppName" required class="w-full border rounded p-2 text-xs" placeholder="Grosir Part Laptop Bandung"></div>
-                            <div><label class="text-xs font-semibold">Alamat Toko / Kota</label><input type="text" id="suppAddress" required class="w-full border rounded p-2 text-xs" placeholder="Bandung Electronic Center (BEC)"></div>
-                            <div><label class="text-xs font-semibold">Spesialisasi Sparepart</label><input type="text" id="suppSpecial" required class="w-full border rounded p-2 text-xs" placeholder="Layar LCD, Keyboard, Baterai, Flexible"></div>
-                            <div><label class="text-xs font-semibold">No. Kontak / WA</label><input type="tel" id="suppPhone" required class="w-full border rounded p-2 text-xs" placeholder="62811223344"></div>
-                            <button type="submit" class="w-full bg-maroon-700 text-white font-bold py-2.5 rounded text-xs shadow hover:bg-maroon-800"><i class="fa-solid fa-plus"></i> Simpan Supplier</button>
-                        </form>
-                    </div>
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-boxes-packing"></i> Daftar Toko Supplier Sparepart</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-gray-50 border-b uppercase font-semibold text-gray-500">
-                                    <tr>
-                                        <th class="p-2.5">Nama Toko</th>
-                                        <th class="p-2.5">Alamat / Lokasi</th>
-                                        <th class="p-2.5">Spesialisasi Item</th>
-                                        <th class="p-2.5 text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="supp-table-body" class="divide-y divide-gray-100">
-                                    <tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada data toko supplier.</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="font-bold text-maroon-700 mb-4"><i class="fa-solid fa-address-book"></i> Daftar Staf & Karyawan PSC</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-gray-50 border-b uppercase font-semibold text-gray-500">
+                                <tr>
+                                    <th class="p-2.5">Nama / Bagian</th>
+                                    <th class="p-2.5">Pendidikan & Tgl Lahir</th>
+                                    <th class="p-2.5">Gaji & Tunjangan</th>
+                                    <th class="p-2.5 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emp-table-body" class="divide-y divide-gray-100">
+                                <tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada data karyawan.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -476,112 +306,12 @@
 
     </main>
 
-    <!-- Modal Login Owner -->
-    <div id="login-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 space-y-4">
-            <div class="text-center">
-                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
-                    <i class="fa-solid fa-user-shield"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">Login Menu Owner</h3>
-                <p class="text-xs text-gray-500">Masukkan kredensial khusus Owner untuk melanjutkan</p>
-            </div>
-            <form id="owner-login-form" class="space-y-3">
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 uppercase">Username Owner</label>
-                    <input type="text" id="ownerUser" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Username">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 uppercase">Password</label>
-                    <input type="password" id="ownerPass" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Password">
-                </div>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow transition text-sm">
-                    Masuk Menu Owner
-                </button>
-            </form>
-            <button onclick="closeLoginModal()" class="w-full text-xs text-gray-400 hover:underline text-center block">Batal</button>
-        </div>
-    </div>
-
-    <!-- Modal Cetak Slip Gaji -->
-    <div id="payslip-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <div id="printable-payslip" class="p-5 border border-dashed border-gray-300 rounded-lg text-sm bg-gray-50">
-                <div class="text-center border-b pb-3 mb-3">
-                    <h3 class="text-xl font-bold text-maroon-700">PSC SERVICE</h3>
-                    <p class="text-xs text-gray-500">SLIP GAJI KARYAWAN HASIL KERJA</p>
-                    <p class="text-xs font-semibold text-gray-600 mt-1" id="slip-date"></p>
-                </div>
-                <div class="space-y-2 text-xs">
-                    <div class="flex justify-between"><span>Nama Karyawan:</span><span id="slip-name" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Jabatan / Bagian:</span><span id="slip-role" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Pendidikan:</span><span id="slip-edu"></span></div>
-                    <hr class="my-2 border-gray-200">
-                    <div class="flex justify-between"><span>Gaji Pokok:</span><span id="slip-base" class="font-semibold"></span></div>
-                    <div class="flex justify-between"><span>Tunjangan:</span><span id="slip-allowance" class="font-semibold"></span></div>
-                    <div class="flex justify-between pt-2 border-t text-sm font-bold">
-                        <span>Total Gaji Diterima:</span>
-                        <span id="slip-total" class="text-green-700"></span>
-                    </div>
-                </div>
-                <div class="mt-8 flex justify-between text-[10px] text-gray-500 pt-4 border-t">
-                    <div class="text-center">Penerima,<br><br><br>( ............................ )</div>
-                    <div class="text-center">Owner / Manager,<br><br><br>( Eko Aris )</div>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2">
-                <button onclick="closePayslipModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Tutup</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs hover:bg-maroon-800 flex items-center gap-1">
-                    <i class="fa-solid fa-print"></i> Cetak Slip
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Invoice / Cetak Nota -->
-    <div id="invoice-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <div id="printable-invoice" class="p-4 border border-dashed border-gray-300 rounded-lg text-sm bg-gray-50">
-                <div class="text-center border-b pb-3 mb-3">
-                    <h3 class="text-xl font-bold text-maroon-700">PSC SERVICE</h3>
-                    <p class="text-xs text-gray-500">Jl. Raya PSC No. 1 - Solusi Perbaikan Gadget & Laptop</p>
-                    <p class="text-xs font-semibold text-gray-600 mt-1" id="inv-date"></p>
-                </div>
-                <div class="space-y-1 text-xs">
-                    <div class="flex justify-between"><span>No. Nota:</span><span id="inv-id" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Pelanggan:</span><span id="inv-customer" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>No. WA:</span><span id="inv-phone"></span></div>
-                    <div class="flex justify-between"><span>Perangkat:</span><span id="inv-device" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>Keluhan:</span><span id="inv-issue"></span></div>
-                    <div class="flex justify-between text-gray-600"><span>Tgl Masuk:</span><span id="inv-date-in" class="font-medium"></span></div>
-                    <div class="flex justify-between text-gray-600 border-b pb-2"><span>Tgl Keluar:</span><span id="inv-date-out" class="font-medium"></span></div>
-                    <div class="flex justify-between pt-2 text-sm font-bold">
-                        <span>Total Biaya:</span>
-                        <span id="inv-cost" class="text-maroon-700"></span>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span>Status:</span>
-                        <span id="inv-status" class="font-semibold uppercase"></span>
-                    </div>
-                </div>
-                <div class="text-center text-[10px] text-gray-400 mt-4 border-t pt-2">
-                    Terima kasih telah mempercayakan servis Anda kepada kami!
-                </div>
-            </div>
-            <div class="flex justify-end gap-2">
-                <button onclick="closeInvoiceModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Tutup</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs hover:bg-maroon-800 flex items-center gap-1">
-                    <i class="fa-solid fa-print"></i> Cetak Nota
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK & Application Script -->
+    <!-- FIREBASE REALTIME DATABASE SCRIPT (MENGGUNAKAN KODE LAMA) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // Konfigurasi Asli Milik Anda
         const firebaseConfig = {
             apiKey: "AIzaSyCUv1FoZD1AhcD8FxeOvaTZ9XZJ_D3i3zc",
             authDomain: "psc-service-system.firebaseapp.com",
@@ -595,30 +325,40 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // References
+        // References Ke Node Database Anda
         const servicesRef = ref(db, 'service_orders');
         const stocksRef = ref(db, 'inventory_stocks');
         const employeesRef = ref(db, 'owner_employees');
-        const purchasingRef = ref(db, 'owner_purchasing');
-        const techniciansRef = ref(db, 'owner_technicians');
-        const suppliersRef = ref(db, 'owner_suppliers');
 
         let rawServices = {};
         let rawStocks = {};
         let rawEmployees = {};
-        let rawPurchasing = {};
-        let rawTechnicians = {};
-        let rawSuppliers = {};
 
-        let cart = [];
-        let isOwnerLoggedIn = false;
-        let inactivityTimer = null;
-        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Menit dalam milidetik
+        const statusBadge = document.getElementById('status-badge');
 
-        let chartStatusInstance = null;
-        let chartRevenueInstance = null;
+        // Listener Realtime Data Services
+        onValue(servicesRef, (snapshot) => {
+            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400"></span> Terhubung Realtime`;
+            statusBadge.className = 'text-xs bg-green-700 text-white font-semibold px-3 py-1 rounded-full flex items-center gap-1.5';
 
-        // Tabs switcher
+            rawServices = snapshot.val() || {};
+            renderServices();
+            renderCustomers();
+        });
+
+        // Listener Realtime Data Stok
+        onValue(stocksRef, (snapshot) => {
+            rawStocks = snapshot.val() || {};
+            renderStocks();
+        });
+
+        // Listener Realtime Data Karyawan
+        onValue(employeesRef, (snapshot) => {
+            rawEmployees = snapshot.val() || {};
+            renderEmployees();
+        });
+
+        // Tab Switcher Function
         window.switchTab = (tabName) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => {
@@ -632,127 +372,15 @@
             activeBtn.classList.remove('border-transparent');
         };
 
-        // Owner Access Logic
-        window.handleOwnerTabAccess = () => {
-            if (isOwnerLoggedIn) {
-                switchTab('owner');
-            } else {
-                document.getElementById('login-modal').classList.remove('hidden');
-            }
-        };
-
-        window.closeLoginModal = () => {
-            document.getElementById('login-modal').classList.add('hidden');
-        };
-
-        // Logout Owner Logic
-        window.logoutOwner = () => {
-            isOwnerLoggedIn = false;
-            clearTimeout(inactivityTimer);
-            document.getElementById('owner-indicator').classList.add('hidden');
-            document.getElementById('owner-logout-btn').classList.add('hidden');
-            alert('Session Owner telah berakhir / Logout berhasil.');
-            switchTab('dashboard');
-        };
-
-        // Reset Inactivity Timer
-        window.resetInactivityTimer = () => {
-            if (!isOwnerLoggedIn) return;
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                alert('Tidak ada aktivitas selama 5 menit. Akses Owner otomatis di-logout demi keamanan.');
-                logoutOwner();
-            }, INACTIVITY_LIMIT);
-        };
-
-        // Event Listeners for Activity Tracking
-        ['mousemove', 'keydown', 'click', 'scroll'].forEach(evt => {
-            window.addEventListener(evt, resetInactivityTimer);
-        });
-
-        document.getElementById('owner-login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const u = document.getElementById('ownerUser').value;
-            const p = document.getElementById('ownerPass').value;
-
-            if (u === 'eko aris' && p === 'admin123') {
-                isOwnerLoggedIn = true;
-                closeLoginModal();
-                document.getElementById('owner-indicator').classList.remove('hidden');
-                document.getElementById('owner-logout-btn').classList.remove('hidden');
-                document.getElementById('owner-login-form').reset();
-                switchTab('owner');
-                resetInactivityTimer();
-            } else {
-                alert('Username atau Password Owner Salah!');
-            }
-        });
-
-        // Owner Sub-Tabs Switcher
-        window.switchOwnerSubTab = (subName) => {
-            document.querySelectorAll('.owner-subpage').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`owner-${subName}`).classList.remove('hidden');
-            
-            const btnIds = ['karyawan', 'purchasing', 'teknisi', 'supplier'];
-            btnIds.forEach(id => {
-                const b = document.getElementById(`btn-owner-${id}`);
-                b.classList.remove('border-maroon-700', 'text-maroon-700', 'font-bold');
-                b.classList.add('border-transparent', 'font-medium', 'text-gray-600');
-            });
-
-            const activeB = document.getElementById(`btn-owner-${subName}`);
-            activeB.classList.add('border-maroon-700', 'text-maroon-700', 'font-bold');
-            activeB.classList.remove('border-transparent', 'font-medium', 'text-gray-600');
-        };
-
-        // Format Date Helper
+        // Date Formatter Helper
         const formatDate = (timestamp) => {
             if (!timestamp) return '-';
             return new Date(timestamp).toLocaleDateString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                day: '2-digit', month: 'short', year: 'numeric'
             });
         };
 
-        const statusBadge = document.getElementById('status-badge');
-
-        onValue(servicesRef, (snapshot) => {
-            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400"></span> Terhubung Realtime`;
-            statusBadge.className = 'text-xs bg-green-700 text-white font-semibold px-3 py-1 rounded-full flex items-center gap-1.5';
-
-            rawServices = snapshot.val() || {};
-            renderServices();
-            updateDashboard();
-            updateOwnerFinancials();
-        });
-
-        onValue(stocksRef, (snapshot) => {
-            rawStocks = snapshot.val() || {};
-            renderStocks();
-            renderPOSItems();
-        });
-
-        onValue(employeesRef, (snapshot) => {
-            rawEmployees = snapshot.val() || {};
-            renderEmployees();
-        });
-
-        onValue(purchasingRef, (snapshot) => {
-            rawPurchasing = snapshot.val() || {};
-            renderPurchasing();
-            updateOwnerFinancials();
-        });
-
-        onValue(techniciansRef, (snapshot) => {
-            rawTechnicians = snapshot.val() || {};
-            renderTechnicians();
-        });
-
-        onValue(suppliersRef, (snapshot) => {
-            rawSuppliers = snapshot.val() || {};
-            renderSuppliers();
-        });
-
-        // Form Submit Servis
+        // Submit Form Service
         document.getElementById('service-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const now = Date.now();
@@ -761,6 +389,8 @@
                 customerPhone: document.getElementById('customerPhone').value,
                 deviceUnit: document.getElementById('deviceUnit').value,
                 deviceIssue: document.getElementById('deviceIssue').value,
+                arrivalType: document.getElementById('arrivalType').value,
+                techType: document.getElementById('techType').value,
                 estimatedCost: parseInt(document.getElementById('estimatedCost').value) || 0,
                 status: 'Proses',
                 createdAt: now,
@@ -769,10 +399,11 @@
 
             push(servicesRef, newOrder).then(() => {
                 document.getElementById('service-form').reset();
+                alert('Data Service Toko PSC Berhasil Disimpan!');
             });
         });
 
-        // Form Submit Stok
+        // Submit Form Stok
         document.getElementById('stock-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newStock = {
@@ -786,7 +417,7 @@
             });
         });
 
-        // Form Submit Karyawan
+        // Submit Form Karyawan
         document.getElementById('emp-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newEmp = {
@@ -801,42 +432,7 @@
             push(employeesRef, newEmp).then(() => document.getElementById('emp-form').reset());
         });
 
-        // Form Submit Purchasing
-        document.getElementById('purchase-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newPur = {
-                category: document.getElementById('purCategory').value,
-                item: document.getElementById('purItem').value,
-                cost: parseInt(document.getElementById('purCost').value) || 0,
-                note: document.getElementById('purNote').value,
-            };
-            push(purchasingRef, newPur).then(() => document.getElementById('purchase-form').reset());
-        });
-
-        // Form Submit Teknisi
-        document.getElementById('tech-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newTech = {
-                name: document.getElementById('techName').value,
-                skill: document.getElementById('techSkill').value,
-                phone: document.getElementById('techPhone').value,
-            };
-            push(techniciansRef, newTech).then(() => document.getElementById('tech-form').reset());
-        });
-
-        // Form Submit Supplier
-        document.getElementById('supp-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newSupp = {
-                name: document.getElementById('suppName').value,
-                address: document.getElementById('suppAddress').value,
-                special: document.getElementById('suppSpecial').value,
-                phone: document.getElementById('suppPhone').value,
-            };
-            push(suppliersRef, newSupp).then(() => document.getElementById('supp-form').reset());
-        });
-
-        // Render Tables
+        // Render Service Table
         window.renderServices = () => {
             const tableBody = document.getElementById('service-table-body');
             tableBody.innerHTML = '';
@@ -856,12 +452,13 @@
                     if (item.status === 'Garansi') badgeColor = 'bg-purple-100 text-purple-800 border-purple-300';
                     if (item.status === 'Selesai') badgeColor = 'bg-blue-100 text-blue-800 border-blue-300';
                     if (item.status === 'Diambil') badgeColor = 'bg-green-100 text-green-800 border-green-300';
+                    if (item.status === 'Batal') badgeColor = 'bg-red-100 text-red-800 border-red-300';
 
                     const cleanPhone = item.customerPhone.replace(/[^0-9]/g, '');
-                    const waMessage = encodeURIComponent(`Halo Kak ${item.customerName}, kami dari PSC Service menginformasikan status unit servis ${item.deviceUnit} saat ini: *${item.status}*. Biaya: Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}. Tgl Masuk: ${formatDate(item.createdAt)}. Terima kasih!`);
+                    const waMessage = encodeURIComponent(`Halo Kak ${item.customerName}, kami dari PSC Service Jatinangor menginformasikan status unit ${item.deviceUnit}: *${item.status}*. Biaya: Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}. Terima kasih!`);
                     const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
 
-                    const garansiButton = item.status === 'Diambil' ? `<button onclick="claimGaransi('${key}')" class="p-1.5 text-purple-600 hover:bg-purple-50 rounded" title="Klaim Garansi Servis"><i class="fa-solid fa-shield-halved text-base"></i></button>` : '';
+                    const garansiButton = item.status === 'Diambil' ? `<button onclick="claimGaransi('${key}')" class="p-1 text-purple-600 hover:bg-purple-50 rounded" title="Klaim Garansi Servis"><i class="fa-solid fa-shield-halved"></i> Garansi</button>` : '';
 
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-gray-50 transition border-b';
@@ -875,8 +472,8 @@
                             <div class="text-xs text-gray-500 italic">${item.deviceIssue}</div>
                         </td>
                         <td class="p-3 text-xs">
-                            <div class="text-gray-700"><strong>Masuk:</strong> ${formatDate(item.createdAt)}</div>
-                            <div class="text-gray-500 mt-0.5"><strong>Keluar:</strong> ${formatDate(item.completedAt)}</div>
+                            <div class="text-gray-700 font-medium">${item.techType || 'Teknisi Internal'}</div>
+                            <div class="text-gray-400">${item.arrivalType || 'Langsung Toko'}</div>
                         </td>
                         <td class="p-3 font-bold text-maroon-700">
                             Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}
@@ -885,17 +482,17 @@
                             <span class="px-2.5 py-1 text-xs font-semibold border rounded-full ${badgeColor}">${item.status}</span>
                         </td>
                         <td class="p-3 text-center">
-                            <div class="flex items-center justify-center space-x-2">
+                            <div class="flex items-center justify-center space-x-1.5">
                                 <select onchange="updateStatus('${key}', this.value)" class="text-xs border rounded p-1 bg-white focus:outline-none">
                                     <option value="Proses" ${item.status === 'Proses' ? 'selected' : ''}>Proses</option>
                                     <option value="Garansi" ${item.status === 'Garansi' ? 'selected' : ''}>Garansi</option>
                                     <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                                    <option value="Diambil" ${item.status === 'Diambil' ? 'selected' : ''}>Diambil</option>
+                                    <option value="Diambil" ${item.status === 'Diambil' ? 'selected' : ''}>Diambil (Lunas)</option>
+                                    <option value="Batal" ${item.status === 'Batal' ? 'selected' : ''}>Batal (Rp 0)</option>
                                 </select>
                                 <a href="${waLink}" target="_blank" class="p-1.5 text-green-600 hover:bg-green-50 rounded" title="Kirim WA"><i class="fa-brands fa-whatsapp text-base"></i></a>
                                 ${garansiButton}
-                                <button onclick="openInvoiceModal('${key}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded" title="Cetak Nota"><i class="fa-solid fa-receipt text-base"></i></button>
-                                <button onclick="deleteOrder('${key}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus"><i class="fa-solid fa-trash-can text-base"></i></button>
+                                <button onclick="deleteOrder('${key}')" class="p-1 text-red-500 hover:bg-red-50 rounded" title="Hapus"><i class="fa-solid fa-trash-can text-base"></i></button>
                             </div>
                         </td>
                     `;
@@ -906,23 +503,63 @@
             if (count === 0) tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-400">Tidak ada data servis ditemukan.</td></tr>`;
         };
 
+        // Render Customer CRM Table
+        window.renderCustomers = () => {
+            const body = document.getElementById('customer-table-body');
+            body.innerHTML = '';
+            const keys = Object.keys(rawServices);
+            if (keys.length === 0) { body.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada customer tercatat.</td></tr>`; return; }
+
+            keys.forEach(k => {
+                const s = rawServices[k];
+                const cleanPhone = s.customerPhone.replace(/[^0-9]/g, '');
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-800">${s.customerName}</td>
+                    <td class="p-3 text-gray-600">${s.customerPhone}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 text-xs bg-red-100 text-red-700 font-bold rounded-full">HOT LEAD</span></td>
+                    <td class="p-3 font-medium">${s.deviceUnit}</td>
+                    <td class="p-3 text-xs text-gray-400">${formatDate(s.createdAt)}</td>
+                    <td class="p-3 text-center">
+                        <a href="https://wa.me/${cleanPhone}" target="_blank" class="px-2.5 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 inline-flex items-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i> Chat Promo
+                        </a>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
+
+        // Update Status Service
+        window.updateStatus = (id, newStatus) => {
+            const updateData = { status: newStatus };
+            if (newStatus === 'Batal') updateData.estimatedCost = 0; // Bebas biaya jika batal
+            if (newStatus === 'Selesai' || newStatus === 'Diambil') updateData.completedAt = Date.now();
+            else updateData.completedAt = null;
+
+            update(ref(db, `service_orders/${id}`), updateData);
+        };
+
+        // Klaim Garansi 1 Bulan
         window.claimGaransi = (key) => {
             const item = rawServices[key];
             if (!item) return;
-            if (confirm(`Buat tiket klaim garansi untuk ${item.customerName} (${item.deviceUnit})?`)) {
+            if (confirm(`Buat tiket klaim garansi 1 bulan untuk ${item.customerName} (${item.deviceUnit})?`)) {
                 push(servicesRef, {
                     customerName: item.customerName,
                     customerPhone: item.customerPhone,
                     deviceUnit: item.deviceUnit,
-                    deviceIssue: `[KLAIM GARANSI] ${item.deviceIssue}`,
-                    estimatedCost: 0,
+                    deviceIssue: `[KLAIM GARANSI 1 BULAN] ${item.deviceIssue}`,
+                    estimatedCost: 0, // Garansi Gratis
                     status: 'Garansi',
                     createdAt: Date.now(),
                     completedAt: null
-                }).then(() => alert('Tiket Klaim Garansi Berhasil Dibuat!'));
+                }).then(() => alert('Tiket Klaim Garansi Berhasil Dibuat (Biaya Rp 0)!'));
             }
         };
 
+        // Render Stok Table
         window.renderStocks = () => {
             const tableBody = document.getElementById('stock-table-body');
             tableBody.innerHTML = '';
@@ -937,8 +574,7 @@
                     <td class="p-3 font-semibold text-gray-800">${item.name}</td>
                     <td class="p-3 text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
                     <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500' : 'text-gray-700'}">${item.qty} Pcs</td>
-                    <td class="p-3 text-center space-x-1">
-                        <button onclick="returnStock('${key}')" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200" title="+1 Retur Barang">+1 Retur</button>
+                    <td class="p-3 text-center">
                         <button onclick="deleteStock('${key}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
@@ -946,13 +582,7 @@
             });
         };
 
-        window.returnStock = (key) => {
-            const currentQty = rawStocks[key]?.qty || 0;
-            update(ref(db, `inventory_stocks/${key}`), { qty: currentQty + 1 });
-            alert('Stok berhasil ditambah +1.');
-        };
-
-        // Render Owner Tables
+        // Render Karyawan Table
         window.renderEmployees = () => {
             const body = document.getElementById('emp-table-body');
             body.innerHTML = '';
@@ -964,11 +594,10 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 border-b';
                 tr.innerHTML = `
-                    <td class="p-2.5"><div class="font-bold text-gray-800">${e.name}</div><div class="text-[11px] text-gray-500">${e.role} | ${e.address}</div></td>
-                    <td class="p-2.5"><div>${e.edu}</div><div class="text-[11px] text-gray-400">Tgl Lahir: ${e.dob}</div></td>
-                    <td class="p-2.5"><div class="font-semibold text-green-700">Gapok: Rp ${Number(e.salary).toLocaleString('id-ID')}</div><div class="text-[11px] text-gray-500">Tunj: Rp ${Number(e.allowance).toLocaleString('id-ID')}</div></td>
-                    <td class="p-2.5 text-center space-x-1">
-                        <button onclick="openPayslipModal('${k}')" class="px-2 py-1 bg-green-100 text-green-700 rounded text-[11px] hover:bg-green-200"><i class="fa-solid fa-file-invoice-dollar"></i> Slip Gaji</button>
+                    <td class="p-2.5"><div class="font-bold text-gray-800">${e.name}</div><div class="text-[11px] text-gray-500">${e.role}</div></td>
+                    <td class="p-2.5"><div>${e.edu}</div><div class="text-[11px] text-gray-400">Lahir: ${e.dob}</div></td>
+                    <td class="p-2.5"><div class="font-semibold text-green-700">Gapok: Rp ${Number(e.salary).toLocaleString('id-ID')}</div></td>
+                    <td class="p-2.5 text-center">
                         <button onclick="deleteEmployee('${k}')" class="p-1 text-red-500"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 `;
@@ -976,268 +605,10 @@
             });
         };
 
-        window.renderPurchasing = () => {
-            const body = document.getElementById('pur-table-body');
-            body.innerHTML = '';
-            const keys = Object.keys(rawPurchasing).reverse();
-            if (keys.length === 0) { body.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada purchasing.</td></tr>`; return; }
-
-            keys.forEach(k => {
-                const p = rawPurchasing[k];
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
-                tr.innerHTML = `
-                    <td class="p-2.5"><div class="font-bold text-gray-800">${p.item}</div><span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 rounded-full font-semibold">${p.category}</span></td>
-                    <td class="p-2.5 font-bold text-rose-600">Rp ${Number(p.cost).toLocaleString('id-ID')}</td>
-                    <td class="p-2.5 text-gray-500 italic">${p.note || '-'}</td>
-                    <td class="p-2.5 text-center"><button onclick="deletePurchasing('${k}')" class="text-red-500"><i class="fa-solid fa-trash-can"></i></button></td>
-                `;
-                body.appendChild(tr);
-            });
-        };
-
-        window.renderTechnicians = () => {
-            const body = document.getElementById('tech-table-body');
-            body.innerHTML = '';
-            const keys = Object.keys(rawTechnicians);
-            if (keys.length === 0) { body.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada teknisi panggilan.</td></tr>`; return; }
-
-            keys.forEach(k => {
-                const t = rawTechnicians[k];
-                const cleanPhone = t.phone.replace(/[^0-9]/g, '');
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
-                tr.innerHTML = `
-                    <td class="p-2.5 font-bold text-gray-800">${t.name}</td>
-                    <td class="p-2.5 font-medium text-purple-700">${t.skill}</td>
-                    <td class="p-2.5"><a href="https://wa.me/${cleanPhone}" target="_blank" class="text-green-600 font-semibold flex items-center gap-1"><i class="fa-brands fa-whatsapp"></i> ${t.phone}</a></td>
-                    <td class="p-2.5 text-center"><button onclick="deleteTechnician('${k}')" class="text-red-500"><i class="fa-solid fa-trash-can"></i></button></td>
-                `;
-                body.appendChild(tr);
-            });
-        };
-
-        window.renderSuppliers = () => {
-            const body = document.getElementById('supp-table-body');
-            body.innerHTML = '';
-            const keys = Object.keys(rawSuppliers);
-            if (keys.length === 0) { body.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada toko supplier.</td></tr>`; return; }
-
-            keys.forEach(k => {
-                const s = rawSuppliers[k];
-                const cleanPhone = s.phone.replace(/[^0-9]/g, '');
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
-                tr.innerHTML = `
-                    <td class="p-2.5 font-bold text-gray-800">${s.name}</td>
-                    <td class="p-2.5 text-gray-600">${s.address}</td>
-                    <td class="p-2.5 font-medium text-maroon-700">${s.special}</td>
-                    <td class="p-2.5 text-center space-x-2">
-                        <a href="https://wa.me/${cleanPhone}" target="_blank" class="text-green-600"><i class="fa-brands fa-whatsapp text-base"></i></a>
-                        <button onclick="deleteSupplier('${k}')" class="text-red-500"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                `;
-                body.appendChild(tr);
-            });
-        };
-
-        // Modal Slip Gaji
-        window.openPayslipModal = (id) => {
-            const e = rawEmployees[id];
-            if (!e) return;
-            document.getElementById('slip-date').textContent = new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-            document.getElementById('slip-name').textContent = e.name;
-            document.getElementById('slip-role').textContent = e.role;
-            document.getElementById('slip-edu').textContent = e.edu;
-            document.getElementById('slip-base').textContent = `Rp ${Number(e.salary).toLocaleString('id-ID')}`;
-            document.getElementById('slip-allowance').textContent = `Rp ${Number(e.allowance).toLocaleString('id-ID')}`;
-            document.getElementById('slip-total').textContent = `Rp ${(Number(e.salary) + Number(e.allowance)).toLocaleString('id-ID')}`;
-            document.getElementById('payslip-modal').classList.remove('hidden');
-        };
-
-        window.closePayslipModal = () => document.getElementById('payslip-modal').classList.add('hidden');
-
-        // POS & Cart Logic
-        window.renderPOSItems = () => {
-            const grid = document.getElementById('pos-items-grid');
-            grid.innerHTML = '';
-            const keys = Object.keys(rawStocks);
-            if (keys.length === 0) { grid.innerHTML = `<p class="text-xs text-gray-400 col-span-3 text-center py-6">Tambahkan stok sparepart terlebih dahulu.</p>`; return; }
-
-            keys.forEach((key) => {
-                const item = rawStocks[key];
-                const card = document.createElement('div');
-                card.className = 'border rounded-xl p-3 bg-gray-50 hover:border-maroon-700 cursor-pointer transition flex flex-col justify-between';
-                card.onclick = () => addToCart(key, item);
-                card.innerHTML = `
-                    <div><div class="text-xs font-bold text-gray-800 line-clamp-2">${item.name}</div><div class="text-xs text-gray-500 mt-1">Stok: ${item.qty}</div></div>
-                    <div class="text-xs font-bold text-maroon-700 mt-2">Rp ${Number(item.price).toLocaleString('id-ID')}</div>
-                `;
-                grid.appendChild(card);
-            });
-        };
-
-        window.addToCart = (key, item) => {
-            if (item.qty <= 0) { alert('Stok habis!'); return; }
-            const existing = cart.find(c => c.key === key);
-            if (existing) {
-                if (existing.qty + 1 > item.qty) { alert('Melebihi stok!'); return; }
-                existing.qty++;
-            } else {
-                cart.push({ key, name: item.name, price: item.price, qty: 1 });
-            }
-            renderCart();
-        };
-
-        window.renderCart = () => {
-            const list = document.getElementById('cart-list');
-            list.innerHTML = '';
-            let total = 0;
-
-            if (cart.length === 0) {
-                list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Keranjang masih kosong.</p>`;
-            } else {
-                cart.forEach((c, idx) => {
-                    const subtotal = c.price * c.qty;
-                    total += subtotal;
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'py-2 flex justify-between items-center text-xs';
-                    itemDiv.innerHTML = `
-                        <div><div class="font-semibold text-gray-800">${c.name}</div><div class="text-gray-500">Rp ${Number(c.price).toLocaleString('id-ID')} x ${c.qty}</div></div>
-                        <div class="flex items-center gap-2"><span class="font-bold text-maroon-700">Rp ${Number(subtotal).toLocaleString('id-ID')}</span><button onclick="removeFromCart(${idx})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button></div>
-                    `;
-                    list.appendChild(itemDiv);
-                });
-            }
-            document.getElementById('cart-total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
-        };
-
-        window.removeFromCart = (idx) => { cart.splice(idx, 1); renderCart(); };
-        window.clearCart = () => { cart = []; renderCart(); };
-
-        window.checkoutPOS = () => {
-            if (cart.length === 0) { alert('Keranjang kosong!'); return; }
-            cart.forEach(c => {
-                const currentQty = rawStocks[c.key]?.qty || 0;
-                update(ref(db, `inventory_stocks/${c.key}`), { qty: Math.max(0, currentQty - c.qty) });
-            });
-            alert('Transaksi Kasir Berhasil!');
-            cart = [];
-            renderCart();
-        };
-
-        // Firebase Delete Functions
-        window.updateStatus = (id, newStatus) => {
-            const updateData = { status: newStatus };
-            if (newStatus === 'Selesai' || newStatus === 'Diambil') updateData.completedAt = Date.now();
-            else updateData.completedAt = null;
-            update(ref(db, `service_orders/${id}`), updateData);
-        };
-
-        window.deleteOrder = (id) => { if (confirm('Hapus servis ini?')) remove(ref(db, `service_orders/${id}`)); };
-        window.deleteStock = (id) => { if (confirm('Hapus stok ini?')) remove(ref(db, `inventory_stocks/${id}`)); };
+        // Delete Functions
+        window.deleteOrder = (id) => { if (confirm('Hapus data servis ini?')) remove(ref(db, `service_orders/${id}`)); };
+        window.deleteStock = (id) => { if (confirm('Hapus stok barang ini?')) remove(ref(db, `inventory_stocks/${id}`)); };
         window.deleteEmployee = (id) => { if (confirm('Hapus karyawan ini?')) remove(ref(db, `owner_employees/${id}`)); };
-        window.deletePurchasing = (id) => { if (confirm('Hapus purchasing ini?')) remove(ref(db, `owner_purchasing/${id}`)); };
-        window.deleteTechnician = (id) => { if (confirm('Hapus teknisi ini?')) remove(ref(db, `owner_technicians/${id}`)); };
-        window.deleteSupplier = (id) => { if (confirm('Hapus supplier ini?')) remove(ref(db, `owner_suppliers/${id}`)); };
-
-        // Open Invoice Modal
-        window.openInvoiceModal = (id) => {
-            const item = rawServices[id];
-            if (!item) return;
-            document.getElementById('inv-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            document.getElementById('inv-id').textContent = `#PSC-${id.substring(1, 6).toUpperCase()}`;
-            document.getElementById('inv-customer').textContent = item.customerName;
-            document.getElementById('inv-phone').textContent = item.customerPhone;
-            document.getElementById('inv-device').textContent = item.deviceUnit;
-            document.getElementById('inv-issue').textContent = item.deviceIssue;
-            document.getElementById('inv-date-in').textContent = formatDate(item.createdAt);
-            document.getElementById('inv-date-out').textContent = formatDate(item.completedAt);
-            document.getElementById('inv-cost').textContent = `Rp ${Number(item.estimatedCost).toLocaleString('id-ID')}`;
-            document.getElementById('inv-status').textContent = item.status;
-            document.getElementById('invoice-modal').classList.remove('hidden');
-        };
-
-        window.closeInvoiceModal = () => document.getElementById('invoice-modal').classList.add('hidden');
-
-        // Calculations & Financials
-        window.updateOwnerFinancials = () => {
-            let omset = 0;
-            Object.keys(rawServices).forEach(k => {
-                const s = rawServices[k];
-                if (s.status === 'Selesai' || s.status === 'Diambil') omset += Number(s.estimatedCost || 0);
-            });
-
-            let purchasing = 0;
-            Object.keys(rawPurchasing).forEach(k => {
-                purchasing += Number(rawPurchasing[k].cost || 0);
-            });
-
-            const laba = omset - purchasing;
-
-            document.getElementById('owner-stat-omset').textContent = `Rp ${omset.toLocaleString('id-ID')}`;
-            document.getElementById('owner-stat-purchasing').textContent = `Rp ${purchasing.toLocaleString('id-ID')}`;
-            document.getElementById('owner-stat-laba').textContent = `Rp ${laba.toLocaleString('id-ID')}`;
-        };
-
-        window.updateDashboard = () => {
-            const keys = Object.keys(rawServices);
-            let total = keys.length;
-            let process = 0;
-            let garansi = 0;
-            let done = 0;
-            let taken = 0;
-            let revenue = 0;
-
-            keys.forEach(k => {
-                const s = rawServices[k];
-                if (s.status === 'Proses') process++;
-                if (s.status === 'Garansi') garansi++;
-                if (s.status === 'Selesai') done++;
-                if (s.status === 'Diambil') taken++;
-                if (s.status === 'Selesai' || s.status === 'Diambil') revenue += Number(s.estimatedCost || 0);
-            });
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-process').textContent = process;
-            document.getElementById('stat-garansi').textContent = garansi;
-            document.getElementById('stat-revenue').textContent = `Rp ${revenue.toLocaleString('id-ID')}`;
-
-            renderCharts(process, garansi, done, taken, revenue);
-        };
-
-        function renderCharts(process, garansi, done, taken, revenue) {
-            const ctx1 = document.getElementById('chartStatus').getContext('2d');
-            const ctx2 = document.getElementById('chartRevenue').getContext('2d');
-
-            if (chartStatusInstance) chartStatusInstance.destroy();
-            if (chartRevenueInstance) chartRevenueInstance.destroy();
-
-            chartStatusInstance = new Chart(ctx1, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Proses', 'Garansi', 'Selesai', 'Diambil'],
-                    datasets: [{
-                        data: [process, garansi, done, taken],
-                        backgroundColor: ['#eab308', '#9333ea', '#2563eb', '#16a34a']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            chartRevenueInstance = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: ['Total Omset Servis'],
-                    datasets: [{
-                        label: 'Pendapatan (Rp)',
-                        data: [revenue],
-                        backgroundColor: '#800000'
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
     </script>
 </body>
 </html>
