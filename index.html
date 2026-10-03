@@ -102,16 +102,8 @@
                             <input type="text" id="crmDevice" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="MacBook Air M1 / ThinkPad X240">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Label Prospect WA Business</label>
-                            <select id="crmLabel" class="w-full border rounded-lg p-2 text-xs bg-white font-bold">
-                                <option value="COLD LEAD" class="text-blue-600">COLD LEAD (Baru Tanya)</option>
-                                <option value="WARM LEAD" class="text-amber-600">WARM LEAD (Tertarik / Nego)</option>
-                                <option value="HOT LEAD" class="text-red-600">HOT LEAD (Deal / Mau Datang)</option>
-                            </select>
-                        </div>
-                        <div>
                             <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Catatan Chat</label>
-                            <textarea id="crmNote" rows="2" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Tanya ganti baterai / upgrade RAM"></textarea>
+                            <textarea id="crmNote" rows="3" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none" placeholder="Tanya ganti baterai / upgrade RAM"></textarea>
                         </div>
                         <button type="submit" class="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-save"></i> Simpan Customer ke CRM
@@ -132,8 +124,8 @@
                                 <tr>
                                     <th class="p-3">Nama</th>
                                     <th class="p-3">WhatsApp</th>
-                                    <th class="p-3">Label WA</th>
                                     <th class="p-3">Perangkat</th>
+                                    <th class="p-3">Catatan Chat</th>
                                     <th class="p-3">Tgl Chat</th>
                                     <th class="p-3 text-center">Aksi WA / Hapus</th>
                                 </tr>
@@ -532,14 +524,13 @@
             return new Date(timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // Submit CRM Customer
+        // Submit CRM Customer (Tanpa Label WA)
         document.getElementById('customer-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newCust = {
                 name: document.getElementById('crmName').value,
                 phone: document.getElementById('crmPhone').value,
                 device: document.getElementById('crmDevice').value,
-                label: document.getElementById('crmLabel').value,
                 note: document.getElementById('crmNote').value,
                 createdAt: Date.now()
             };
@@ -552,12 +543,12 @@
 
         function populateCrmDropdown() {
             const dropdown = document.getElementById('selectCrmCustomer');
-            dropdown.innerHTML = '<option value="">-- Pilih Customer (CRM) --</option>';
+            dropdown.innerHTML = '<option value="">-- Pilih Customer --</option>';
             Object.keys(rawCustomers).forEach(k => {
                 const c = rawCustomers[k];
                 const opt = document.createElement('option');
                 opt.value = k;
-                opt.textContent = `${c.name} - ${c.device} (${c.label})`;
+                opt.textContent = `${c.name} - ${c.device}`;
                 dropdown.appendChild(opt);
             });
         }
@@ -743,7 +734,7 @@
             });
         }
 
-        // Render Customers CRM
+        // Render Customers CRM (Tanpa Kolom Label WA)
         window.renderCustomers = () => {
             const body = document.getElementById('customer-table-body');
             body.innerHTML = '';
@@ -754,17 +745,13 @@
                 const c = rawCustomers[k];
                 const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
 
-                let badge = 'bg-blue-100 text-blue-800';
-                if (c.label === 'WARM LEAD') badge = 'bg-amber-100 text-amber-800';
-                if (c.label === 'HOT LEAD') badge = 'bg-red-100 text-red-800';
-
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 border-b';
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-gray-800">${c.name}</td>
                     <td class="p-3 text-gray-600">${c.phone}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 text-xs font-bold rounded-full ${badge}">${c.label}</span></td>
                     <td class="p-3 font-medium text-gray-700">${c.device}</td>
+                    <td class="p-3 text-gray-500 italic">${c.note || '-'}</td>
                     <td class="p-3 text-xs text-gray-400">${formatDate(c.createdAt)}</td>
                     <td class="p-3 text-center space-x-2">
                         <a href="https://wa.me/${cleanPhone}" target="_blank" class="px-2.5 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 inline-flex items-center gap-1">
