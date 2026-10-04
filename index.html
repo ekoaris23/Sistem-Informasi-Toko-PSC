@@ -652,7 +652,6 @@
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Database CRM");
 
-            // Lebar kolom otomatis
             worksheet['!cols'] = [
                 { wch: 5 },  // No
                 { wch: 20 }, // Nama
@@ -900,7 +899,7 @@
             });
         }
 
-        // Render Customers CRM (Dengan Kolom Asal Customer)
+        // Render Customers CRM
         window.renderCustomers = () => {
             const body = document.getElementById('customer-table-body');
             body.innerHTML = '';
@@ -934,9 +933,29 @@
             });
         };
 
+        // CARA 3: Update Status & Auto-Prompt Ubah Nominal Biaya saat pindah ke "Konfirmasi Customer"
         window.updateStatus = (id, newStatus) => {
+            const currentService = rawServices[id];
+            let currentCost = currentService ? Number(currentService.estimatedCost) || 0 : 0;
             const updateData = { status: newStatus };
-            if (newStatus === 'Batal' || newStatus === 'Garansi') updateData.estimatedCost = 0;
+
+            if (newStatus === 'Batal' || newStatus === 'Garansi') {
+                updateData.estimatedCost = 0;
+            } else if (newStatus === 'Konfirmasi') {
+                // Auto-prompt jika pindah ke Konfirmasi Customer
+                const promptVal = prompt(
+                    `Unit dipindah ke status "Konfirmasi Customer".\nEstimasi Biaya Awal: Rp ${currentCost.toLocaleString('id-ID')}\n\nMasukkan BIAYA REAL / BARU jika ada perubahan (Atau biarkan sama):`,
+                    currentCost
+                );
+
+                if (promptVal !== null && promptVal.trim() !== '') {
+                    const parsed = parseInt(promptVal);
+                    if (!isNaN(parsed) && parsed >= 0) {
+                        updateData.estimatedCost = parsed;
+                    }
+                }
+            }
+
             update(ref(db, `service_orders/${id}`), updateData);
         };
 
