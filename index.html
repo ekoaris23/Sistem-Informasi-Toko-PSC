@@ -516,6 +516,62 @@
         </div>
     </div>
 
+    <!-- MODAL EDIT SERVICE CARD -->
+    <div id="edit-service-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Kartu Service Unit
+                </h3>
+                <button onclick="closeEditServiceModal()" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="edit-service-form" class="space-y-3 text-xs">
+                <input type="hidden" id="editServiceKey">
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Nama Customer</label>
+                    <input type="text" id="editServiceCustName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">No. WhatsApp</label>
+                    <input type="tel" id="editServiceCustPhone" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Perangkat / Unit Laptop</label>
+                    <input type="text" id="editServiceDevice" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Keluhan / Kerusakan</label>
+                    <input type="text" id="editServiceIssue" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold text-gray-600 uppercase mb-1">Kedatangan</label>
+                        <select id="editServiceArrival" class="w-full border rounded-lg p-2 bg-white text-xs">
+                            <option value="Langsung">Langsung Toko</option>
+                            <option value="Pickup">Pickup</option>
+                            <option value="Onsite">Onsite</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-600 uppercase mb-1">Teknisi / Penanganan</label>
+                        <select id="editServiceTech" class="w-full border rounded-lg p-2 bg-white text-xs">
+                            <option value="Internal">Internal</option>
+                            <option value="Vendor">Vendor</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Estimasi / Biaya Service (Rp)</label>
+                    <input type="number" id="editServiceCost" required class="w-full border rounded-lg p-2.5 text-sm font-bold text-maroon-700 focus:ring-2 focus:ring-maroon-700 focus:outline-none bg-amber-50">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeEditServiceModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs font-bold hover:bg-maroon-800">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- FIREBASE REALTIME DATABASE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -706,6 +762,48 @@
             });
         });
 
+        // Modal Edit Service Card Functions
+        window.openEditServiceModal = (key) => {
+            const s = rawServices[key];
+            if (!s) return;
+
+            document.getElementById('editServiceKey').value = key;
+            document.getElementById('editServiceCustName').value = s.customerName || '';
+            document.getElementById('editServiceCustPhone').value = s.customerPhone || '';
+            document.getElementById('editServiceDevice').value = s.deviceUnit || '';
+            document.getElementById('editServiceIssue').value = s.deviceIssue || '';
+            document.getElementById('editServiceArrival').value = s.arrivalType || 'Langsung';
+            document.getElementById('editServiceTech').value = s.techType || 'Internal';
+            document.getElementById('editServiceCost').value = s.estimatedCost || 0;
+
+            document.getElementById('edit-service-modal').classList.remove('hidden');
+        };
+
+        window.closeEditServiceModal = () => {
+            document.getElementById('edit-service-modal').classList.add('hidden');
+        };
+
+        document.getElementById('edit-service-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('editServiceKey').value;
+            if (!key) return;
+
+            const updateData = {
+                customerName: document.getElementById('editServiceCustName').value,
+                customerPhone: document.getElementById('editServiceCustPhone').value,
+                deviceUnit: document.getElementById('editServiceDevice').value,
+                deviceIssue: document.getElementById('editServiceIssue').value,
+                arrivalType: document.getElementById('editServiceArrival').value,
+                techType: document.getElementById('editServiceTech').value,
+                estimatedCost: parseInt(document.getElementById('editServiceCost').value) || 0
+            };
+
+            update(ref(db, `service_orders/${key}`), updateData).then(() => {
+                closeEditServiceModal();
+                alert('Kartu Service Berhasil Diperbarui!');
+            });
+        });
+
         function populateCrmDropdown() {
             const dropdown = document.getElementById('selectCrmCustomer');
             dropdown.innerHTML = '<option value="">-- Pilih Customer --</option>';
@@ -807,7 +905,8 @@
                             <option value="Garansi" ${st === 'Garansi' ? 'selected' : ''}>🛡️ Klaim Garansi (Rp 0)</option>
                             <option value="Batal" ${st === 'Batal' ? 'selected' : ''}>❌ Batal / Retur (Rp 0)</option>
                         </select>
-                        <button onclick="deleteOrder('${k}')" class="text-rose-400 p-1 hover:text-rose-300"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="openEditServiceModal('${k}')" class="text-amber-400 p-1 hover:text-amber-300" title="Edit Kartu Service"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteOrder('${k}')" class="text-rose-400 p-1 hover:text-rose-300" title="Hapus Kartu Service"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 `;
 
@@ -942,7 +1041,6 @@
             if (newStatus === 'Batal' || newStatus === 'Garansi') {
                 updateData.estimatedCost = 0;
             } else if (newStatus === 'Konfirmasi') {
-                // Auto-prompt jika pindah ke Konfirmasi Customer
                 const promptVal = prompt(
                     `Unit dipindah ke status "Konfirmasi Customer".\nEstimasi Biaya Awal: Rp ${currentCost.toLocaleString('id-ID')}\n\nMasukkan BIAYA REAL / BARU jika ada perubahan (Atau biarkan sama):`,
                     currentCost
