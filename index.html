@@ -356,7 +356,7 @@
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Mingguan</p>
                         <p id="sum-weekly" class="text-xl font-bold text-blue-600 mt-1">Rp 0</p>
-                        <span class="text-[10px] text-gray-400">7 hari terakhir</span>
+                        <span id="label-week-number" class="text-[10px] text-gray-400">Minggu ini</span>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-600">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Bulanan</p>
@@ -370,12 +370,21 @@
                     </div>
                 </div>
 
-                <!-- Grafik Omset Service -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                    <h4 class="text-xs font-bold text-gray-700 uppercase mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-bar text-maroon-700"></i> Grafik Omset Service (Harian, Mingguan, Bulanan & Tahunan)
-                    </h4>
-                    <div class="h-64">
+                <!-- Grafik Omset Service Dengan Filter Mode -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
+                        <h4 class="text-xs font-bold text-gray-700 uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-maroon-700 text-sm"></i> Grafik Omset Penjualan & Service
+                        </h4>
+                        <!-- FILTER / SWITCHER MODE GRAFIK -->
+                        <div class="flex flex-wrap bg-gray-100 p-1 rounded-lg text-xs font-semibold gap-1">
+                            <button onclick="setChartMode('daily')" id="btn-chart-daily" class="px-3 py-1.5 rounded-md bg-white text-maroon-700 shadow transition">📅 Harian (7 Hari)</button>
+                            <button onclick="setChartMode('weekly')" id="btn-chart-weekly" class="px-3 py-1.5 rounded-md text-gray-600 hover:text-maroon-700 transition">🗓️ Mingguan (Per Minggu)</button>
+                            <button onclick="setChartMode('monthly')" id="btn-chart-monthly" class="px-3 py-1.5 rounded-md text-gray-600 hover:text-maroon-700 transition">📊 Bulanan (Jan-Des)</button>
+                            <button onclick="setChartMode('yearly')" id="btn-chart-yearly" class="px-3 py-1.5 rounded-md text-gray-600 hover:text-maroon-700 transition">📈 Tahunan</button>
+                        </div>
+                    </div>
+                    <div class="h-72">
                         <canvas id="chartRevenueReport"></canvas>
                     </div>
                 </div>
@@ -633,8 +642,9 @@
         let rawServices = {};
         let rawStocks = {};
         let rawEmployees = {};
-        let cardExpandedState = {}; // Default kartu tertutup, nilai true berarti terbuka
+        let cardExpandedState = {}; // Default kartu tertutup
         let chartInstance = null;
+        let currentChartMode = 'daily'; // Default filter mode grafik: 'daily', 'weekly', 'monthly', 'yearly'
 
         const statusBadge = document.getElementById('status-badge');
 
@@ -696,7 +706,32 @@
             return new Date(val).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // Toggle Expand/Collapse Kartu Service (Default Tertutup / Collapsed)
+        // Fungsi Menghitung Nomor Minggu dalam Tahun (ISO Week)
+        function getWeekNumber(d) {
+            const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            const dayNum = date.getUTCDay() || 7;
+            date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+            return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+        }
+
+        // Switcher Mode Grafik
+        window.setChartMode = (mode) => {
+            currentChartMode = mode;
+            ['daily', 'weekly', 'monthly', 'yearly'].forEach(m => {
+                const btn = document.getElementById(`btn-chart-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = 'px-3 py-1.5 rounded-md bg-white text-maroon-700 shadow font-bold transition';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-md text-gray-600 hover:text-maroon-700 transition';
+                    }
+                }
+            });
+            renderFinancialReports();
+        };
+
+        // Toggle Expand/Collapse Kartu Service
         window.toggleCardCollapse = (key) => {
             cardExpandedState[key] = !cardExpandedState[key];
             renderServices();
@@ -952,7 +987,7 @@
             });
         });
 
-        // Render Trello Board Cards (Default Collapsed / Closed)
+        // Render Trello Board Cards
         window.renderServices = () => {
             const cols = {
                 'Service Masuk': document.getElementById('col-masuk'),
@@ -985,7 +1020,6 @@
                 const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
                 const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : null;
 
-                // DEFAULT: kartu tertutup (isExpanded = false)
                 const isExpanded = cardExpandedState[k] || false;
 
                 const card = document.createElement('div');
@@ -1013,7 +1047,7 @@
                         ${!isExpanded ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>` : ''}
                     </div>
 
-                    <!-- BAGIAN DETAIL KARTU (DEFAULT TERSEMBUNYI, TAMPIL JIKA DIKLIK EXPAND) -->
+                    <!-- BAGIAN DETAIL KARTU -->
                     <div class="${isExpanded ? 'block' : 'hidden'} space-y-2 pt-1 border-t border-slate-700/60">
                         <div class="text-slate-400 italic text-[11px]">${s.deviceIssue}</div>
                         <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-700/60">
@@ -1080,28 +1114,48 @@
             });
         }
 
-        // Render Financial Reports & Chart (AKURAT & OTOMATIS)
+        // Render Financial Reports & Chart (REALTIME & MULTI-FILTER DETAILED)
         function renderFinancialReports() {
             const now = new Date();
             const todayISO = now.toISOString().split('T')[0];
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth();
+            const currentWeekNum = getWeekNumber(now);
 
-            // Batas 7 hari yang lalu
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(now.getDate() - 7);
-            sevenDaysAgo.setHours(0, 0, 0, 0);
+            document.getElementById('label-week-number').textContent = `Minggu ke-${currentWeekNum} tahun ini`;
 
             let daily = 0, weekly = 0, monthly = 0, yearly = 0;
 
+            // Struktur penampung data grafik per mode
+            const daysMap = {};      // 7 Hari terakhir
+            const weeksMap = {};     // Minggu 1 s/d Minggu Terakhir Tahun Ini
+            const monthsMap = Array(12).fill(0); // Jan - Des (0-11)
+            const yearsMap = {};     // Perbandingan Tahun
+
+            // Inisialisasi 7 Hari Terakhir
+            const dayLabels = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(now.getDate() - i);
+                const iso = d.toISOString().split('T')[0];
+                const lbl = d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+                daysMap[iso] = 0;
+                dayLabels.push({ iso, lbl });
+            }
+
+            // Inisialisasi Minggu 1 s/d Minggu saat ini
+            for (let w = 1; w <= currentWeekNum; w++) {
+                weeksMap[w] = 0;
+            }
+
+            // Olah Semua Transaksi Service
             Object.keys(rawServices).forEach(k => {
                 const s = rawServices[k];
                 const cost = Number(s.estimatedCost) || 0;
-                
-                // Jangan hitung transaksi Batal / Retur
+
+                // Abaikan transaksi Batal / Retur
                 if (s.status === 'Batal') return;
 
-                // Ambil Date object dari serviceInDate atau createdAt
                 let itemDate = null;
                 let itemISO = '';
 
@@ -1118,52 +1172,107 @@
 
                 if (!itemDate) return;
 
-                // 1. Harian (Hari ini saja)
-                if (itemISO === todayISO) {
-                    daily += cost;
+                const yr = itemDate.getFullYear();
+                const mo = itemDate.getMonth();
+                const wk = getWeekNumber(itemDate);
+
+                // 1. Kartu Atas
+                if (itemISO === todayISO) daily += cost;
+                if (yr === currentYear && wk === currentWeekNum) weekly += cost;
+                if (yr === currentYear && mo === currentMonth) monthly += cost;
+                if (yr === currentYear) yearly += cost;
+
+                // 2. Data Grafik 7 Hari
+                if (daysMap[itemISO] !== undefined) {
+                    daysMap[itemISO] += cost;
                 }
 
-                // 2. Mingguan (7 Hari Terakhir)
-                if (itemDate >= sevenDaysAgo) {
-                    weekly += cost;
+                // 3. Data Grafik Mingguan (Tahun Ini)
+                if (yr === currentYear) {
+                    if (!weeksMap[wk]) weeksMap[wk] = 0;
+                    weeksMap[wk] += cost;
                 }
 
-                // 3. Bulanan (Bulan & Tahun Saat Ini)
-                if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
-                    monthly += cost;
+                // 4. Data Grafik Bulanan (Tahun Ini)
+                if (yr === currentYear) {
+                    monthsMap[mo] += cost;
                 }
 
-                // 4. Tahunan (Tahun Saat Ini)
-                if (itemDate.getFullYear() === currentYear) {
-                    yearly += cost;
-                }
+                // 5. Data Grafik Tahunan
+                if (!yearsMap[yr]) yearsMap[yr] = 0;
+                yearsMap[yr] += cost;
             });
 
-            // Update Teks Ringkasan Nominal
+            // Update Angka di 4 Kartu Ringkasan Atas
             document.getElementById('sum-daily').textContent = `Rp ${daily.toLocaleString('id-ID')}`;
             document.getElementById('sum-weekly').textContent = `Rp ${weekly.toLocaleString('id-ID')}`;
             document.getElementById('sum-monthly').textContent = `Rp ${monthly.toLocaleString('id-ID')}`;
             document.getElementById('sum-yearly').textContent = `Rp ${yearly.toLocaleString('id-ID')}`;
 
-            // Render Chart.js Realtime
+            // Siapkan Data untuk Chart.js Berdasarkan Filter Mode Aktif
+            let chartLabels = [];
+            let chartData = [];
+            let barColor = '#3b82f6';
+
+            if (currentChartMode === 'daily') {
+                chartLabels = dayLabels.map(item => item.lbl);
+                chartData = dayLabels.map(item => daysMap[item.iso] || 0);
+                barColor = '#f59e0b';
+            } else if (currentChartMode === 'weekly') {
+                const weekKeys = Object.keys(weeksMap).sort((a, b) => parseInt(a) - parseInt(b));
+                chartLabels = weekKeys.map(w => `Minggu ${w}`);
+                chartData = weekKeys.map(w => weeksMap[w]);
+                barColor = '#3b82f6';
+            } else if (currentChartMode === 'monthly') {
+                chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                chartData = monthsMap;
+                barColor = '#16a34a';
+            } else if (currentChartMode === 'yearly') {
+                const yearKeys = Object.keys(yearsMap).sort((a, b) => parseInt(a) - parseInt(b));
+                if (yearKeys.length === 0) yearKeys.push(currentYear.toString());
+                chartLabels = yearKeys.map(y => `Tahun ${y}`);
+                chartData = yearKeys.map(y => yearsMap[y] || 0);
+                barColor = '#9333ea';
+            }
+
+            // Render Ulang Chart.js
             const ctx = document.getElementById('chartRevenueReport').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
             chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Harian', 'Mingguan', 'Bulanan', 'Tahunan'],
+                    labels: chartLabels,
                     datasets: [{
-                        label: 'Total Nominal Service (Rp)',
-                        data: [daily, weekly, monthly, yearly],
-                        backgroundColor: ['#f59e0b', '#3b82f6', '#16a34a', '#9333ea'],
-                        borderRadius: 8
+                        label: 'Omset Service & Penjualan (Rp)',
+                        data: chartData,
+                        backgroundColor: barColor,
+                        borderRadius: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Total: Rp ${Number(context.raw || 0).toLocaleString('id-ID')}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
