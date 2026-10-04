@@ -1080,33 +1080,72 @@
             });
         }
 
-        // Render Financial Reports & Chart
+        // Render Financial Reports & Chart (AKURAT & OTOMATIS)
         function renderFinancialReports() {
             const now = new Date();
-            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())).getTime();
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-            const startOfYear = new Date(now.getFullYear(), 0, 1).getTime();
+            const todayISO = now.toISOString().split('T')[0];
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            // Batas 7 hari yang lalu
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(now.getDate() - 7);
+            sevenDaysAgo.setHours(0, 0, 0, 0);
 
             let daily = 0, weekly = 0, monthly = 0, yearly = 0;
 
             Object.keys(rawServices).forEach(k => {
                 const s = rawServices[k];
                 const cost = Number(s.estimatedCost) || 0;
-                const time = s.createdAt || 0;
+                
+                // Jangan hitung transaksi Batal / Retur
+                if (s.status === 'Batal') return;
 
-                if (time >= startOfDay) daily += cost;
-                if (time >= startOfWeek) weekly += cost;
-                if (time >= startOfMonth) monthly += cost;
-                if (time >= startOfYear) yearly += cost;
+                // Ambil Date object dari serviceInDate atau createdAt
+                let itemDate = null;
+                let itemISO = '';
+
+                if (s.serviceInDate) {
+                    itemISO = s.serviceInDate;
+                    const parts = s.serviceInDate.split('-');
+                    if (parts.length === 3) {
+                        itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    }
+                } else if (s.createdAt) {
+                    itemDate = new Date(s.createdAt);
+                    itemISO = itemDate.toISOString().split('T')[0];
+                }
+
+                if (!itemDate) return;
+
+                // 1. Harian (Hari ini saja)
+                if (itemISO === todayISO) {
+                    daily += cost;
+                }
+
+                // 2. Mingguan (7 Hari Terakhir)
+                if (itemDate >= sevenDaysAgo) {
+                    weekly += cost;
+                }
+
+                // 3. Bulanan (Bulan & Tahun Saat Ini)
+                if (itemDate.getFullYear() === currentYear && itemDate.getMonth() === currentMonth) {
+                    monthly += cost;
+                }
+
+                // 4. Tahunan (Tahun Saat Ini)
+                if (itemDate.getFullYear() === currentYear) {
+                    yearly += cost;
+                }
             });
 
+            // Update Teks Ringkasan Nominal
             document.getElementById('sum-daily').textContent = `Rp ${daily.toLocaleString('id-ID')}`;
             document.getElementById('sum-weekly').textContent = `Rp ${weekly.toLocaleString('id-ID')}`;
             document.getElementById('sum-monthly').textContent = `Rp ${monthly.toLocaleString('id-ID')}`;
             document.getElementById('sum-yearly').textContent = `Rp ${yearly.toLocaleString('id-ID')}`;
 
-            // Render Chart.js
+            // Render Chart.js Realtime
             const ctx = document.getElementById('chartRevenueReport').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
