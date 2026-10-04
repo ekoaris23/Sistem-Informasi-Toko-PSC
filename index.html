@@ -30,12 +30,20 @@
     <!-- SheetJS (xlsx) untuk Export Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        .kanban-scroll::-webkit-scrollbar {
-            height: 8px;
+        /* Custom Scrollbar untuk Papan Trello */
+        .kanban-scroll::-webkit-scrollbar,
+        .column-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .kanban-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+        .kanban-scroll::-webkit-scrollbar-thumb,
+        .column-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
             border-radius: 4px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb:hover,
+        .column-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
     </style>
 </head>
@@ -133,7 +141,7 @@
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-address-book"></i> Database Customer Chatting & Prospek Repeat Order
                         </h2>
-                        <!-- Tombol Export Excel -->
+                        <!-- Tombol Export Excel CRM -->
                         <button onclick="exportCrmToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
@@ -218,90 +226,99 @@
                 </form>
             </div>
 
-            <!-- TRELLO BOARD LAYOUT -->
-            <div class="bg-slate-800 p-4 rounded-2xl shadow-inner min-h-[500px]">
-                <div class="flex justify-between items-center mb-4 text-white">
+            <!-- TRELLO BOARD LAYOUT (FIXED HEIGHT SEUKURAN 1 LAYAR LAPTOP) -->
+            <div class="bg-slate-800 p-4 rounded-2xl shadow-inner h-[540px] flex flex-col">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-3 text-white flex-shrink-0">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-kanban text-amber-400 text-xl"></i>
                         <h2 class="font-bold text-lg">PSC SERVICE BOARD</h2>
                     </div>
-                    <div class="flex gap-2">
-                        <input type="text" id="searchBoard" onkeyup="renderServices()" placeholder="Cari kartu..." class="px-3 py-1 text-xs rounded bg-slate-700 border border-slate-600 text-white placeholder-slate-400">
+                    <!-- INPUT PENCARIAN KARTU SERVICE -->
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchBoard" onkeyup="renderServices()" placeholder="Cari Nama / Unit Laptop..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
                     </div>
                 </div>
 
-                <!-- Trello Columns Container -->
-                <div class="flex gap-4 overflow-x-auto pb-4 kanban-scroll items-start">
+                <!-- Trello Columns Container (Horizontal Scroll & Height Terbatas) -->
+                <div class="flex gap-4 overflow-x-auto pb-2 kanban-scroll items-start flex-grow h-full">
+                    
                     <!-- Col 1: Service Masuk -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-yellow-400"><i class="fa-solid fa-inbox"></i> SERVICE MASUK</h3>
-                            <span id="cnt-masuk" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-yellow-400">0</span>
+                            <span id="cnt-masuk" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-yellow-400 border border-slate-700">0</span>
                         </div>
-                        <div id="col-masuk" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-masuk" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
                     <!-- Col 2: Dikerjakan Teknisi -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-blue-400"><i class="fa-solid fa-screwdriver-wrench"></i> DIKERJAKAN TEKNISI</h3>
-                            <span id="cnt-proses" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-blue-400">0</span>
+                            <span id="cnt-proses" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-blue-400 border border-slate-700">0</span>
                         </div>
-                        <div id="col-proses" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-proses" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
                     <!-- Col 3: Service Selesai -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-emerald-400"><i class="fa-solid fa-circle-check"></i> SERVICE SELESAI</h3>
-                            <span id="cnt-selesai" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-emerald-400">0</span>
+                            <span id="cnt-selesai" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-emerald-400 border border-slate-700">0</span>
                         </div>
-                        <div id="col-selesai" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-selesai" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
                     <!-- Col 4: Konfirmasi Customer -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-purple-400"><i class="fa-solid fa-comments"></i> KONFIRMASI CUSTOMER</h3>
-                            <span id="cnt-konfirmasi" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-purple-400">0</span>
+                            <span id="cnt-konfirmasi" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-purple-400 border border-slate-700">0</span>
                         </div>
-                        <div id="col-konfirmasi" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-konfirmasi" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
                     <!-- Col 5: Diserahkan Ke Customer (Lunas) -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-green-400"><i class="fa-solid fa-handshake"></i> DISERAHKAN (LUNAS)</h3>
-                            <span id="cnt-diambil" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-green-400">0</span>
+                            <span id="cnt-diambil" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-green-400 border border-slate-700">0</span>
                         </div>
-                        <div id="col-diambil" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-diambil" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
                     <!-- Col 6: Klaim Garansi 1 Bulan -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-amber-300"><i class="fa-solid fa-shield-halved"></i> KLAIM GARANSI (Rp 0)</h3>
-                            <span id="cnt-garansi" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-amber-300">0</span>
+                            <span id="cnt-garansi" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-amber-300 border border-slate-700">0</span>
                         </div>
-                        <div id="col-garansi" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-garansi" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
                     <!-- Col 7: Batal / Dikembalikan (Rp 0) -->
-                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-rose-400"><i class="fa-solid fa-rotate-left"></i> BATAL / RETUR (Rp 0)</h3>
-                            <span id="cnt-batal" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-rose-400">0</span>
+                            <span id="cnt-batal" class="text-xs font-bold bg-slate-800 px-2 py-0.5 rounded text-rose-400 border border-slate-700">0</span>
                         </div>
-                        <div id="col-batal" class="space-y-3 min-h-[150px]"></div>
+                        <div id="col-batal" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
                 </div>
             </div>
 
             <!-- TABEL RANGKUMAN SERVICE -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-md font-bold text-maroon-700 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-table-list"></i> Tabel Rangkuman Data Service Toko PSC
-                </h3>
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                    <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
+                        <i class="fa-solid fa-table-list"></i> Tabel Rangkuman Data Service Toko PSC
+                    </h3>
+                    <!-- Tombol Export Excel Tabel Service -->
+                    <button onclick="exportServiceToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs text-left text-gray-600">
                         <thead class="uppercase bg-gray-50 text-gray-500 border-b">
@@ -616,6 +633,7 @@
         let rawServices = {};
         let rawStocks = {};
         let rawEmployees = {};
+        let cardCollapsedState = {}; // Menyimpan status minimize/accordion kartu
         let chartInstance = null;
 
         const statusBadge = document.getElementById('status-badge');
@@ -678,6 +696,12 @@
             return new Date(val).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
+        // Toggle Expand/Collapse Kartu Service
+        window.toggleCardCollapse = (key) => {
+            cardCollapsedState[key] = !cardCollapsedState[key];
+            renderServices();
+        };
+
         // Submit CRM Customer Baru
         document.getElementById('customer-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -737,6 +761,58 @@
             ];
 
             const fileName = `Database_Customer_CRM_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        };
+
+        // Export Rangkuman Data Service ke Excel (.xlsx)
+        window.exportServiceToExcel = () => {
+            const keys = Object.keys(rawServices).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada data service untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const s = rawServices[key];
+                const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
+                const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : '-';
+
+                return {
+                    "No": index + 1,
+                    "ID Service": `#PSC-${key.substring(1, 6).toUpperCase()}`,
+                    "Nama Customer": s.customerName || '',
+                    "No WhatsApp": s.customerPhone || '',
+                    "Type Laptop": s.deviceUnit || '',
+                    "Kendala / Kerusakan": s.deviceIssue || '',
+                    "Tgl Masuk": inDateText,
+                    "Tgl Keluar": outDateText,
+                    "Kedatangan": s.arrivalType || 'Langsung Toko',
+                    "Teknisi": s.techType || 'Internal',
+                    "Nominal Biaya (Rp)": Number(s.estimatedCost) || 0,
+                    "Status saat ini": s.status || 'Service Masuk'
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Rangkuman Service");
+
+            worksheet['!cols'] = [
+                { wch: 5 },  // No
+                { wch: 15 }, // ID Service
+                { wch: 20 }, // Nama
+                { wch: 18 }, // WA
+                { wch: 22 }, // Type Laptop
+                { wch: 30 }, // Kendala
+                { wch: 15 }, // Tgl Masuk
+                { wch: 15 }, // Tgl Keluar
+                { wch: 15 }, // Kedatangan
+                { wch: 12 }, // Teknisi
+                { wch: 20 }, // Nominal
+                { wch: 18 }  // Status
+            ];
+
+            const fileName = `Rangkuman_Data_Service_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(workbook, fileName);
         };
 
@@ -909,37 +985,53 @@
                 const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
                 const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : null;
 
+                const isCollapsed = cardCollapsedState[k] || false;
+
                 const card = document.createElement('div');
                 card.className = 'bg-slate-800 rounded-lg p-3 border border-slate-700 shadow hover:border-amber-500 transition text-xs space-y-2';
+                
                 card.innerHTML = `
                     <div class="flex justify-between items-start font-bold text-white">
-                        <div>
+                        <div class="pr-2">
                             <span>${s.customerName}</span>
                             <div class="text-[10px] text-amber-300 font-normal flex flex-wrap items-center gap-1.5 mt-0.5">
                                 <span><i class="fa-regular fa-calendar-check text-[9px]"></i> Masuk: ${inDateText}</span>
                                 ${outDateText ? `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-flag-checkered text-[9px]"></i> Out: ${outDateText}</span>` : ''}
                             </div>
                         </div>
-                        <a href="https://wa.me/${cleanPhone}?text=${waMessage}" target="_blank" class="text-green-400 hover:text-green-300"><i class="fa-brands fa-whatsapp text-sm"></i></a>
+                        <div class="flex items-center gap-1.5">
+                            <a href="https://wa.me/${cleanPhone}?text=${waMessage}" target="_blank" class="text-green-400 hover:text-green-300 p-1" title="Chat WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></a>
+                            <button onclick="toggleCardCollapse('${k}')" class="text-slate-400 hover:text-amber-400 p-1 rounded transition" title="${isCollapsed ? 'Buka Detail' : 'Ciutkan Kartu'}">
+                                <i class="fa-solid ${isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'} text-xs"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="text-slate-300 font-semibold">${s.deviceUnit}</div>
-                    <div class="text-slate-400 italic text-[11px]">${s.deviceIssue}</div>
-                    <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-700">
-                        <span>${s.techType || 'Internal'} | ${s.arrivalType || 'Toko'}</span>
-                        <span class="font-bold text-amber-400 text-xs">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>
+                    
+                    <div class="text-slate-300 font-semibold flex justify-between items-center">
+                        <span>${s.deviceUnit}</span>
+                        ${isCollapsed ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>` : ''}
                     </div>
-                    <div class="pt-2 flex justify-between items-center gap-1">
-                        <select onchange="updateStatus('${k}', this.value)" class="w-full bg-slate-900 text-slate-200 border border-slate-700 rounded p-1 text-[10px]">
-                            <option value="Service Masuk" ${st === 'Service Masuk' ? 'selected' : ''}>📥 Service Masuk</option>
-                            <option value="Proses" ${st === 'Proses' ? 'selected' : ''}>🛠️ Dikerjakan Teknisi</option>
-                            <option value="Selesai" ${st === 'Selesai' ? 'selected' : ''}>✅ Service Selesai</option>
-                            <option value="Konfirmasi" ${st === 'Konfirmasi' ? 'selected' : ''}>📞 Konfirmasi Customer</option>
-                            <option value="Diambil" ${st === 'Diambil' ? 'selected' : ''}>🤝 Diserahkan (Lunas)</option>
-                            <option value="Garansi" ${st === 'Garansi' ? 'selected' : ''}>🛡️ Klaim Garansi (Rp 0)</option>
-                            <option value="Batal" ${st === 'Batal' ? 'selected' : ''}>❌ Batal / Retur (Rp 0)</option>
-                        </select>
-                        <button onclick="openEditServiceModal('${k}')" class="text-amber-400 p-1 hover:text-amber-300" title="Edit Kartu Service"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteOrder('${k}')" class="text-rose-400 p-1 hover:text-rose-300" title="Hapus Kartu Service"><i class="fa-solid fa-trash-can"></i></button>
+
+                    <!-- BAGIAN DETAIL KARTU (AKAN TERSEMBUNYI SAAT DICIUTKAN / COLLAPSED) -->
+                    <div class="${isCollapsed ? 'hidden' : 'block'} space-y-2 pt-1 border-t border-slate-700/60">
+                        <div class="text-slate-400 italic text-[11px]">${s.deviceIssue}</div>
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-700/60">
+                            <span>${s.techType || 'Internal'} | ${s.arrivalType || 'Toko'}</span>
+                            <span class="font-bold text-amber-400 text-xs">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="pt-1 flex justify-between items-center gap-1">
+                            <select onchange="updateStatus('${k}', this.value)" class="w-full bg-slate-900 text-slate-200 border border-slate-700 rounded p-1 text-[10px]">
+                                <option value="Service Masuk" ${st === 'Service Masuk' ? 'selected' : ''}>📥 Service Masuk</option>
+                                <option value="Proses" ${st === 'Proses' ? 'selected' : ''}>🛠️ Dikerjakan Teknisi</option>
+                                <option value="Selesai" ${st === 'Selesai' ? 'selected' : ''}>✅ Service Selesai</option>
+                                <option value="Konfirmasi" ${st === 'Konfirmasi' ? 'selected' : ''}>📞 Konfirmasi Customer</option>
+                                <option value="Diambil" ${st === 'Diambil' ? 'selected' : ''}>🤝 Diserahkan (Lunas)</option>
+                                <option value="Garansi" ${st === 'Garansi' ? 'selected' : ''}>🛡️ Klaim Garansi (Rp 0)</option>
+                                <option value="Batal" ${st === 'Batal' ? 'selected' : ''}>❌ Batal / Retur (Rp 0)</option>
+                            </select>
+                            <button onclick="openEditServiceModal('${k}')" class="text-amber-400 p-1 hover:text-amber-300" title="Edit Kartu Service"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteOrder('${k}')" class="text-rose-400 p-1 hover:text-rose-300" title="Hapus Kartu Service"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
                     </div>
                 `;
 
