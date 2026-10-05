@@ -30,19 +30,22 @@
     <!-- SheetJS (xlsx) untuk Export Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        /* Custom Scrollbar untuk Papan Trello */
+        /* Custom Scrollbar untuk Papan Trello dan Tabel */
         .kanban-scroll::-webkit-scrollbar,
-        .column-scroll::-webkit-scrollbar {
+        .column-scroll::-webkit-scrollbar,
+        .table-scroll::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         .kanban-scroll::-webkit-scrollbar-thumb,
-        .column-scroll::-webkit-scrollbar-thumb {
-            background: #475569;
+        .column-scroll::-webkit-scrollbar-thumb,
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #94a3b8;
             border-radius: 4px;
         }
         .kanban-scroll::-webkit-scrollbar-thumb:hover,
-        .column-scroll::-webkit-scrollbar-thumb:hover {
+        .column-scroll::-webkit-scrollbar-thumb:hover,
+        .table-scroll::-webkit-scrollbar-thumb:hover {
             background: #64748b;
         }
     </style>
@@ -308,9 +311,9 @@
                 </div>
             </div>
 
-            <!-- TABEL RANGKUMAN SERVICE -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+            <!-- TABEL RANGKUMAN SERVICE (DIBATASI TINGGINYA / MAX-HEIGHT) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-2">
                     <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-table-list"></i> Tabel Rangkuman Data Service Toko PSC
                     </h3>
@@ -319,9 +322,11 @@
                         <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                     </button>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left text-gray-600">
-                        <thead class="uppercase bg-gray-50 text-gray-500 border-b">
+
+                <!-- Container Scroll Vertikal Terbatas -->
+                <div class="overflow-x-auto max-h-[360px] overflow-y-auto table-scroll border rounded-lg">
+                    <table class="w-full text-xs text-left text-gray-600 relative">
+                        <thead class="uppercase bg-gray-100 text-gray-700 border-b sticky top-0 z-10 shadow-sm">
                             <tr>
                                 <th class="p-3">ID Service</th>
                                 <th class="p-3">Nama Customer</th>
@@ -331,10 +336,11 @@
                                 <th class="p-3">Tgl Keluar</th>
                                 <th class="p-3">Nominal Biaya</th>
                                 <th class="p-3">Status Saat Ini</th>
+                                <th class="p-3 text-center">Aksi / Cetak Nota</th>
                             </tr>
                         </thead>
                         <tbody id="summary-service-table" class="divide-y divide-gray-100">
-                            <tr><td colspan="8" class="p-4 text-center text-gray-400">Belum ada data rangkuman service.</td></tr>
+                            <tr><td colspan="9" class="p-4 text-center text-gray-400">Belum ada data rangkuman service.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -644,7 +650,7 @@
         let rawEmployees = {};
         let cardExpandedState = {}; // Default kartu tertutup
         let chartInstance = null;
-        let currentChartMode = 'daily'; // Default filter mode grafik: 'daily', 'weekly', 'monthly', 'yearly'
+        let currentChartMode = 'daily'; // Filter mode grafik: 'daily', 'weekly', 'monthly', 'yearly'
 
         const statusBadge = document.getElementById('status-badge');
 
@@ -849,6 +855,121 @@
 
             const fileName = `Rangkuman_Data_Service_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(workbook, fileName);
+        };
+
+        // FUNGSI PRINT NOTA RESMI ONLINE TOKO PSC
+        window.printServiceReceipt = (key) => {
+            const s = rawServices[key];
+            if (!s) return;
+
+            const serviceId = `#PSC-${key.substring(1, 6).toUpperCase()}`;
+            const inDate = s.serviceInDate ? formatDate(s.serviceInDate) : '-';
+            const outDate = s.serviceOutDate ? formatDate(s.serviceOutDate) : 'Masih Diproses';
+            const costFormatted = Number(s.estimatedCost || 0).toLocaleString('id-ID');
+
+            const printWindow = window.open('', '_blank', 'width=800,height=900');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Nota Service ${serviceId} - Paramount Star Computer</title>
+
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; line-height: 1.4; }
+                        .receipt-box { border: 2px solid #800000; padding: 20px; border-radius: 10px; max-width: 700px; margin: 0 auto; }
+                        .header { text-align: center; border-b: 2px border-style: dashed; border-color: #800000; padding-bottom: 12px; margin-bottom: 15px; }
+                        .header h1 { margin: 0; color: #800000; font-size: 22px; }
+                        .header p { margin: 2px 0; font-size: 11px; color: #475569; }
+                        .title-badge { background: #800000; color: #fff; text-align: center; font-weight: bold; padding: 6px; border-radius: 5px; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; }
+                        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom: 15px; }
+                        .info-item span { font-weight: bold; color: #475569; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+                        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+                        th { background-color: #f1f5f9; color: #334155; }
+                        .total-row { font-weight: bold; font-size: 14px; background: #fef3c7; color: #92400e; }
+                        .terms { font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 15px; }
+                        .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 11px; }
+                        .sig-box { width: 140px; border-top: 1px solid #475569; margin-top: 45px; }
+                        @media print {
+                            body { padding: 0; }
+                            .receipt-box { border: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-box">
+                        <div class="header">
+                            <h1>PARAMOUNT STAR COMPUTER (PSC)</h1>
+                            <p>Jl. Raya Bandung-Sumedang No. 88, Jatinangor - Sumedang</p>
+                            <p>WhatsApp / Hotline: 0812-3456-7890 | Website/Ig: @psc_computer</p>
+                        </div>
+
+                        <div class="title-badge">NOTA BUKTI SERVICE & PERBAIKAN LAPTOP</div>
+
+                        <div class="info-grid">
+                            <div>
+                                <div class="info-item"><span>ID Service:</span> ${serviceId}</div>
+                                <div class="info-item"><span>Nama Customer:</span> ${s.customerName}</div>
+                                <div class="info-item"><span>No WhatsApp:</span> ${s.customerPhone || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="info-item"><span>Tanggal Masuk:</span> ${inDate}</div>
+                                <div class="info-item"><span>Tanggal Keluar:</span> ${outDate}</div>
+                                <div class="info-item"><span>Status Saat Ini:</span> <strong>${s.status || 'Proses'}</strong></div>
+                            </div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Perangkat / Unit</th>
+                                    <th>Kendala / Tindakan Perbaikan</th>
+                                    <th>Teknisi / Penanganan</th>
+                                    <th style="text-align: right;">Biaya (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>${s.deviceUnit}</strong></td>
+                                    <td>${s.deviceIssue}</td>
+                                    <td>${s.techType || 'Internal'} (${s.arrivalType || 'Toko'})</td>
+                                    <td style="text-align: right;">Rp ${costFormatted}</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="3" style="text-align: right;">TOTAL BIAYA SERVICE:</td>
+                                    <td style="text-align: right;">Rp ${costFormatted}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="terms">
+                            <strong>Syarat & Ketentuan Garansi Toko PSC:</strong><br>
+                            1. Garansi service berlaku selama 30 hari kalender sejak unit diserahkan.<br>
+                            2. Garansi BATAL jika segel rusak, terkena cairan, jatuh, terbentur, atau ada perbaikan pihak luar.<br>
+                            3. Wajib membawa nota ini saat klaim garansi atau pengambilan unit laptop.
+                        </div>
+
+                        <div class="footer-signatures">
+                            <div>
+                                Customer / Pemilik Unit
+                                <div class="sig-box">( ${s.customerName} )</div>
+                            </div>
+                            <div>
+                                Kasir / Teknisi PSC
+                                <div class="sig-box">( Paramount Star Computer )</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         };
 
         // Open & Close Edit Modal CRM
@@ -1082,14 +1203,14 @@
             document.getElementById('cnt-batal').textContent = counts['Batal'];
         };
 
-        // Render Summary Service Table
+        // Render Summary Service Table (DIBATASI TINGGINYA + TOMBOL PRINT NOTA)
         function renderSummaryTable() {
             const tableBody = document.getElementById('summary-service-table');
             tableBody.innerHTML = '';
             const keys = Object.keys(rawServices).reverse();
 
             if (keys.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400">Belum ada data service.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Belum ada data service.</td></tr>`;
                 return;
             }
 
@@ -1099,7 +1220,7 @@
                 const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : '-';
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
+                tr.className = 'hover:bg-amber-50/50 border-b transition';
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-gray-500">#PSC-${k.substring(1, 6).toUpperCase()}</td>
                     <td class="p-3 font-bold text-gray-800">${s.customerName}</td>
@@ -1109,12 +1230,17 @@
                     <td class="p-3 text-xs font-semibold text-emerald-800"><span class="px-2 py-0.5 bg-emerald-50 rounded border border-emerald-200">${outDateText}</span></td>
                     <td class="p-3 font-bold text-maroon-700">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</td>
                     <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold bg-slate-100 text-slate-700 rounded-full border">${s.status || 'Service Masuk'}</span></td>
+                    <td class="p-3 text-center">
+                        <button onclick="printServiceReceipt('${k}')" class="px-3 py-1 bg-maroon-700 hover:bg-maroon-800 text-white rounded-lg text-xs font-bold shadow transition inline-flex items-center gap-1.5" title="Print Nota Resmi PSC">
+                            <i class="fa-solid fa-print"></i> Print Nota
+                        </button>
+                    </td>
                 `;
                 tableBody.appendChild(tr);
             });
         }
 
-        // Render Financial Reports & Chart (REALTIME & MULTI-FILTER DETAILED)
+        // Render Financial Reports & Chart
         function renderFinancialReports() {
             const now = new Date();
             const todayISO = now.toISOString().split('T')[0];
@@ -1126,13 +1252,11 @@
 
             let daily = 0, weekly = 0, monthly = 0, yearly = 0;
 
-            // Struktur penampung data grafik per mode
-            const daysMap = {};      // 7 Hari terakhir
-            const weeksMap = {};     // Minggu 1 s/d Minggu Terakhir Tahun Ini
-            const monthsMap = Array(12).fill(0); // Jan - Des (0-11)
-            const yearsMap = {};     // Perbandingan Tahun
+            const daysMap = {};
+            const weeksMap = {};
+            const monthsMap = Array(12).fill(0);
+            const yearsMap = {};
 
-            // Inisialisasi 7 Hari Terakhir
             const dayLabels = [];
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
@@ -1143,17 +1267,14 @@
                 dayLabels.push({ iso, lbl });
             }
 
-            // Inisialisasi Minggu 1 s/d Minggu saat ini
             for (let w = 1; w <= currentWeekNum; w++) {
                 weeksMap[w] = 0;
             }
 
-            // Olah Semua Transaksi Service
             Object.keys(rawServices).forEach(k => {
                 const s = rawServices[k];
                 const cost = Number(s.estimatedCost) || 0;
 
-                // Abaikan transaksi Batal / Retur
                 if (s.status === 'Batal') return;
 
                 let itemDate = null;
@@ -1176,40 +1297,26 @@
                 const mo = itemDate.getMonth();
                 const wk = getWeekNumber(itemDate);
 
-                // 1. Kartu Atas
                 if (itemISO === todayISO) daily += cost;
                 if (yr === currentYear && wk === currentWeekNum) weekly += cost;
                 if (yr === currentYear && mo === currentMonth) monthly += cost;
                 if (yr === currentYear) yearly += cost;
 
-                // 2. Data Grafik 7 Hari
-                if (daysMap[itemISO] !== undefined) {
-                    daysMap[itemISO] += cost;
-                }
-
-                // 3. Data Grafik Mingguan (Tahun Ini)
+                if (daysMap[itemISO] !== undefined) daysMap[itemISO] += cost;
                 if (yr === currentYear) {
                     if (!weeksMap[wk]) weeksMap[wk] = 0;
                     weeksMap[wk] += cost;
-                }
-
-                // 4. Data Grafik Bulanan (Tahun Ini)
-                if (yr === currentYear) {
                     monthsMap[mo] += cost;
                 }
-
-                // 5. Data Grafik Tahunan
                 if (!yearsMap[yr]) yearsMap[yr] = 0;
                 yearsMap[yr] += cost;
             });
 
-            // Update Angka di 4 Kartu Ringkasan Atas
             document.getElementById('sum-daily').textContent = `Rp ${daily.toLocaleString('id-ID')}`;
             document.getElementById('sum-weekly').textContent = `Rp ${weekly.toLocaleString('id-ID')}`;
             document.getElementById('sum-monthly').textContent = `Rp ${monthly.toLocaleString('id-ID')}`;
             document.getElementById('sum-yearly').textContent = `Rp ${yearly.toLocaleString('id-ID')}`;
 
-            // Siapkan Data untuk Chart.js Berdasarkan Filter Mode Aktif
             let chartLabels = [];
             let chartData = [];
             let barColor = '#3b82f6';
@@ -1235,7 +1342,6 @@
                 barColor = '#9333ea';
             }
 
-            // Render Ulang Chart.js
             const ctx = document.getElementById('chartRevenueReport').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
