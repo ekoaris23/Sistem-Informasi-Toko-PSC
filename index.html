@@ -141,13 +141,12 @@
                     </form>
                 </div>
 
-                <!-- Database Customer CRM Table dengan SEARCH & SORTING -->
+                <!-- Database Customer CRM Table -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-address-book"></i> Database Customer Chatting & Prospek Repeat Order
                         </h2>
-                        <!-- Tombol Export Excel CRM -->
                         <button onclick="exportCrmToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
@@ -454,13 +453,12 @@
                     </form>
                 </div>
 
-                <!-- Tabel Katalog Produk DENGAN SEARCH, SORTING & EXPORT EXCEL -->
+                <!-- Tabel Katalog Produk -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-boxes-stacked"></i> Stok Produk, Laptop & Sparepart Store
                         </h2>
-                        <!-- Tombol Export Excel Stok Produk -->
                         <button onclick="exportStocksToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
@@ -548,7 +546,7 @@
                     </form>
                 </div>
 
-                <!-- Tabel Riwayat Transaksi DENGAN SEARCH & SORTING -->
+                <!-- Tabel Riwayat Transaksi -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
@@ -844,6 +842,15 @@
         document.getElementById('serviceInDate').value = todayStr;
         document.getElementById('transDate').value = todayStr;
 
+        // Helper fungsi konversi waktu presisi untuk Sorting
+        function getTimeValue(item, dateKey = 'serviceInDate') {
+            if (item && item[dateKey]) {
+                const parsed = Date.parse(item[dateKey]);
+                if (!isNaN(parsed)) return parsed;
+            }
+            return (item && item.createdAt) ? item.createdAt : 0;
+        }
+
         // Realtime Listeners
         onValue(customersRef, (snapshot) => {
             rawCustomers = snapshot.val() || {};
@@ -1019,7 +1026,7 @@
             });
         });
 
-        // Export CRM Data ke Excel (.xlsx)
+        // Export CRM Data ke Excel
         window.exportCrmToExcel = () => {
             const keys = Object.keys(rawCustomers);
             if (keys.length === 0) {
@@ -1044,12 +1051,10 @@
             const worksheet = XLSX.utils.json_to_sheet(exportData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Database CRM");
-
-            const fileName = `Database_Customer_CRM_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, fileName);
+            XLSX.writeFile(workbook, `Database_Customer_CRM_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
-        // Export Rangkuman Data Service ke Excel (.xlsx)
+        // Export Rangkuman Data Service ke Excel
         window.exportServiceToExcel = () => {
             const keys = Object.keys(rawServices).reverse();
             if (keys.length === 0) {
@@ -1059,9 +1064,6 @@
 
             const exportData = keys.map((key, index) => {
                 const s = rawServices[key];
-                const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
-                const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : '-';
-
                 return {
                     "No": index + 1,
                     "ID Service": `#PSC-${key.substring(1, 6).toUpperCase()}`,
@@ -1069,8 +1071,8 @@
                     "No WhatsApp": s.customerPhone || '',
                     "Type Laptop": s.deviceUnit || '',
                     "Kendala / Kerusakan": s.deviceIssue || '',
-                    "Tgl Masuk": inDateText,
-                    "Tgl Keluar": outDateText,
+                    "Tgl Masuk": s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-'),
+                    "Tgl Keluar": s.serviceOutDate ? formatDate(s.serviceOutDate) : '-',
                     "Kedatangan": s.arrivalType || 'Langsung Toko',
                     "Teknisi": s.techType || 'Internal',
                     "Nominal Biaya (Rp)": Number(s.estimatedCost) || 0,
@@ -1081,12 +1083,10 @@
             const worksheet = XLSX.utils.json_to_sheet(exportData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Rangkuman Service");
-
-            const fileName = `Rangkuman_Data_Service_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, fileName);
+            XLSX.writeFile(workbook, `Rangkuman_Data_Service_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
-        // EXPORT STOK PRODUK KE EXCEL
+        // Export Stok Produk ke Excel
         window.exportStocksToExcel = () => {
             const keys = Object.keys(rawStocks).reverse();
             if (keys.length === 0) {
@@ -1108,12 +1108,10 @@
             const worksheet = XLSX.utils.json_to_sheet(exportData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Katalog Stok Produk");
-
-            const fileName = `Katalog_Stok_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, fileName);
+            XLSX.writeFile(workbook, `Katalog_Stok_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
-        // EXPORT REKAP TRANSAKSI PRODUK KE EXCEL
+        // Export Rekap Transaksi Produk ke Excel
         window.exportTransactionsToExcel = () => {
             const keys = Object.keys(rawTransactions).reverse();
             if (keys.length === 0) {
@@ -1139,12 +1137,10 @@
             const worksheet = XLSX.utils.json_to_sheet(exportData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi Penjualan");
-
-            const fileName = `Rekap_Transaksi_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, fileName);
+            XLSX.writeFile(workbook, `Rekap_Transaksi_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
-        // FUNGSI PRINT NOTA RESMI ONLINE TOKO PSC
+        // Print Service Receipt
         window.printServiceReceipt = (key, receiptType) => {
             const s = rawServices[key];
             if (!s) return;
@@ -1190,10 +1186,7 @@
                         .terms { font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 15px; }
                         .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 11px; }
                         .sig-box { width: 140px; border-top: 1px solid #475569; margin-top: 45px; }
-                        @media print {
-                            body { padding: 0; }
-                            .receipt-box { border: none; }
-                        }
+                        @media print { body { padding: 0; } .receipt-box { border: none; } }
                     </style>
                 </head>
                 <body>
@@ -1203,9 +1196,7 @@
                             <p>Komplek Puri Indah Jatinangor Blok A3 nomor 21, Jalan sayang, Cikeruh, Jatinangor, Sumedang.</p>
                             <p>Whatsapp / hotline : 0851-8824-3665</p>
                         </div>
-
                         <div class="title-badge">${receiptTitle}</div>
-
                         <div class="info-grid">
                             <div>
                                 <div class="info-item"><span>ID Service:</span> ${serviceId}</div>
@@ -1218,7 +1209,6 @@
                                 <div class="info-item"><span>Status Saat Ini:</span> <strong>${displayStatus}</strong></div>
                             </div>
                         </div>
-
                         <table>
                             <thead>
                                 <tr>
@@ -1249,31 +1239,18 @@
                                 ` : ''}
                             </tbody>
                         </table>
-
                         <div class="terms">
                             <strong>Syarat & Ketentuan Garansi Toko PSC:</strong><br>
                             1. Garansi service berlaku selama 30 hari kalender sejak unit diserahkan.<br>
                             2. Garansi BATAL jika segel rusak, terkena cairan, jatuh, terbentur, atau ada perbaikan pihak luar.<br>
                             3. Wajib membawa nota serah terima ini saat pengambilan unit laptop.
                         </div>
-
                         <div class="footer-signatures">
-                            <div>
-                                Customer / Pemilik Unit
-                                <div class="sig-box">( ${s.customerName} )</div>
-                            </div>
-                            <div>
-                                Kasir / Teknisi PSC
-                                <div class="sig-box">( Paramount Star Computer )</div>
-                            </div>
+                            <div>Customer / Pemilik Unit<div class="sig-box">( ${s.customerName} )</div></div>
+                            <div>Kasir / Teknisi PSC<div class="sig-box">( Paramount Star Computer )</div></div>
                         </div>
                     </div>
-
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                        };
-                    <\/script>
+                    <script>window.onload = function() { window.print(); };<\/script>
                 </body>
                 </html>
             `);
@@ -1298,7 +1275,6 @@
             document.getElementById('edit-crm-modal').classList.add('hidden');
         };
 
-        // Submit Form Edit Customer CRM
         document.getElementById('edit-crm-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const key = document.getElementById('editCrmKey').value;
@@ -1319,7 +1295,7 @@
             });
         });
 
-        // Modal Edit Service Card Functions
+        // Modal Edit Service Card
         window.openEditServiceModal = (key) => {
             const s = rawServices[key];
             if (!s) return;
@@ -1435,7 +1411,7 @@
             });
         });
 
-        // SUBMIT TRANSAKSI PENJUALAN PRODUK (AUTO-DEDUCT STOK)
+        // Submit Transaksi Penjualan Produk
         document.getElementById('trans-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const stockKey = document.getElementById('transSelectStock').value;
@@ -1582,9 +1558,10 @@
             document.getElementById('cnt-batal').textContent = counts['Batal'];
         };
 
-        // RENDER CUSTOMERS CRM DENGAN SEARCH & SORTING
+        // RENDER CUSTOMERS CRM (DENGAN SORTING FIX)
         window.renderCustomers = () => {
             const body = document.getElementById('customer-table-body');
+            if (!body) return;
             body.innerHTML = '';
 
             const query = (document.getElementById('searchCrmTable')?.value || '').toLowerCase().trim();
@@ -1592,7 +1569,6 @@
 
             let keys = Object.keys(rawCustomers);
 
-            // Filter Search
             if (query) {
                 keys = keys.filter(k => {
                     const c = rawCustomers[k];
@@ -1604,17 +1580,22 @@
                 });
             }
 
-            // Sorting
             keys.sort((a, b) => {
                 const cA = rawCustomers[a];
                 const cB = rawCustomers[b];
-                const timeA = cA.createdAt || 0;
-                const timeB = cB.createdAt || 0;
 
-                if (sortBy === 'newest') return timeB - timeA;
-                if (sortBy === 'oldest') return timeA - timeB;
-                if (sortBy === 'nameAsc') return (cA.name || '').localeCompare(cB.name || '');
-                if (sortBy === 'nameDesc') return (cB.name || '').localeCompare(cA.name || '');
+                if (sortBy === 'newest') {
+                    return getTimeValue(cB, 'chatDate') - getTimeValue(cA, 'chatDate');
+                }
+                if (sortBy === 'oldest') {
+                    return getTimeValue(cA, 'chatDate') - getTimeValue(cB, 'chatDate');
+                }
+                if (sortBy === 'nameAsc') {
+                    return (cA.name || '').toLowerCase().localeCompare((cB.name || '').toLowerCase());
+                }
+                if (sortBy === 'nameDesc') {
+                    return (cB.name || '').toLowerCase().localeCompare((cA.name || '').toLowerCase());
+                }
                 return 0;
             });
 
@@ -1650,9 +1631,10 @@
             });
         };
 
-        // RENDER SUMMARY SERVICE TABLE DENGAN SEARCH & SORTING
+        // RENDER SUMMARY SERVICE TABLE (DENGAN SORTING FIX)
         function renderSummaryTable() {
             const tableBody = document.getElementById('summary-service-table');
+            if (!tableBody) return;
             tableBody.innerHTML = '';
 
             const query = (document.getElementById('searchServiceTable')?.value || '').toLowerCase().trim();
@@ -1660,7 +1642,6 @@
 
             let keys = Object.keys(rawServices);
 
-            // Filter Search
             if (query) {
                 keys = keys.filter(k => {
                     const s = rawServices[k];
@@ -1675,24 +1656,27 @@
                 });
             }
 
-            // Sorting
             keys.sort((a, b) => {
                 const sA = rawServices[a];
                 const sB = rawServices[b];
-                const timeA = sA.createdAt || 0;
-                const timeB = sB.createdAt || 0;
-                const costA = Number(sA.estimatedCost) || 0;
-                const costB = Number(sB.estimatedCost) || 0;
 
-                if (sortBy === 'newest') return timeB - timeA;
-                if (sortBy === 'oldest') return timeA - timeB;
-                if (sortBy === 'nameAsc') return (sA.customerName || '').localeCompare(sB.customerName || '');
-                if (sortBy === 'costDesc') return costB - costA;
+                if (sortBy === 'newest') {
+                    return getTimeValue(sB, 'serviceInDate') - getTimeValue(sA, 'serviceInDate');
+                }
+                if (sortBy === 'oldest') {
+                    return getTimeValue(sA, 'serviceInDate') - getTimeValue(sB, 'serviceInDate');
+                }
+                if (sortBy === 'nameAsc') {
+                    return (sA.customerName || '').toLowerCase().localeCompare((sB.customerName || '').toLowerCase());
+                }
+                if (sortBy === 'costDesc') {
+                    return (Number(sB.estimatedCost) || 0) - (Number(sA.estimatedCost) || 0);
+                }
                 return 0;
             });
 
             if (keys.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Tidak ada data service yang cocok dengan kata kunci.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Tidak ada data service yang cocok.</td></tr>`;
                 return;
             }
 
@@ -1730,9 +1714,10 @@
             });
         }
 
-        // RENDER KATALOG STOK PRODUK DENGAN SEARCH & SORTING
+        // RENDER KATALOG STOK PRODUK (DENGAN SORTING FIX)
         window.renderStocks = () => {
             const tableBody = document.getElementById('stock-table-body');
+            if (!tableBody) return;
             tableBody.innerHTML = '';
 
             const query = (document.getElementById('searchStockTable')?.value || '').toLowerCase().trim();
@@ -1740,7 +1725,6 @@
 
             let keys = Object.keys(rawStocks);
 
-            // Filter Search
             if (query) {
                 keys = keys.filter(k => {
                     const item = rawStocks[k];
@@ -1749,21 +1733,16 @@
                 });
             }
 
-            // Sorting
             keys.sort((a, b) => {
                 const iA = rawStocks[a];
                 const iB = rawStocks[b];
-                const priceA = Number(iA.price) || 0;
-                const priceB = Number(iB.price) || 0;
-                const qtyA = Number(iA.qty) || 0;
-                const qtyB = Number(iB.qty) || 0;
 
-                if (sortBy === 'newest') return b.localeCompare(a); // Reverse Key
-                if (sortBy === 'nameAsc') return (iA.name || '').localeCompare(iB.name || '');
-                if (sortBy === 'priceDesc') return priceB - priceA;
-                if (sortBy === 'priceAsc') return priceA - priceB;
-                if (sortBy === 'qtyDesc') return qtyB - qtyA;
-                if (sortBy === 'qtyAsc') return qtyA - qtyB;
+                if (sortBy === 'newest') return b.localeCompare(a);
+                if (sortBy === 'nameAsc') return (iA.name || '').toLowerCase().localeCompare((iB.name || '').toLowerCase());
+                if (sortBy === 'priceDesc') return (Number(iB.price) || 0) - (Number(iA.price) || 0);
+                if (sortBy === 'priceAsc') return (Number(iA.price) || 0) - (Number(iB.price) || 0);
+                if (sortBy === 'qtyDesc') return (Number(iB.qty) || 0) - (Number(iA.qty) || 0);
+                if (sortBy === 'qtyAsc') return (Number(iA.qty) || 0) - (Number(iB.qty) || 0);
                 return 0;
             });
 
@@ -1790,9 +1769,10 @@
             });
         };
 
-        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK DENGAN SEARCH & SORTING
+        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK (DENGAN SORTING FIX)
         window.renderTransactions = () => {
             const body = document.getElementById('trans-table-body');
+            if (!body) return;
             body.innerHTML = '';
 
             const query = (document.getElementById('searchTransTable')?.value || '').toLowerCase().trim();
@@ -1800,7 +1780,6 @@
 
             let keys = Object.keys(rawTransactions);
 
-            // Filter Search
             if (query) {
                 keys = keys.filter(k => {
                     const t = rawTransactions[k];
@@ -1812,24 +1791,27 @@
                 });
             }
 
-            // Sorting
             keys.sort((a, b) => {
                 const tA = rawTransactions[a];
                 const tB = rawTransactions[b];
-                const timeA = tA.createdAt || 0;
-                const timeB = tB.createdAt || 0;
-                const priceA = Number(tA.totalPrice) || 0;
-                const priceB = Number(tB.totalPrice) || 0;
 
-                if (sortBy === 'newest') return timeB - timeA;
-                if (sortBy === 'oldest') return timeA - timeB;
-                if (sortBy === 'priceDesc') return priceB - priceA;
-                if (sortBy === 'nameAsc') return (tA.customerName || '').localeCompare(tB.customerName || '');
+                if (sortBy === 'newest') {
+                    return getTimeValue(tB, 'transDate') - getTimeValue(tA, 'transDate');
+                }
+                if (sortBy === 'oldest') {
+                    return getTimeValue(tA, 'transDate') - getTimeValue(tB, 'transDate');
+                }
+                if (sortBy === 'priceDesc') {
+                    return (Number(tB.totalPrice) || 0) - (Number(tA.totalPrice) || 0);
+                }
+                if (sortBy === 'nameAsc') {
+                    return (tA.customerName || '').toLowerCase().localeCompare((tB.customerName || '').toLowerCase());
+                }
                 return 0;
             });
 
             if (keys.length === 0) {
-                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Tidak ada riwayat transaksi yang cocok dengan pencarian.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Tidak ada riwayat transaksi yang cocok.</td></tr>`;
                 return;
             }
 
@@ -2045,7 +2027,7 @@
             update(ref(db, `service_orders/${id}`), updateData);
         };
 
-        // Submit Stok Produk / Laptop / Sparepart
+        // Submit Stok Produk
         document.getElementById('stock-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const newStock = {
@@ -2060,7 +2042,7 @@
             });
         });
 
-        // FUNGSI PRINT NOTA TRANSAKSI PENJUALAN PRODUK
+        // Print Transaction Receipt
         window.printTransactionReceipt = (key) => {
             const t = rawTransactions[key];
             if (!t) return;
@@ -2089,10 +2071,7 @@
                         .total-row { font-weight: bold; font-size: 14px; background: #dcfce7; color: #15803d; }
                         .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 11px; }
                         .sig-box { width: 140px; border-top: 1px solid #475569; margin-top: 45px; }
-                        @media print {
-                            body { padding: 0; }
-                            .receipt-box { border: none; }
-                        }
+                        @media print { body { padding: 0; } .receipt-box { border: none; } }
                     </style>
                 </head>
                 <body>
@@ -2102,9 +2081,7 @@
                             <p>Komplek Puri Indah Jatinangor Blok A3 nomor 21, Jalan sayang, Cikeruh, Jatinangor, Sumedang.</p>
                             <p>Whatsapp / hotline : 0851-8824-3665</p>
                         </div>
-
                         <div class="title-badge">NOTA PENJUALAN PRODUK / SPAREPART</div>
-
                         <div class="info-grid">
                             <div>
                                 <div class="info-item"><span>No Transaksi:</span> ${transId}</div>
@@ -2115,7 +2092,6 @@
                                 <div class="info-item"><span>Status Pembayaran:</span> <strong style="color:#15803d;">LUNAS</strong></div>
                             </div>
                         </div>
-
                         <table>
                             <thead>
                                 <tr>
@@ -2138,24 +2114,12 @@
                                 </tr>
                             </tbody>
                         </table>
-
                         <div class="footer-signatures">
-                            <div>
-                                Pembeli / Customer
-                                <div class="sig-box">( ${t.customerName} )</div>
-                            </div>
-                            <div>
-                                Kasir PSC Store
-                                <div class="sig-box">( Paramount Star Computer )</div>
-                            </div>
+                            <div>Pembeli / Customer<div class="sig-box">( ${t.customerName} )</div></div>
+                            <div>Kasir PSC Store<div class="sig-box">( Paramount Star Computer )</div></div>
                         </div>
                     </div>
-
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                        };
-                    <\/script>
+                    <script>window.onload = function() { window.print(); };<\/script>
                 </body>
                 </html>
             `);
