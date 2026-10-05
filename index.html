@@ -183,9 +183,9 @@
                 <form id="service-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-3 text-xs">
                     <div>
                         <label class="block font-semibold text-gray-600 uppercase mb-1">Pilih Customer (CRM)</label>
-                        <select id="selectCrmCustomer" onchange="autoFillCustomerData()" required class="w-full border rounded-lg p-2 bg-amber-50 font-bold focus:ring-2 focus:ring-maroon-700 focus:outline-none">
-                            <option value="">-- Pilih Customer --</option>
-                        </select>
+                        <!-- KOTAK INPUT SEARCHABLE UNTUK PILIH CUSTOMER CRM -->
+                        <input type="text" id="searchCrmCustomer" list="crmDatalist" oninput="autoFillCustomerData()" placeholder="Ketik/Cari Nama..." required class="w-full border rounded-lg p-2 bg-amber-50 font-bold focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                        <datalist id="crmDatalist"></datalist>
                     </div>
                     <div>
                         <label class="block font-semibold text-gray-600 uppercase mb-1">No. WhatsApp</label>
@@ -229,24 +229,20 @@
                 </form>
             </div>
 
-            <!-- TRELLO BOARD LAYOUT (FIXED HEIGHT SEUKURAN 1 LAYAR LAPTOP) -->
+            <!-- TRELLO BOARD LAYOUT -->
             <div class="bg-slate-800 p-4 rounded-2xl shadow-inner h-[540px] flex flex-col">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-3 text-white flex-shrink-0">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-kanban text-amber-400 text-xl"></i>
                         <h2 class="font-bold text-lg">PSC SERVICE BOARD</h2>
                     </div>
-                    <!-- INPUT PENCARIAN KARTU SERVICE -->
                     <div class="relative w-full sm:w-72">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
                         <input type="text" id="searchBoard" onkeyup="renderServices()" placeholder="Cari Nama / Unit Laptop..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
                     </div>
                 </div>
 
-                <!-- Trello Columns Container (Horizontal Scroll & Height Terbatas) -->
                 <div class="flex gap-4 overflow-x-auto pb-2 kanban-scroll items-start flex-grow h-full">
-                    
-                    <!-- Col 1: Service Masuk -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-yellow-400"><i class="fa-solid fa-inbox"></i> SERVICE MASUK</h3>
@@ -255,7 +251,6 @@
                         <div id="col-masuk" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
-                    <!-- Col 2: Dikerjakan Teknisi -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-blue-400"><i class="fa-solid fa-screwdriver-wrench"></i> DIKERJAKAN TEKNISI</h3>
@@ -264,7 +259,6 @@
                         <div id="col-proses" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
-                    <!-- Col 3: Service Selesai -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-emerald-400"><i class="fa-solid fa-circle-check"></i> SERVICE SELESAI</h3>
@@ -273,7 +267,6 @@
                         <div id="col-selesai" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
-                    <!-- Col 4: Konfirmasi Customer -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-purple-400"><i class="fa-solid fa-comments"></i> KONFIRMASI CUSTOMER</h3>
@@ -282,7 +275,6 @@
                         <div id="col-konfirmasi" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
-                    <!-- Col 5: Diserahkan Ke Customer (Lunas) -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-green-400"><i class="fa-solid fa-handshake"></i> DISERAHKAN (LUNAS)</h3>
@@ -291,7 +283,6 @@
                         <div id="col-diambil" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
-                    <!-- Col 6: Klaim Garansi 1 Bulan -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-amber-300"><i class="fa-solid fa-shield-halved"></i> KLAIM GARANSI (Rp 0)</h3>
@@ -300,7 +291,6 @@
                         <div id="col-garansi" class="space-y-3 overflow-y-auto column-scroll pr-1 flex-grow"></div>
                     </div>
 
-                    <!-- Col 7: Batal / Dikembalikan (Rp 0) -->
                     <div class="w-72 bg-slate-900/90 rounded-xl p-3 flex-shrink-0 text-slate-200 border border-slate-700 h-full flex flex-col">
                         <div class="flex justify-between items-center mb-3 flex-shrink-0 border-b border-slate-800 pb-2">
                             <h3 class="font-bold text-sm tracking-wide flex items-center gap-2 text-rose-400"><i class="fa-solid fa-rotate-left"></i> BATAL / RETUR (Rp 0)</h3>
@@ -311,19 +301,17 @@
                 </div>
             </div>
 
-            <!-- TABEL RANGKUMAN SERVICE (DIBATASI TINGGINYA / MAX-HEIGHT & 2 TOMBOL CETAK NOTA) -->
+            <!-- TABEL RANGKUMAN SERVICE -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-table-list"></i> Tabel Rangkuman Data Service Toko PSC
                     </h3>
-                    <!-- Tombol Export Excel Tabel Service -->
                     <button onclick="exportServiceToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                         <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                     </button>
                 </div>
 
-                <!-- Container Scroll Vertikal Terbatas -->
                 <div class="overflow-x-auto max-h-[380px] overflow-y-auto table-scroll border rounded-lg">
                     <table class="w-full text-xs text-left text-gray-600 relative">
                         <thead class="uppercase bg-gray-100 text-gray-700 border-b sticky top-0 z-10 shadow-sm">
@@ -346,13 +334,12 @@
                 </div>
             </div>
 
-            <!-- GRAFIK & RINGKASAN SERVICE BESERTA NOMINAL NYA -->
+            <!-- GRAFIK & RINGKASAN SERVICE -->
             <div class="space-y-4">
                 <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
                     <i class="fa-solid fa-chart-line"></i> Laporan & Ringkasan Nominal Service
                 </h3>
 
-                <!-- Ringkasan Stats (Harian, Mingguan, Bulanan, Tahunan) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-amber-500">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Pendapatan Harian</p>
@@ -376,13 +363,11 @@
                     </div>
                 </div>
 
-                <!-- Grafik Omset Service Dengan Filter Mode -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
                         <h4 class="text-xs font-bold text-gray-700 uppercase flex items-center gap-2">
                             <i class="fa-solid fa-chart-column text-maroon-700 text-sm"></i> Grafik Omset Penjualan & Service
                         </h4>
-                        <!-- FILTER / SWITCHER MODE GRAFIK -->
                         <div class="flex flex-wrap bg-gray-100 p-1 rounded-lg text-xs font-semibold gap-1">
                             <button onclick="setChartMode('daily')" id="btn-chart-daily" class="px-3 py-1.5 rounded-md bg-white text-maroon-700 shadow transition">📅 Harian (7 Hari)</button>
                             <button onclick="setChartMode('weekly')" id="btn-chart-weekly" class="px-3 py-1.5 rounded-md text-gray-600 hover:text-maroon-700 transition">🗓️ Mingguan (Per Minggu)</button>
@@ -648,6 +633,7 @@
         let rawServices = {};
         let rawStocks = {};
         let rawEmployees = {};
+        let crmMap = {}; // Penampung pasangan nama-key customer CRM
         let cardExpandedState = {};
         let chartInstance = null;
         let currentChartMode = 'daily';
@@ -662,7 +648,7 @@
         onValue(customersRef, (snapshot) => {
             rawCustomers = snapshot.val() || {};
             renderCustomers();
-            populateCrmDropdown();
+            populateCrmDatalist();
         });
 
         onValue(servicesRef, (snapshot) => {
@@ -737,6 +723,46 @@
         window.toggleCardCollapse = (key) => {
             cardExpandedState[key] = !cardExpandedState[key];
             renderServices();
+        };
+
+        // POPULATE DATALIST DENGAN SORT TERBARU KE TERLAMA (NEWEST FIRST)
+        function populateCrmDatalist() {
+            const datalist = document.getElementById('crmDatalist');
+            datalist.innerHTML = '';
+            crmMap = {};
+
+            // Urutkan kunci dari yang paling baru (terbaru di paling atas)
+            const sortedKeys = Object.keys(rawCustomers).sort((a, b) => {
+                const timeA = rawCustomers[a].createdAt || 0;
+                const timeB = rawCustomers[b].createdAt || 0;
+                return timeB - timeA; // Descending
+            });
+
+            sortedKeys.forEach(k => {
+                const c = rawCustomers[k];
+                const labelText = `${c.name} - ${c.device || 'Perangkat'}`;
+                crmMap[labelText] = k;
+
+                const opt = document.createElement('option');
+                opt.value = labelText;
+                datalist.appendChild(opt);
+            });
+        }
+
+        // AUTO-FILL DATA CUSTOMER SAAT DI-KETIK / DIPIIH
+        window.autoFillCustomerData = () => {
+            const searchVal = document.getElementById('searchCrmCustomer').value.trim();
+            const custKey = crmMap[searchVal];
+
+            if (custKey && rawCustomers[custKey]) {
+                const c = rawCustomers[custKey];
+                document.getElementById('customerPhone').value = c.phone || '';
+                document.getElementById('deviceUnit').value = c.device || '';
+            } else {
+                // Jika mengetik nama baru manual yang belum ada di CRM
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('deviceUnit').value = '';
+            }
         };
 
         // Submit CRM Customer Baru
@@ -827,7 +853,7 @@
             XLSX.writeFile(workbook, fileName);
         };
 
-        // FUNGSI PRINT NOTA RESMI ONLINE TOKO PSC (TIPE 1: SERAH TERIMA & TIPE 2: SELESAI SERVICE)
+        // FUNGSI PRINT NOTA RESMI ONLINE TOKO PSC
         window.printServiceReceipt = (key, receiptType) => {
             const s = rawServices[key];
             if (!s) return;
@@ -846,8 +872,6 @@
             }
 
             const remainingBalance = Math.max(0, totalCost - dpAmount);
-
-            // Judul Nota & Status
             const receiptTitle = receiptType === 'handover' ? 'NOTA BUKTI SERAH TERIMA UNIT SERVICE' : 'NOTA BUKTI PELUNASAN & SELESAI SERVICE';
             const displayStatus = receiptType === 'handover' ? (s.status || 'Unit Diterima') : 'Selesai Service';
 
@@ -1050,39 +1074,22 @@
             });
         });
 
-        function populateCrmDropdown() {
-            const dropdown = document.getElementById('selectCrmCustomer');
-            dropdown.innerHTML = '<option value="">-- Pilih Customer --</option>';
-            Object.keys(rawCustomers).forEach(k => {
-                const c = rawCustomers[k];
-                const opt = document.createElement('option');
-                opt.value = k;
-                opt.textContent = `${c.name} - ${c.device}`;
-                dropdown.appendChild(opt);
-            });
-        }
-
-        window.autoFillCustomerData = () => {
-            const custKey = document.getElementById('selectCrmCustomer').value;
-            if (custKey && rawCustomers[custKey]) {
-                const c = rawCustomers[custKey];
-                document.getElementById('customerPhone').value = c.phone || '';
-                document.getElementById('deviceUnit').value = c.device || '';
-            } else {
-                document.getElementById('customerPhone').value = '';
-                document.getElementById('deviceUnit').value = '';
-            }
-        };
-
         // Submit Service Card (Trello)
         document.getElementById('service-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const custKey = document.getElementById('selectCrmCustomer').value;
-            const custName = custKey && rawCustomers[custKey] ? rawCustomers[custKey].name : 'Customer';
+            const searchVal = document.getElementById('searchCrmCustomer').value.trim();
+            const custKey = crmMap[searchVal];
+            
+            // Ambil Nama Customer (Jika tidak terdaftar di CRM, gunakan teks yang diketik)
+            let custName = searchVal.split(' - ')[0];
+            if (custKey && rawCustomers[custKey]) {
+                custName = rawCustomers[custKey].name;
+            }
+
             const inDate = document.getElementById('serviceInDate').value || todayStr;
 
             const newOrder = {
-                customerName: custName,
+                customerName: custName || 'Customer',
                 customerPhone: document.getElementById('customerPhone').value,
                 deviceUnit: document.getElementById('deviceUnit').value,
                 deviceIssue: document.getElementById('deviceIssue').value,
@@ -1097,6 +1104,7 @@
 
             push(servicesRef, newOrder).then(() => {
                 document.getElementById('service-form').reset();
+                document.getElementById('searchCrmCustomer').value = '';
                 document.getElementById('serviceInDate').value = todayStr;
             });
         });
@@ -1161,7 +1169,6 @@
                         ${!isExpanded ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>` : ''}
                     </div>
 
-                    <!-- BAGIAN DETAIL KARTU -->
                     <div class="${isExpanded ? 'block' : 'hidden'} space-y-2 pt-1 border-t border-slate-700/60">
                         <div class="text-slate-400 italic text-[11px]">${s.deviceIssue}</div>
                         <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-700/60">
@@ -1196,7 +1203,7 @@
             document.getElementById('cnt-batal').textContent = counts['Batal'];
         };
 
-        // Render Summary Service Table (DIBATASI TINGGINYA + 2 TOMBOL NOTA BERBEDA)
+        // Render Summary Service Table
         function renderSummaryTable() {
             const tableBody = document.getElementById('summary-service-table');
             tableBody.innerHTML = '';
@@ -1212,7 +1219,6 @@
                 const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
                 const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : '-';
                 
-                // Ubah Tampilan Status "Diambil" Menjadi "Selesai Service"
                 const rawStatus = s.status || 'Service Masuk';
                 const statusLabel = rawStatus === 'Diambil' ? 'Selesai Service' : rawStatus;
 
