@@ -141,9 +141,9 @@
                     </form>
                 </div>
 
-                <!-- Database Customer CRM Table -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                <!-- Database Customer CRM Table dengan SEARCH & SORTING -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-address-book"></i> Database Customer Chatting & Prospek Repeat Order
                         </h2>
@@ -152,6 +152,24 @@
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
                     </div>
+
+                    <!-- BARIS FILTER SEARCH & SORTING CRM -->
+                    <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <div class="relative flex-grow min-w-[200px]">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                            <input type="text" id="searchCrmTable" onkeyup="renderCustomers()" placeholder="Cari Nama, WA, Perangkat, Catatan..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs">
+                            <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
+                            <select id="sortCrmTable" onchange="renderCustomers()" class="border rounded-lg p-1.5 text-xs bg-white font-medium focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                                <option value="newest">Terbaru -> Terlama</option>
+                                <option value="oldest">Terlama -> Terbaru</option>
+                                <option value="nameAsc">Nama (A - Z)</option>
+                                <option value="nameDesc">Nama (Z - A)</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-600">
                             <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b">
@@ -303,7 +321,7 @@
                 </div>
             </div>
 
-            <!-- TABEL RANGKUMAN SERVICE -->
+            <!-- TABEL RANGKUMAN SERVICE DENGAN SEARCH & SORTING -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
@@ -312,6 +330,23 @@
                     <button onclick="exportServiceToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                         <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                     </button>
+                </div>
+
+                <!-- BARIS FILTER SEARCH & SORTING SERVICE TABLE -->
+                <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                    <div class="relative flex-grow min-w-[200px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                        <input type="text" id="searchServiceTable" onkeyup="renderSummaryTable()" placeholder="Cari ID Service, Customer, Unit Laptop, Kerusakan..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
+                        <select id="sortServiceTable" onchange="renderSummaryTable()" class="border rounded-lg p-1.5 text-xs bg-white font-medium focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                            <option value="newest">Terbaru -> Terlama (Tgl Masuk)</option>
+                            <option value="oldest">Terlama -> Terbaru (Tgl Masuk)</option>
+                            <option value="nameAsc">Nama Customer (A - Z)</option>
+                            <option value="costDesc">Biaya (Highest -> Lowest)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto max-h-[380px] overflow-y-auto table-scroll border rounded-lg">
@@ -419,11 +454,37 @@
                     </form>
                 </div>
 
-                <!-- Tabel Katalog Produk (Lengkap Tombol Edit & Hapus) -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-boxes-stacked"></i> Stok Produk, Laptop & Sparepart Store
-                    </h2>
+                <!-- Tabel Katalog Produk DENGAN SEARCH, SORTING & EXPORT EXCEL -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked"></i> Stok Produk, Laptop & Sparepart Store
+                        </h2>
+                        <!-- Tombol Export Excel Stok Produk -->
+                        <button onclick="exportStocksToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
+                        </button>
+                    </div>
+
+                    <!-- BARIS FILTER SEARCH & SORTING PRODUK TABLE -->
+                    <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <div class="relative flex-grow min-w-[200px]">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                            <input type="text" id="searchStockTable" onkeyup="renderStocks()" placeholder="Cari Nama Produk / Kategori..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs">
+                            <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
+                            <select id="sortStockTable" onchange="renderStocks()" class="border rounded-lg p-1.5 text-xs bg-white font-medium focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                                <option value="newest">Terbaru Diinput</option>
+                                <option value="nameAsc">Nama Produk (A - Z)</option>
+                                <option value="priceDesc">Harga (Highest -> Lowest)</option>
+                                <option value="priceAsc">Harga (Lowest -> Highest)</option>
+                                <option value="qtyDesc">Stok (Banyak -> Sedikit)</option>
+                                <option value="qtyAsc">Stok (Sedikit -> Banyak)</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-600">
                             <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b">
@@ -444,7 +505,7 @@
             </div>
         </section>
 
-        <!-- ================= TAB 4: TRANSAKSI PENJUALAN PRODUK (NEW) ================= -->
+        <!-- ================= TAB 4: TRANSAKSI PENJUALAN PRODUK ================= -->
         <section id="page-transaction" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Form Kasir Input Transaksi Penjualan Produk -->
@@ -487,15 +548,32 @@
                     </form>
                 </div>
 
-                <!-- Tabel Riwayat Transaksi Penjualan Produk -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                <!-- Tabel Riwayat Transaksi DENGAN SEARCH & SORTING -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-receipt"></i> Riwayat Transaksi Penjualan Produk Store
                         </h2>
                         <button onclick="exportTransactionsToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
+                    </div>
+
+                    <!-- BARIS FILTER SEARCH & SORTING TRANSAKSI TABLE -->
+                    <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <div class="relative flex-grow min-w-[200px]">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                            <input type="text" id="searchTransTable" onkeyup="renderTransactions()" placeholder="Cari TRX ID, Pembeli, Produk, Tgl..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs">
+                            <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
+                            <select id="sortTransTable" onchange="renderTransactions()" class="border rounded-lg p-1.5 text-xs bg-white font-medium focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                                <option value="newest">Terbaru -> Terlama (Tgl Transaksi)</option>
+                                <option value="oldest">Terlama -> Terbaru</option>
+                                <option value="priceDesc">Total Bayar (Highest -> Lowest)</option>
+                                <option value="nameAsc">Nama Pembeli (A - Z)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto max-h-[420px] overflow-y-auto table-scroll border rounded-lg">
@@ -685,7 +763,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT STOCK / PRODUK (NEW) -->
+    <!-- MODAL EDIT STOCK / PRODUK -->
     <div id="edit-stock-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -889,7 +967,6 @@
             }
         };
 
-        // POPULATE DROPDOWN KASIR STOK BARANG
         function populateStockDropdown() {
             const dropdown = document.getElementById('transSelectStock');
             dropdown.innerHTML = '<option value="">-- Pilih Barang dari Stok --</option>';
@@ -1006,6 +1083,64 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, "Rangkuman Service");
 
             const fileName = `Rangkuman_Data_Service_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        };
+
+        // EXPORT STOK PRODUK KE EXCEL
+        window.exportStocksToExcel = () => {
+            const keys = Object.keys(rawStocks).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada data stok produk untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const item = rawStocks[key];
+                return {
+                    "No": index + 1,
+                    "Kategori": item.category || 'Sparepart',
+                    "Nama Produk / Unit": item.name || '',
+                    "Harga Jual (Rp)": Number(item.price) || 0,
+                    "Sisa Stok (Pcs)": Number(item.qty) || 0
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Katalog Stok Produk");
+
+            const fileName = `Katalog_Stok_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        };
+
+        // EXPORT REKAP TRANSAKSI PRODUK KE EXCEL
+        window.exportTransactionsToExcel = () => {
+            const keys = Object.keys(rawTransactions).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada transaksi produk untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const t = rawTransactions[key];
+                return {
+                    "No": index + 1,
+                    "ID Transaksi": `#TRX-${key.substring(1, 6).toUpperCase()}`,
+                    "Nama Pembeli": t.customerName || '',
+                    "Nama Produk / Sparepart": t.productName || '',
+                    "Kategori": t.category || '',
+                    "Jumlah (Qty)": t.qty || 0,
+                    "Harga Satuan (Rp)": Number(t.unitPrice) || 0,
+                    "Total Bayar (Rp)": Number(t.totalPrice) || 0,
+                    "Tanggal Transaksi": t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt)
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi Penjualan");
+
+            const fileName = `Rekap_Transaksi_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(workbook, fileName);
         };
 
@@ -1271,7 +1406,7 @@
             e.preventDefault();
             const searchVal = document.getElementById('searchCrmCustomer').value.trim();
             const custKey = crmMap[searchVal];
-            
+
             let custName = searchVal.split(' - ')[0];
             if (custKey && rawCustomers[custKey]) {
                 custName = rawCustomers[custKey].name;
@@ -1342,9 +1477,7 @@
                 createdAt: Date.now()
             };
 
-            // 1. Simpan Transaksi Penjualan
             push(transactionsRef, newTransaction).then(() => {
-                // 2. Potong Sisa Stok Produk di Database Realtime
                 const updatedQty = Math.max(0, currentQty - buyQty);
                 update(ref(db, `inventory_stocks/${stockKey}`), { qty: updatedQty });
 
@@ -1392,7 +1525,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'bg-slate-800 rounded-lg p-3 border border-slate-700 shadow hover:border-amber-500 transition text-xs space-y-2';
-                
+
                 card.innerHTML = `
                     <div class="flex justify-between items-start font-bold text-white">
                         <div class="pr-2">
@@ -1409,7 +1542,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="text-slate-300 font-semibold flex justify-between items-center">
                         <span>${s.deviceUnit}</span>
                         ${!isExpanded ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>` : ''}
@@ -1449,14 +1582,117 @@
             document.getElementById('cnt-batal').textContent = counts['Batal'];
         };
 
-        // Render Summary Service Table
+        // RENDER CUSTOMERS CRM DENGAN SEARCH & SORTING
+        window.renderCustomers = () => {
+            const body = document.getElementById('customer-table-body');
+            body.innerHTML = '';
+
+            const query = (document.getElementById('searchCrmTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortCrmTable')?.value || 'newest';
+
+            let keys = Object.keys(rawCustomers);
+
+            // Filter Search
+            if (query) {
+                keys = keys.filter(k => {
+                    const c = rawCustomers[k];
+                    return (c.name || '').toLowerCase().includes(query) ||
+                           (c.phone || '').toLowerCase().includes(query) ||
+                           (c.device || '').toLowerCase().includes(query) ||
+                           (c.source || '').toLowerCase().includes(query) ||
+                           (c.note || '').toLowerCase().includes(query);
+                });
+            }
+
+            // Sorting
+            keys.sort((a, b) => {
+                const cA = rawCustomers[a];
+                const cB = rawCustomers[b];
+                const timeA = cA.createdAt || 0;
+                const timeB = cB.createdAt || 0;
+
+                if (sortBy === 'newest') return timeB - timeA;
+                if (sortBy === 'oldest') return timeA - timeB;
+                if (sortBy === 'nameAsc') return (cA.name || '').localeCompare(cB.name || '');
+                if (sortBy === 'nameDesc') return (cB.name || '').localeCompare(cA.name || '');
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Tidak ada customer yang sesuai pencarian.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const c = rawCustomers[k];
+                const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
+                const displayDate = c.chatDate ? formatDate(c.chatDate) : formatDate(c.createdAt);
+                const sourceText = c.source || 'Google Maps';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-800">${c.name}</td>
+                    <td class="p-3 text-gray-600">${c.phone}</td>
+                    <td class="p-3 font-medium text-gray-700">${c.device}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold bg-amber-100 text-amber-800 rounded-full border border-amber-200">${sourceText}</span></td>
+                    <td class="p-3 text-gray-500 italic">${c.note || '-'}</td>
+                    <td class="p-3 text-xs text-gray-600 font-semibold">${displayDate}</td>
+                    <td class="p-3 text-center space-x-1.5">
+                        <a href="https://wa.me/${cleanPhone}" target="_blank" class="px-2.5 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 inline-flex items-center gap-1" title="Chat WA Promo">
+                            <i class="fa-brands fa-whatsapp"></i> Chat Promo
+                        </a>
+                        <button onclick="openEditCrmModal('${k}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Customer"><i class="fa-solid fa-pen-to-square text-base"></i></button>
+                        <button onclick="deleteCustomer('${k}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Customer"><i class="fa-solid fa-trash-can text-base"></i></button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
+
+        // RENDER SUMMARY SERVICE TABLE DENGAN SEARCH & SORTING
         function renderSummaryTable() {
             const tableBody = document.getElementById('summary-service-table');
             tableBody.innerHTML = '';
-            const keys = Object.keys(rawServices).reverse();
+
+            const query = (document.getElementById('searchServiceTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortServiceTable')?.value || 'newest';
+
+            let keys = Object.keys(rawServices);
+
+            // Filter Search
+            if (query) {
+                keys = keys.filter(k => {
+                    const s = rawServices[k];
+                    const idCode = `#PSC-${k.substring(1, 6).toUpperCase()}`.toLowerCase();
+                    const statusText = s.status === 'Diambil' ? 'selesai service' : (s.status || '').toLowerCase();
+
+                    return idCode.includes(query) ||
+                           (s.customerName || '').toLowerCase().includes(query) ||
+                           (s.deviceUnit || '').toLowerCase().includes(query) ||
+                           (s.deviceIssue || '').toLowerCase().includes(query) ||
+                           statusText.includes(query);
+                });
+            }
+
+            // Sorting
+            keys.sort((a, b) => {
+                const sA = rawServices[a];
+                const sB = rawServices[b];
+                const timeA = sA.createdAt || 0;
+                const timeB = sB.createdAt || 0;
+                const costA = Number(sA.estimatedCost) || 0;
+                const costB = Number(sB.estimatedCost) || 0;
+
+                if (sortBy === 'newest') return timeB - timeA;
+                if (sortBy === 'oldest') return timeA - timeB;
+                if (sortBy === 'nameAsc') return (sA.customerName || '').localeCompare(sB.customerName || '');
+                if (sortBy === 'costDesc') return costB - costA;
+                return 0;
+            });
 
             if (keys.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Belum ada data service.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Tidak ada data service yang cocok dengan kata kunci.</td></tr>`;
                 return;
             }
 
@@ -1464,7 +1700,7 @@
                 const s = rawServices[k];
                 const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
                 const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : '-';
-                
+
                 const rawStatus = s.status || 'Service Masuk';
                 const statusLabel = rawStatus === 'Diambil' ? 'Selesai Service' : rawStatus;
 
@@ -1493,6 +1729,133 @@
                 tableBody.appendChild(tr);
             });
         }
+
+        // RENDER KATALOG STOK PRODUK DENGAN SEARCH & SORTING
+        window.renderStocks = () => {
+            const tableBody = document.getElementById('stock-table-body');
+            tableBody.innerHTML = '';
+
+            const query = (document.getElementById('searchStockTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortStockTable')?.value || 'newest';
+
+            let keys = Object.keys(rawStocks);
+
+            // Filter Search
+            if (query) {
+                keys = keys.filter(k => {
+                    const item = rawStocks[k];
+                    return (item.name || '').toLowerCase().includes(query) ||
+                           (item.category || '').toLowerCase().includes(query);
+                });
+            }
+
+            // Sorting
+            keys.sort((a, b) => {
+                const iA = rawStocks[a];
+                const iB = rawStocks[b];
+                const priceA = Number(iA.price) || 0;
+                const priceB = Number(iB.price) || 0;
+                const qtyA = Number(iA.qty) || 0;
+                const qtyB = Number(iB.qty) || 0;
+
+                if (sortBy === 'newest') return b.localeCompare(a); // Reverse Key
+                if (sortBy === 'nameAsc') return (iA.name || '').localeCompare(iB.name || '');
+                if (sortBy === 'priceDesc') return priceB - priceA;
+                if (sortBy === 'priceAsc') return priceA - priceB;
+                if (sortBy === 'qtyDesc') return qtyB - qtyA;
+                if (sortBy === 'qtyAsc') return qtyA - qtyB;
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">Tidak ada produk yang cocok dengan pencarian.</td></tr>`;
+                return;
+            }
+
+            keys.forEach((key) => {
+                const item = rawStocks[key];
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-xs"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-200">${item.category || 'Sparepart'}</span></td>
+                    <td class="p-3 font-semibold text-gray-800">${item.name}</td>
+                    <td class="p-3 text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500 font-bold' : 'text-gray-700'}">${item.qty} Pcs</td>
+                    <td class="p-3 text-center space-x-1.5">
+                        <button onclick="openEditStockModal('${key}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Produk & Stok"><i class="fa-solid fa-pen-to-square text-base"></i></button>
+                        <button onclick="deleteStock('${key}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Produk"><i class="fa-solid fa-trash-can text-base"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        };
+
+        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK DENGAN SEARCH & SORTING
+        window.renderTransactions = () => {
+            const body = document.getElementById('trans-table-body');
+            body.innerHTML = '';
+
+            const query = (document.getElementById('searchTransTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortTransTable')?.value || 'newest';
+
+            let keys = Object.keys(rawTransactions);
+
+            // Filter Search
+            if (query) {
+                keys = keys.filter(k => {
+                    const t = rawTransactions[k];
+                    const trxCode = `#TRX-${k.substring(1, 6).toUpperCase()}`.toLowerCase();
+                    return trxCode.includes(query) ||
+                           (t.customerName || '').toLowerCase().includes(query) ||
+                           (t.productName || '').toLowerCase().includes(query) ||
+                           (t.transDate || '').toLowerCase().includes(query);
+                });
+            }
+
+            // Sorting
+            keys.sort((a, b) => {
+                const tA = rawTransactions[a];
+                const tB = rawTransactions[b];
+                const timeA = tA.createdAt || 0;
+                const timeB = tB.createdAt || 0;
+                const priceA = Number(tA.totalPrice) || 0;
+                const priceB = Number(tB.totalPrice) || 0;
+
+                if (sortBy === 'newest') return timeB - timeA;
+                if (sortBy === 'oldest') return timeA - timeB;
+                if (sortBy === 'priceDesc') return priceB - priceA;
+                if (sortBy === 'nameAsc') return (tA.customerName || '').localeCompare(tB.customerName || '');
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Tidak ada riwayat transaksi yang cocok dengan pencarian.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const t = rawTransactions[k];
+                const transDateText = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-emerald-50/50 border-b transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-gray-500">#TRX-${k.substring(1, 6).toUpperCase()}</td>
+                    <td class="p-3 font-bold text-gray-800">${t.customerName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${t.productName}</td>
+                    <td class="p-3 text-center font-bold text-gray-800">${t.qty} Pcs</td>
+                    <td class="p-3 font-extrabold text-emerald-700">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                    <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${transDateText}</span></td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="printTransactionReceipt('${k}')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Transaksi Produk">
+                            <i class="fa-solid fa-print"></i> Print Nota
+                        </button>
+                        <button onclick="deleteTransaction('${k}')" class="p-1 text-red-500 hover:text-red-700" title="Hapus Transaksi"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
 
         // Render Financial Reports & Chart
         function renderFinancialReports() {
@@ -1525,7 +1888,6 @@
                 weeksMap[w] = 0;
             }
 
-            // Gabungkan Omset dari Service + Penjualan Produk
             const processIncome = (cost, itemDate, itemISO) => {
                 if (!itemDate) return;
                 const yr = itemDate.getFullYear();
@@ -1656,40 +2018,6 @@
             });
         }
 
-        // Render Customers CRM
-        window.renderCustomers = () => {
-            const body = document.getElementById('customer-table-body');
-            body.innerHTML = '';
-            const keys = Object.keys(rawCustomers).reverse();
-            if (keys.length === 0) { body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Belum ada customer tercatat di CRM.</td></tr>`; return; }
-
-            keys.forEach(k => {
-                const c = rawCustomers[k];
-                const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
-                const displayDate = c.chatDate ? formatDate(c.chatDate) : formatDate(c.createdAt);
-                const sourceText = c.source || 'Google Maps';
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-gray-800">${c.name}</td>
-                    <td class="p-3 text-gray-600">${c.phone}</td>
-                    <td class="p-3 font-medium text-gray-700">${c.device}</td>
-                    <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold bg-amber-100 text-amber-800 rounded-full border border-amber-200">${sourceText}</span></td>
-                    <td class="p-3 text-gray-500 italic">${c.note || '-'}</td>
-                    <td class="p-3 text-xs text-gray-600 font-semibold">${displayDate}</td>
-                    <td class="p-3 text-center space-x-1.5">
-                        <a href="https://wa.me/${cleanPhone}" target="_blank" class="px-2.5 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 inline-flex items-center gap-1" title="Chat WA Promo">
-                            <i class="fa-brands fa-whatsapp"></i> Chat Promo
-                        </a>
-                        <button onclick="openEditCrmModal('${k}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Customer"><i class="fa-solid fa-pen-to-square text-base"></i></button>
-                        <button onclick="deleteCustomer('${k}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Customer"><i class="fa-solid fa-trash-can text-base"></i></button>
-                    </td>
-                `;
-                body.appendChild(tr);
-            });
-        };
-
         // Update Status & Auto-Prompt Ubah Nominal Biaya
         window.updateStatus = (id, newStatus) => {
             const currentService = rawServices[id];
@@ -1731,66 +2059,6 @@
                 document.getElementById('stock-form').reset();
             });
         });
-
-        // RENDER KATALOG STOK PRODUK (LENGKAP EDIT & HAPUS)
-        window.renderStocks = () => {
-            const tableBody = document.getElementById('stock-table-body');
-            tableBody.innerHTML = '';
-            const keys = Object.keys(rawStocks).reverse();
-            if (keys.length === 0) { tableBody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">Belum ada katalog produk.</td></tr>`; return; }
-
-            keys.forEach((key) => {
-                const item = rawStocks[key];
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-xs"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-200">${item.category || 'Sparepart'}</span></td>
-                    <td class="p-3 font-semibold text-gray-800">${item.name}</td>
-                    <td class="p-3 text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
-                    <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500 font-bold' : 'text-gray-700'}">${item.qty} Pcs</td>
-                    <td class="p-3 text-center space-x-1.5">
-                        <button onclick="openEditStockModal('${key}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Produk & Stok"><i class="fa-solid fa-pen-to-square text-base"></i></button>
-                        <button onclick="deleteStock('${key}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Produk"><i class="fa-solid fa-trash-can text-base"></i></button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        };
-
-        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK
-        window.renderTransactions = () => {
-            const body = document.getElementById('trans-table-body');
-            body.innerHTML = '';
-            const keys = Object.keys(rawTransactions).reverse();
-
-            if (keys.length === 0) {
-                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Belum ada riwayat transaksi produk.</td></tr>`;
-                return;
-            }
-
-            keys.forEach(k => {
-                const t = rawTransactions[k];
-                const transDateText = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-emerald-50/50 border-b transition';
-                tr.innerHTML = `
-                    <td class="p-3 font-mono font-bold text-gray-500">#TRX-${k.substring(1, 6).toUpperCase()}</td>
-                    <td class="p-3 font-bold text-gray-800">${t.customerName}</td>
-                    <td class="p-3 font-semibold text-gray-700">${t.productName}</td>
-                    <td class="p-3 text-center font-bold text-gray-800">${t.qty} Pcs</td>
-                    <td class="p-3 font-extrabold text-emerald-700">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
-                    <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${transDateText}</span></td>
-                    <td class="p-3 text-center space-x-1">
-                        <button onclick="printTransactionReceipt('${k}')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Transaksi Produk">
-                            <i class="fa-solid fa-print"></i> Print Nota
-                        </button>
-                        <button onclick="deleteTransaction('${k}')" class="p-1 text-red-500 hover:text-red-700" title="Hapus Transaksi"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                `;
-                body.appendChild(tr);
-            });
-        };
 
         // FUNGSI PRINT NOTA TRANSAKSI PENJUALAN PRODUK
         window.printTransactionReceipt = (key) => {
@@ -1892,37 +2160,6 @@
                 </html>
             `);
             printWindow.document.close();
-        };
-
-        // EXPORT REKAP TRANSAKSI PRODUK KE EXCEL
-        window.exportTransactionsToExcel = () => {
-            const keys = Object.keys(rawTransactions).reverse();
-            if (keys.length === 0) {
-                alert('Belum ada transaksi produk untuk di-export!');
-                return;
-            }
-
-            const exportData = keys.map((key, index) => {
-                const t = rawTransactions[key];
-                return {
-                    "No": index + 1,
-                    "ID Transaksi": `#TRX-${key.substring(1, 6).toUpperCase()}`,
-                    "Nama Pembeli": t.customerName || '',
-                    "Nama Produk / Sparepart": t.productName || '',
-                    "Kategori": t.category || '',
-                    "Jumlah (Qty)": t.qty || 0,
-                    "Harga Satuan (Rp)": Number(t.unitPrice) || 0,
-                    "Total Bayar (Rp)": Number(t.totalPrice) || 0,
-                    "Tanggal Transaksi": t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt)
-                };
-            });
-
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi Penjualan");
-
-            const fileName = `Rekap_Transaksi_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, fileName);
         };
 
         // Submit Karyawan
