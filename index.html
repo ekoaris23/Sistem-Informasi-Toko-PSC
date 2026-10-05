@@ -156,7 +156,7 @@
                     <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                         <div class="relative flex-grow min-w-[200px]">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                            <input type="text" id="searchCrmTable" onkeyup="renderCustomers()" placeholder="Cari Nama, WA, Perangkat, Catatan..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                            <input type="text" id="searchCrmTable" onkeyup="renderCustomers()" oninput="renderCustomers()" placeholder="Cari Nama, WA, Perangkat, Catatan..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                         </div>
                         <div class="flex items-center gap-1.5 text-xs">
                             <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
@@ -257,7 +257,7 @@
                     </div>
                     <div class="relative w-full sm:w-72">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchBoard" onkeyup="renderServices()" placeholder="Cari Nama / Unit Laptop..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <input type="text" id="searchBoard" onkeyup="renderServices()" oninput="renderServices()" placeholder="Cari Nama / Unit Laptop..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
                     </div>
                 </div>
 
@@ -335,7 +335,7 @@
                 <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                     <div class="relative flex-grow min-w-[200px]">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                        <input type="text" id="searchServiceTable" onkeyup="renderSummaryTable()" placeholder="Cari ID Service, Customer, Unit Laptop, Kerusakan..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                        <input type="text" id="searchServiceTable" onkeyup="renderSummaryTable()" oninput="renderSummaryTable()" placeholder="Cari ID Service, Customer, Unit Laptop, Kerusakan..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                     </div>
                     <div class="flex items-center gap-1.5 text-xs">
                         <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
@@ -468,7 +468,7 @@
                     <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                         <div class="relative flex-grow min-w-[200px]">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                            <input type="text" id="searchStockTable" onkeyup="renderStocks()" placeholder="Cari Nama Produk / Kategori..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                            <input type="text" id="searchStockTable" onkeyup="renderStocks()" oninput="renderStocks()" placeholder="Cari Nama Produk / Kategori..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                         </div>
                         <div class="flex items-center gap-1.5 text-xs">
                             <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
@@ -561,7 +561,7 @@
                     <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                         <div class="relative flex-grow min-w-[200px]">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                            <input type="text" id="searchTransTable" onkeyup="renderTransactions()" placeholder="Cari TRX ID, Pembeli, Produk, Tgl..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                            <input type="text" id="searchTransTable" onkeyup="renderTransactions()" oninput="renderTransactions()" placeholder="Cari TRX ID, Pembeli, Produk, Tgl..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-300 focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                         </div>
                         <div class="flex items-center gap-1.5 text-xs">
                             <span class="font-semibold text-gray-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short"></i> Urutkan:</span>
@@ -842,13 +842,15 @@
         document.getElementById('serviceInDate').value = todayStr;
         document.getElementById('transDate').value = todayStr;
 
-        // Helper fungsi konversi waktu presisi untuk Sorting
+        // HELPER FUNGSI UNTUK MEMBACA TANGGAL SECARA AKURAT (TIMESTAMP)
         function getTimeValue(item, dateKey = 'serviceInDate') {
-            if (item && item[dateKey]) {
-                const parsed = Date.parse(item[dateKey]);
+            if (!item) return 0;
+            const dateVal = item[dateKey] || item.inDate || item.date || item.chatDate || item.transDate;
+            if (dateVal) {
+                const parsed = Date.parse(dateVal);
                 if (!isNaN(parsed)) return parsed;
             }
-            return (item && item.createdAt) ? item.createdAt : 0;
+            return item.createdAt || 0;
         }
 
         // Realtime Listeners
@@ -951,7 +953,9 @@
 
             sortedKeys.forEach(k => {
                 const c = rawCustomers[k];
-                const labelText = `${c.name} - ${c.device || 'Perangkat'}`;
+                const custName = c.name || c.nama || 'Customer';
+                const custDev = c.device || c.perangkat || 'Perangkat';
+                const labelText = `${custName} - ${custDev}`;
                 crmMap[labelText] = k;
 
                 const opt = document.createElement('option');
@@ -966,8 +970,8 @@
 
             if (custKey && rawCustomers[custKey]) {
                 const c = rawCustomers[custKey];
-                document.getElementById('customerPhone').value = c.phone || '';
-                document.getElementById('deviceUnit').value = c.device || '';
+                document.getElementById('customerPhone').value = c.phone || c.whatsapp || c.noHp || '';
+                document.getElementById('deviceUnit').value = c.device || c.perangkat || '';
             } else {
                 document.getElementById('customerPhone').value = '';
                 document.getElementById('deviceUnit').value = '';
@@ -982,7 +986,7 @@
                 const item = rawStocks[k];
                 const opt = document.createElement('option');
                 opt.value = k;
-                opt.textContent = `${item.name} (Sisa: ${item.qty} Pcs) - Rp ${Number(item.price).toLocaleString('id-ID')}`;
+                opt.textContent = `${item.name || item.nama} (Sisa: ${item.qty || 0} Pcs) - Rp ${Number(item.price || item.harga || 0).toLocaleString('id-ID')}`;
                 dropdown.appendChild(opt);
             });
         }
@@ -991,7 +995,7 @@
             const stockKey = document.getElementById('transSelectStock').value;
             if (stockKey && rawStocks[stockKey]) {
                 const item = rawStocks[stockKey];
-                document.getElementById('transUnitPrice').value = item.price || 0;
+                document.getElementById('transUnitPrice').value = item.price || item.harga || 0;
                 calculateTransTotal();
             } else {
                 document.getElementById('transUnitPrice').value = '';
@@ -1038,11 +1042,11 @@
                 const c = rawCustomers[key];
                 return {
                     "No": index + 1,
-                    "Nama Customer": c.name || '',
-                    "No WhatsApp": c.phone || '',
-                    "Perangkat / Laptop": c.device || '',
+                    "Nama Customer": c.name || c.nama || '',
+                    "No WhatsApp": c.phone || c.whatsapp || '',
+                    "Perangkat / Laptop": c.device || c.perangkat || '',
                     "Asal Customer": c.source || 'Google Maps',
-                    "Catatan Chat": c.note || '',
+                    "Catatan Chat": c.note || c.catatan || '',
                     "Tanggal Chat": c.chatDate ? formatDate(c.chatDate) : (c.createdAt ? formatDate(c.createdAt) : '-'),
                     "Waktu Input": c.createdAt ? new Date(c.createdAt).toLocaleString('id-ID') : '-'
                 };
@@ -1064,18 +1068,23 @@
 
             const exportData = keys.map((key, index) => {
                 const s = rawServices[key];
+                const custName = s.customerName || s.name || s.nama || '';
+                const device = s.deviceUnit || s.device || s.perangkat || '';
+                const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '';
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
                 return {
                     "No": index + 1,
                     "ID Service": `#PSC-${key.substring(1, 6).toUpperCase()}`,
-                    "Nama Customer": s.customerName || '',
-                    "No WhatsApp": s.customerPhone || '',
-                    "Type Laptop": s.deviceUnit || '',
-                    "Kendala / Kerusakan": s.deviceIssue || '',
+                    "Nama Customer": custName,
+                    "No WhatsApp": s.customerPhone || s.phone || '',
+                    "Type Laptop": device,
+                    "Kendala / Kerusakan": issue,
                     "Tgl Masuk": s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-'),
                     "Tgl Keluar": s.serviceOutDate ? formatDate(s.serviceOutDate) : '-',
                     "Kedatangan": s.arrivalType || 'Langsung Toko',
                     "Teknisi": s.techType || 'Internal',
-                    "Nominal Biaya (Rp)": Number(s.estimatedCost) || 0,
+                    "Nominal Biaya (Rp)": cost,
                     "Status saat ini": s.status === 'Diambil' ? 'Selesai Service' : (s.status || 'Service Masuk')
                 };
             });
@@ -1099,9 +1108,9 @@
                 return {
                     "No": index + 1,
                     "Kategori": item.category || 'Sparepart',
-                    "Nama Produk / Unit": item.name || '',
-                    "Harga Jual (Rp)": Number(item.price) || 0,
-                    "Sisa Stok (Pcs)": Number(item.qty) || 0
+                    "Nama Produk / Unit": item.name || item.nama || '',
+                    "Harga Jual (Rp)": Number(item.price || item.harga || 0),
+                    "Sisa Stok (Pcs)": Number(item.qty || item.stok || 0)
                 };
             });
 
@@ -1124,12 +1133,12 @@
                 return {
                     "No": index + 1,
                     "ID Transaksi": `#TRX-${key.substring(1, 6).toUpperCase()}`,
-                    "Nama Pembeli": t.customerName || '',
-                    "Nama Produk / Sparepart": t.productName || '',
+                    "Nama Pembeli": t.customerName || t.name || '',
+                    "Nama Produk / Sparepart": t.productName || t.namaProduk || '',
                     "Kategori": t.category || '',
                     "Jumlah (Qty)": t.qty || 0,
-                    "Harga Satuan (Rp)": Number(t.unitPrice) || 0,
-                    "Total Bayar (Rp)": Number(t.totalPrice) || 0,
+                    "Harga Satuan (Rp)": Number(t.unitPrice || 0),
+                    "Total Bayar (Rp)": Number(t.totalPrice || t.total || 0),
                     "Tanggal Transaksi": t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt)
                 };
             });
@@ -1145,10 +1154,14 @@
             const s = rawServices[key];
             if (!s) return;
 
+            const custName = s.customerName || s.name || s.nama || 'Customer';
+            const device = s.deviceUnit || s.device || s.perangkat || '-';
+            const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '-';
+            const totalCost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
             const serviceId = `#PSC-${key.substring(1, 6).toUpperCase()}`;
             const inDate = s.serviceInDate ? formatDate(s.serviceInDate) : '-';
             const outDate = s.serviceOutDate ? formatDate(s.serviceOutDate) : 'Masih Diproses';
-            const totalCost = Number(s.estimatedCost || 0);
 
             let dpAmount = 0;
             if (receiptType === 'handover') {
@@ -1200,8 +1213,8 @@
                         <div class="info-grid">
                             <div>
                                 <div class="info-item"><span>ID Service:</span> ${serviceId}</div>
-                                <div class="info-item"><span>Nama Customer:</span> ${s.customerName}</div>
-                                <div class="info-item"><span>No WhatsApp:</span> ${s.customerPhone || '-'}</div>
+                                <div class="info-item"><span>Nama Customer:</span> ${custName}</div>
+                                <div class="info-item"><span>No WhatsApp:</span> ${s.customerPhone || s.phone || '-'}</div>
                             </div>
                             <div>
                                 <div class="info-item"><span>Tanggal Masuk:</span> ${inDate}</div>
@@ -1219,8 +1232,8 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong>${s.deviceUnit}</strong></td>
-                                    <td>${s.deviceIssue}</td>
+                                    <td><strong>${device}</strong></td>
+                                    <td>${issue}</td>
                                     <td style="text-align: right;">Rp ${totalCost.toLocaleString('id-ID')}</td>
                                 </tr>
                                 <tr class="total-row">
@@ -1246,7 +1259,7 @@
                             3. Wajib membawa nota serah terima ini saat pengambilan unit laptop.
                         </div>
                         <div class="footer-signatures">
-                            <div>Customer / Pemilik Unit<div class="sig-box">( ${s.customerName} )</div></div>
+                            <div>Customer / Pemilik Unit<div class="sig-box">( ${custName} )</div></div>
                             <div>Kasir / Teknisi PSC<div class="sig-box">( Paramount Star Computer )</div></div>
                         </div>
                     </div>
@@ -1257,16 +1270,16 @@
             printWindow.document.close();
         };
 
-        // Open & Close Edit Modal CRM
+        // Modal Edit CRM
         window.openEditCrmModal = (key) => {
             const c = rawCustomers[key];
             if (!c) return;
             document.getElementById('editCrmKey').value = key;
-            document.getElementById('editCrmName').value = c.name || '';
-            document.getElementById('editCrmPhone').value = c.phone || '';
-            document.getElementById('editCrmDevice').value = c.device || '';
+            document.getElementById('editCrmName').value = c.name || c.nama || '';
+            document.getElementById('editCrmPhone').value = c.phone || c.whatsapp || '';
+            document.getElementById('editCrmDevice').value = c.device || c.perangkat || '';
             document.getElementById('editCrmSource').value = c.source || 'Google Maps';
-            document.getElementById('editCrmNote').value = c.note || '';
+            document.getElementById('editCrmNote').value = c.note || c.catatan || '';
             document.getElementById('editCrmDate').value = c.chatDate || (c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : todayStr);
             document.getElementById('edit-crm-modal').classList.remove('hidden');
         };
@@ -1301,15 +1314,15 @@
             if (!s) return;
 
             document.getElementById('editServiceKey').value = key;
-            document.getElementById('editServiceCustName').value = s.customerName || '';
-            document.getElementById('editServiceCustPhone').value = s.customerPhone || '';
-            document.getElementById('editServiceDevice').value = s.deviceUnit || '';
-            document.getElementById('editServiceIssue').value = s.deviceIssue || '';
-            document.getElementById('editServiceInDate').value = s.serviceInDate || (s.createdAt ? new Date(s.createdAt).toISOString().split('T')[0] : todayStr);
-            document.getElementById('editServiceOutDate').value = s.serviceOutDate || '';
+            document.getElementById('editServiceCustName').value = s.customerName || s.name || s.nama || '';
+            document.getElementById('editServiceCustPhone').value = s.customerPhone || s.phone || '';
+            document.getElementById('editServiceDevice').value = s.deviceUnit || s.device || s.perangkat || '';
+            document.getElementById('editServiceIssue').value = s.deviceIssue || s.issue || s.keluhan || s.kendala || '';
+            document.getElementById('editServiceInDate').value = s.serviceInDate || s.inDate || (s.createdAt ? new Date(s.createdAt).toISOString().split('T')[0] : todayStr);
+            document.getElementById('editServiceOutDate').value = s.serviceOutDate || s.outDate || '';
             document.getElementById('editServiceArrival').value = s.arrivalType || 'Langsung';
             document.getElementById('editServiceTech').value = s.techType || 'Internal';
-            document.getElementById('editServiceCost').value = s.estimatedCost || 0;
+            document.getElementById('editServiceCost').value = s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0);
 
             document.getElementById('edit-service-modal').classList.remove('hidden');
         };
@@ -1341,16 +1354,16 @@
             });
         });
 
-        // Open & Close Edit Modal Stock
+        // Modal Edit Stock
         window.openEditStockModal = (key) => {
             const item = rawStocks[key];
             if (!item) return;
 
             document.getElementById('editStockKey').value = key;
             document.getElementById('editStockCategory').value = item.category || 'Sparepart';
-            document.getElementById('editStockName').value = item.name || '';
-            document.getElementById('editStockPrice').value = item.price || 0;
-            document.getElementById('editStockQty').value = item.qty || 0;
+            document.getElementById('editStockName').value = item.name || item.nama || '';
+            document.getElementById('editStockPrice').value = item.price || item.harga || 0;
+            document.getElementById('editStockQty').value = item.qty || item.stok || 0;
 
             document.getElementById('edit-stock-modal').classList.remove('hidden');
         };
@@ -1385,7 +1398,7 @@
 
             let custName = searchVal.split(' - ')[0];
             if (custKey && rawCustomers[custKey]) {
-                custName = rawCustomers[custKey].name;
+                custName = rawCustomers[custKey].name || rawCustomers[custKey].nama;
             }
 
             const inDate = document.getElementById('serviceInDate').value || todayStr;
@@ -1423,7 +1436,7 @@
             }
 
             const buyQty = parseInt(document.getElementById('transQty').value) || 1;
-            const currentQty = parseInt(item.qty) || 0;
+            const currentQty = parseInt(item.qty || item.stok || 0);
 
             if (buyQty > currentQty) {
                 alert(`Stok tidak mencukupi! Stok saat ini hanya ${currentQty} Pcs.`);
@@ -1434,7 +1447,7 @@
             const custKey = crmMap[searchVal];
             let custName = searchVal.split(' - ')[0];
             if (custKey && rawCustomers[custKey]) {
-                custName = rawCustomers[custKey].name;
+                custName = rawCustomers[custKey].name || rawCustomers[custKey].nama;
             }
 
             const unitPrice = parseInt(document.getElementById('transUnitPrice').value) || 0;
@@ -1444,7 +1457,7 @@
             const newTransaction = {
                 customerName: custName || 'Customer Toko',
                 productKey: stockKey,
-                productName: item.name,
+                productName: item.name || item.nama,
                 category: item.category || 'Barang',
                 qty: buyQty,
                 unitPrice: unitPrice,
@@ -1485,15 +1498,20 @@
 
             keys.forEach(k => {
                 const s = rawServices[k];
-                const match = s.customerName.toLowerCase().includes(query) || s.deviceUnit.toLowerCase().includes(query);
+                const custName = s.customerName || s.name || s.nama || 'Customer';
+                const device = s.deviceUnit || s.device || s.perangkat || '-';
+                const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '-';
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
+                const match = custName.toLowerCase().includes(query) || device.toLowerCase().includes(query);
                 if (!match) return;
 
                 let st = s.status || 'Service Masuk';
                 if (!cols[st]) st = 'Service Masuk';
                 counts[st]++;
 
-                const cleanPhone = (s.customerPhone || '').replace(/[^0-9]/g, '');
-                const waMessage = encodeURIComponent(`Halo Kak ${s.customerName}, update unit ${s.deviceUnit} saat ini: *${st === 'Diambil' ? 'Selesai Service' : st}*. Biaya: Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}. Salam, PSC Computer Jatinangor.`);
+                const cleanPhone = (s.customerPhone || s.phone || '').replace(/[^0-9]/g, '');
+                const waMessage = encodeURIComponent(`Halo Kak ${custName}, update unit ${device} saat ini: *${st === 'Diambil' ? 'Selesai Service' : st}*. Biaya: Rp ${cost.toLocaleString('id-ID')}. Salam, PSC Computer Jatinangor.`);
                 const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
                 const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : null;
 
@@ -1505,7 +1523,7 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-start font-bold text-white">
                         <div class="pr-2">
-                            <span>${s.customerName}</span>
+                            <span>${custName}</span>
                             <div class="text-[10px] text-amber-300 font-normal flex flex-wrap items-center gap-1.5 mt-0.5">
                                 <span><i class="fa-regular fa-calendar-check text-[9px]"></i> Masuk: ${inDateText}</span>
                                 ${outDateText ? `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-flag-checkered text-[9px]"></i> Out: ${outDateText}</span>` : ''}
@@ -1520,15 +1538,15 @@
                     </div>
 
                     <div class="text-slate-300 font-semibold flex justify-between items-center">
-                        <span>${s.deviceUnit}</span>
-                        ${!isExpanded ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>` : ''}
+                        <span>${device}</span>
+                        ${!isExpanded ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${cost.toLocaleString('id-ID')}</span>` : ''}
                     </div>
 
                     <div class="${isExpanded ? 'block' : 'hidden'} space-y-2 pt-1 border-t border-slate-700/60">
-                        <div class="text-slate-400 italic text-[11px]">${s.deviceIssue}</div>
+                        <div class="text-slate-400 italic text-[11px]">${issue}</div>
                         <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-700/60">
                             <span>${s.techType || 'Internal'} | ${s.arrivalType || 'Toko'}</span>
-                            <span class="font-bold text-amber-400 text-xs">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</span>
+                            <span class="font-bold text-amber-400 text-xs">Rp ${cost.toLocaleString('id-ID')}</span>
                         </div>
                         <div class="pt-1 flex justify-between items-center gap-1">
                             <select onchange="updateStatus('${k}', this.value)" class="w-full bg-slate-900 text-slate-200 border border-slate-700 rounded p-1 text-[10px]">
@@ -1558,7 +1576,7 @@
             document.getElementById('cnt-batal').textContent = counts['Batal'];
         };
 
-        // RENDER CUSTOMERS CRM (DENGAN SORTING FIX)
+        // RENDER CUSTOMERS CRM
         window.renderCustomers = () => {
             const body = document.getElementById('customer-table-body');
             if (!body) return;
@@ -1572,17 +1590,19 @@
             if (query) {
                 keys = keys.filter(k => {
                     const c = rawCustomers[k];
-                    return (c.name || '').toLowerCase().includes(query) ||
-                           (c.phone || '').toLowerCase().includes(query) ||
-                           (c.device || '').toLowerCase().includes(query) ||
-                           (c.source || '').toLowerCase().includes(query) ||
-                           (c.note || '').toLowerCase().includes(query);
+                    const name = (c.name || c.nama || '').toLowerCase();
+                    const phone = (c.phone || c.whatsapp || '').toLowerCase();
+                    const device = (c.device || c.perangkat || '').toLowerCase();
+                    const source = (c.source || '').toLowerCase();
+                    const note = (c.note || c.catatan || '').toLowerCase();
+
+                    return name.includes(query) || phone.includes(query) || device.includes(query) || source.includes(query) || note.includes(query);
                 });
             }
 
             keys.sort((a, b) => {
-                const cA = rawCustomers[a];
-                const cB = rawCustomers[b];
+                const cA = rawCustomers[a] || {};
+                const cB = rawCustomers[b] || {};
 
                 if (sortBy === 'newest') {
                     return getTimeValue(cB, 'chatDate') - getTimeValue(cA, 'chatDate');
@@ -1591,10 +1611,14 @@
                     return getTimeValue(cA, 'chatDate') - getTimeValue(cB, 'chatDate');
                 }
                 if (sortBy === 'nameAsc') {
-                    return (cA.name || '').toLowerCase().localeCompare((cB.name || '').toLowerCase());
+                    const nameA = (cA.name || cA.nama || '').toLowerCase();
+                    const nameB = (cB.name || cB.nama || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
                 }
                 if (sortBy === 'nameDesc') {
-                    return (cB.name || '').toLowerCase().localeCompare((cA.name || '').toLowerCase());
+                    const nameA = (cA.name || cA.nama || '').toLowerCase();
+                    const nameB = (cB.name || cB.nama || '').toLowerCase();
+                    return nameB.localeCompare(nameA);
                 }
                 return 0;
             });
@@ -1606,18 +1630,20 @@
 
             keys.forEach(k => {
                 const c = rawCustomers[k];
-                const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
+                const custName = c.name || c.nama || 'Customer';
+                const phone = c.phone || c.whatsapp || '-';
+                const cleanPhone = phone.replace(/[^0-9]/g, '');
                 const displayDate = c.chatDate ? formatDate(c.chatDate) : formatDate(c.createdAt);
                 const sourceText = c.source || 'Google Maps';
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 border-b';
                 tr.innerHTML = `
-                    <td class="p-3 font-bold text-gray-800">${c.name}</td>
-                    <td class="p-3 text-gray-600">${c.phone}</td>
-                    <td class="p-3 font-medium text-gray-700">${c.device}</td>
+                    <td class="p-3 font-bold text-gray-800">${custName}</td>
+                    <td class="p-3 text-gray-600">${phone}</td>
+                    <td class="p-3 font-medium text-gray-700">${c.device || c.perangkat || '-'}</td>
                     <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold bg-amber-100 text-amber-800 rounded-full border border-amber-200">${sourceText}</span></td>
-                    <td class="p-3 text-gray-500 italic">${c.note || '-'}</td>
+                    <td class="p-3 text-gray-500 italic">${c.note || c.catatan || '-'}</td>
                     <td class="p-3 text-xs text-gray-600 font-semibold">${displayDate}</td>
                     <td class="p-3 text-center space-x-1.5">
                         <a href="https://wa.me/${cleanPhone}" target="_blank" class="px-2.5 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 inline-flex items-center gap-1" title="Chat WA Promo">
@@ -1631,7 +1657,7 @@
             });
         };
 
-        // RENDER SUMMARY SERVICE TABLE (DENGAN SORTING FIX)
+        // RENDER SUMMARY SERVICE TABLE (DENGAN SEARCH & SORTING FIX)
         function renderSummaryTable() {
             const tableBody = document.getElementById('summary-service-table');
             if (!tableBody) return;
@@ -1640,25 +1666,30 @@
             const query = (document.getElementById('searchServiceTable')?.value || '').toLowerCase().trim();
             const sortBy = document.getElementById('sortServiceTable')?.value || 'newest';
 
-            let keys = Object.keys(rawServices);
+            let keys = Object.keys(rawServices || {});
 
+            // 1. FILTER SEARCH (FALLBACK PROPERTI)
             if (query) {
                 keys = keys.filter(k => {
-                    const s = rawServices[k];
+                    const s = rawServices[k] || {};
                     const idCode = `#PSC-${k.substring(1, 6).toUpperCase()}`.toLowerCase();
+                    const custName = (s.customerName || s.name || s.nama || '').toLowerCase();
+                    const device = (s.deviceUnit || s.device || s.perangkat || '').toLowerCase();
+                    const issue = (s.deviceIssue || s.issue || s.keluhan || s.kendala || '').toLowerCase();
                     const statusText = s.status === 'Diambil' ? 'selesai service' : (s.status || '').toLowerCase();
 
                     return idCode.includes(query) ||
-                           (s.customerName || '').toLowerCase().includes(query) ||
-                           (s.deviceUnit || '').toLowerCase().includes(query) ||
-                           (s.deviceIssue || '').toLowerCase().includes(query) ||
+                           custName.includes(query) ||
+                           device.includes(query) ||
+                           issue.includes(query) ||
                            statusText.includes(query);
                 });
             }
 
+            // 2. LOGIKA SORTING PRESISI
             keys.sort((a, b) => {
-                const sA = rawServices[a];
-                const sB = rawServices[b];
+                const sA = rawServices[a] || {};
+                const sB = rawServices[b] || {};
 
                 if (sortBy === 'newest') {
                     return getTimeValue(sB, 'serviceInDate') - getTimeValue(sA, 'serviceInDate');
@@ -1667,23 +1698,37 @@
                     return getTimeValue(sA, 'serviceInDate') - getTimeValue(sB, 'serviceInDate');
                 }
                 if (sortBy === 'nameAsc') {
-                    return (sA.customerName || '').toLowerCase().localeCompare((sB.customerName || '').toLowerCase());
+                    const nameA = (sA.customerName || sA.name || sA.nama || '').toLowerCase();
+                    const nameB = (sB.customerName || sB.name || sB.nama || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
                 }
                 if (sortBy === 'costDesc') {
-                    return (Number(sB.estimatedCost) || 0) - (Number(sA.estimatedCost) || 0);
+                    const costA = Number(sA.estimatedCost !== undefined ? sA.estimatedCost : (sA.cost || sA.biaya || 0));
+                    const costB = Number(sB.estimatedCost !== undefined ? sB.estimatedCost : (sB.cost || sB.biaya || 0));
+                    return costB - costA;
                 }
                 return 0;
             });
 
             if (keys.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Tidak ada data service yang cocok.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Tidak ada data service yang cocok dengan kata kunci "${query}".</td></tr>`;
                 return;
             }
 
+            // 3. RENDER BARIS TABEL
             keys.forEach(k => {
-                const s = rawServices[k];
-                const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
-                const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : '-';
+                const s = rawServices[k] || {};
+                
+                const custName = s.customerName || s.name || s.nama || 'Customer';
+                const device = s.deviceUnit || s.device || s.perangkat || '-';
+                const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '-';
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+                
+                const inDateRaw = s.serviceInDate || s.inDate || s.date;
+                const inDateText = inDateRaw ? formatDate(inDateRaw) : (s.createdAt ? formatDate(s.createdAt) : '-');
+                
+                const outDateRaw = s.serviceOutDate || s.outDate;
+                const outDateText = outDateRaw ? formatDate(outDateRaw) : '-';
 
                 const rawStatus = s.status || 'Service Masuk';
                 const statusLabel = rawStatus === 'Diambil' ? 'Selesai Service' : rawStatus;
@@ -1692,12 +1737,12 @@
                 tr.className = 'hover:bg-amber-50/50 border-b transition';
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-gray-500">#PSC-${k.substring(1, 6).toUpperCase()}</td>
-                    <td class="p-3 font-bold text-gray-800">${s.customerName}</td>
-                    <td class="p-3 font-semibold text-gray-700">${s.deviceUnit}</td>
-                    <td class="p-3 text-gray-600 italic">${s.deviceIssue}</td>
+                    <td class="p-3 font-bold text-gray-800">${custName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${device}</td>
+                    <td class="p-3 text-gray-600 italic">${issue}</td>
                     <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${inDateText}</span></td>
                     <td class="p-3 text-xs font-semibold text-emerald-800"><span class="px-2 py-0.5 bg-emerald-50 rounded border border-emerald-200">${outDateText}</span></td>
-                    <td class="p-3 font-bold text-maroon-700">Rp ${Number(s.estimatedCost).toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-bold text-maroon-700">Rp ${cost.toLocaleString('id-ID')}</td>
                     <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold ${rawStatus === 'Diambil' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-slate-100 text-slate-700'} rounded-full border">${statusLabel}</span></td>
                     <td class="p-3 text-center">
                         <div class="flex items-center justify-center gap-1.5">
@@ -1714,7 +1759,7 @@
             });
         }
 
-        // RENDER KATALOG STOK PRODUK (DENGAN SORTING FIX)
+        // RENDER KATALOG STOK PRODUK
         window.renderStocks = () => {
             const tableBody = document.getElementById('stock-table-body');
             if (!tableBody) return;
@@ -1728,21 +1773,26 @@
             if (query) {
                 keys = keys.filter(k => {
                     const item = rawStocks[k];
-                    return (item.name || '').toLowerCase().includes(query) ||
-                           (item.category || '').toLowerCase().includes(query);
+                    const name = (item.name || item.nama || '').toLowerCase();
+                    const category = (item.category || '').toLowerCase();
+                    return name.includes(query) || category.includes(query);
                 });
             }
 
             keys.sort((a, b) => {
-                const iA = rawStocks[a];
-                const iB = rawStocks[b];
+                const iA = rawStocks[a] || {};
+                const iB = rawStocks[b] || {};
 
                 if (sortBy === 'newest') return b.localeCompare(a);
-                if (sortBy === 'nameAsc') return (iA.name || '').toLowerCase().localeCompare((iB.name || '').toLowerCase());
-                if (sortBy === 'priceDesc') return (Number(iB.price) || 0) - (Number(iA.price) || 0);
-                if (sortBy === 'priceAsc') return (Number(iA.price) || 0) - (Number(iB.price) || 0);
-                if (sortBy === 'qtyDesc') return (Number(iB.qty) || 0) - (Number(iA.qty) || 0);
-                if (sortBy === 'qtyAsc') return (Number(iA.qty) || 0) - (Number(iB.qty) || 0);
+                if (sortBy === 'nameAsc') {
+                    const nameA = (iA.name || iA.nama || '').toLowerCase();
+                    const nameB = (iB.name || iB.nama || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                if (sortBy === 'priceDesc') return Number(iB.price || iB.harga || 0) - Number(iA.price || iA.harga || 0);
+                if (sortBy === 'priceAsc') return Number(iA.price || iA.harga || 0) - Number(iB.price || iB.harga || 0);
+                if (sortBy === 'qtyDesc') return Number(iB.qty || iB.stok || 0) - Number(iA.qty || iA.stok || 0);
+                if (sortBy === 'qtyAsc') return Number(iA.qty || iA.stok || 0) - Number(iB.qty || iB.stok || 0);
                 return 0;
             });
 
@@ -1753,13 +1803,17 @@
 
             keys.forEach((key) => {
                 const item = rawStocks[key];
+                const prodName = item.name || item.nama || 'Produk';
+                const price = Number(item.price || item.harga || 0);
+                const qty = Number(item.qty || item.stok || 0);
+
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 border-b';
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-xs"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-200">${item.category || 'Sparepart'}</span></td>
-                    <td class="p-3 font-semibold text-gray-800">${item.name}</td>
-                    <td class="p-3 text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
-                    <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500 font-bold' : 'text-gray-700'}">${item.qty} Pcs</td>
+                    <td class="p-3 font-semibold text-gray-800">${prodName}</td>
+                    <td class="p-3 text-maroon-700 font-bold">Rp ${price.toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-semibold ${qty < 3 ? 'text-red-500 font-bold' : 'text-gray-700'}">${qty} Pcs</td>
                     <td class="p-3 text-center space-x-1.5">
                         <button onclick="openEditStockModal('${key}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Produk & Stok"><i class="fa-solid fa-pen-to-square text-base"></i></button>
                         <button onclick="deleteStock('${key}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Produk"><i class="fa-solid fa-trash-can text-base"></i></button>
@@ -1769,7 +1823,7 @@
             });
         };
 
-        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK (DENGAN SORTING FIX)
+        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK
         window.renderTransactions = () => {
             const body = document.getElementById('trans-table-body');
             if (!body) return;
@@ -1784,16 +1838,17 @@
                 keys = keys.filter(k => {
                     const t = rawTransactions[k];
                     const trxCode = `#TRX-${k.substring(1, 6).toUpperCase()}`.toLowerCase();
-                    return trxCode.includes(query) ||
-                           (t.customerName || '').toLowerCase().includes(query) ||
-                           (t.productName || '').toLowerCase().includes(query) ||
-                           (t.transDate || '').toLowerCase().includes(query);
+                    const custName = (t.customerName || t.name || '').toLowerCase();
+                    const prodName = (t.productName || t.namaProduk || '').toLowerCase();
+                    const dateText = (t.transDate || '').toLowerCase();
+
+                    return trxCode.includes(query) || custName.includes(query) || prodName.includes(query) || dateText.includes(query);
                 });
             }
 
             keys.sort((a, b) => {
-                const tA = rawTransactions[a];
-                const tB = rawTransactions[b];
+                const tA = rawTransactions[a] || {};
+                const tB = rawTransactions[b] || {};
 
                 if (sortBy === 'newest') {
                     return getTimeValue(tB, 'transDate') - getTimeValue(tA, 'transDate');
@@ -1802,10 +1857,12 @@
                     return getTimeValue(tA, 'transDate') - getTimeValue(tB, 'transDate');
                 }
                 if (sortBy === 'priceDesc') {
-                    return (Number(tB.totalPrice) || 0) - (Number(tA.totalPrice) || 0);
+                    return Number(tB.totalPrice || tB.total || 0) - Number(tA.totalPrice || tA.total || 0);
                 }
                 if (sortBy === 'nameAsc') {
-                    return (tA.customerName || '').toLowerCase().localeCompare((tB.customerName || '').toLowerCase());
+                    const nameA = (tA.customerName || tA.name || '').toLowerCase();
+                    const nameB = (tB.customerName || tB.name || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
                 }
                 return 0;
             });
@@ -1817,16 +1874,19 @@
 
             keys.forEach(k => {
                 const t = rawTransactions[k];
+                const custName = t.customerName || t.name || 'Customer';
+                const prodName = t.productName || t.namaProduk || 'Produk';
+                const totalPrice = Number(t.totalPrice || t.total || 0);
                 const transDateText = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-emerald-50/50 border-b transition';
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-gray-500">#TRX-${k.substring(1, 6).toUpperCase()}</td>
-                    <td class="p-3 font-bold text-gray-800">${t.customerName}</td>
-                    <td class="p-3 font-semibold text-gray-700">${t.productName}</td>
-                    <td class="p-3 text-center font-bold text-gray-800">${t.qty} Pcs</td>
-                    <td class="p-3 font-extrabold text-emerald-700">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-bold text-gray-800">${custName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${prodName}</td>
+                    <td class="p-3 text-center font-bold text-gray-800">${t.qty || 1} Pcs</td>
+                    <td class="p-3 font-extrabold text-emerald-700">Rp ${totalPrice.toLocaleString('id-ID')}</td>
                     <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${transDateText}</span></td>
                     <td class="p-3 text-center space-x-1">
                         <button onclick="printTransactionReceipt('${k}')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Transaksi Produk">
@@ -1895,7 +1955,7 @@
             Object.keys(rawServices).forEach(k => {
                 const s = rawServices[k];
                 if (s.status === 'Batal') return;
-                const cost = Number(s.estimatedCost) || 0;
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
 
                 let itemDate = null;
                 let itemISO = '';
@@ -1914,7 +1974,7 @@
             // 2. Transaksi Penjualan Produk
             Object.keys(rawTransactions).forEach(k => {
                 const t = rawTransactions[k];
-                const cost = Number(t.totalPrice) || 0;
+                const cost = Number(t.totalPrice || t.total || 0);
 
                 let itemDate = null;
                 let itemISO = t.transDate || '';
@@ -2003,7 +2063,7 @@
         // Update Status & Auto-Prompt Ubah Nominal Biaya
         window.updateStatus = (id, newStatus) => {
             const currentService = rawServices[id];
-            let currentCost = currentService ? Number(currentService.estimatedCost) || 0 : 0;
+            let currentCost = currentService ? Number(currentService.estimatedCost !== undefined ? currentService.estimatedCost : (currentService.cost || currentService.biaya || 0)) : 0;
             const updateData = { status: newStatus };
 
             if (newStatus === 'Diambil') {
@@ -2047,6 +2107,10 @@
             const t = rawTransactions[key];
             if (!t) return;
 
+            const custName = t.customerName || t.name || 'Customer';
+            const prodName = t.productName || t.namaProduk || 'Produk';
+            const totalPrice = Number(t.totalPrice || t.total || 0);
+
             const transId = `#TRX-${key.substring(1, 6).toUpperCase()}`;
             const transDate = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
 
@@ -2085,7 +2149,7 @@
                         <div class="info-grid">
                             <div>
                                 <div class="info-item"><span>No Transaksi:</span> ${transId}</div>
-                                <div class="info-item"><span>Nama Pembeli:</span> ${t.customerName}</div>
+                                <div class="info-item"><span>Nama Pembeli:</span> ${custName}</div>
                             </div>
                             <div>
                                 <div class="info-item"><span>Tanggal Transaksi:</span> ${transDate}</div>
@@ -2103,19 +2167,19 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong>${t.productName}</strong></td>
-                                    <td style="text-align: center;">${t.qty} Pcs</td>
-                                    <td style="text-align: right;">Rp ${Number(t.unitPrice).toLocaleString('id-ID')}</td>
-                                    <td style="text-align: right;">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                                    <td><strong>${prodName}</strong></td>
+                                    <td style="text-align: center;">${t.qty || 1} Pcs</td>
+                                    <td style="text-align: right;">Rp ${Number(t.unitPrice || 0).toLocaleString('id-ID')}</td>
+                                    <td style="text-align: right;">Rp ${totalPrice.toLocaleString('id-ID')}</td>
                                 </tr>
                                 <tr class="total-row">
                                     <td colspan="3" style="text-align: right;">TOTAL BAYAR:</td>
-                                    <td style="text-align: right;">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                                    <td style="text-align: right;">Rp ${totalPrice.toLocaleString('id-ID')}</td>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="footer-signatures">
-                            <div>Pembeli / Customer<div class="sig-box">( ${t.customerName} )</div></div>
+                            <div>Pembeli / Customer<div class="sig-box">( ${custName} )</div></div>
                             <div>Kasir PSC Store<div class="sig-box">( Paramount Star Computer )</div></div>
                         </div>
                     </div>
