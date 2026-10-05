@@ -84,6 +84,9 @@
             <button onclick="switchTab('product')" id="tab-product" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
                 <i class="fa-solid fa-boxes-stacked"></i> Produk, Laptop & Sparepart
             </button>
+            <button onclick="switchTab('transaction')" id="tab-transaction" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-cart-shopping"></i> Transaksi Penjualan Produk
+            </button>
             <button onclick="switchTab('karyawan')" id="tab-karyawan" class="tab-btn px-5 py-3 border-b-2 border-transparent hover:text-maroon-700 flex items-center gap-2 whitespace-nowrap">
                 <i class="fa-solid fa-users-gear"></i> Karyawan & Joblist
             </button>
@@ -183,7 +186,6 @@
                 <form id="service-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-3 text-xs">
                     <div>
                         <label class="block font-semibold text-gray-600 uppercase mb-1">Pilih Customer (CRM)</label>
-                        <!-- KOTAK INPUT SEARCHABLE UNTUK PILIH CUSTOMER CRM -->
                         <input type="text" id="searchCrmCustomer" list="crmDatalist" oninput="autoFillCustomerData()" placeholder="Ketik/Cari Nama..." required class="w-full border rounded-lg p-2 bg-amber-50 font-bold focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                         <datalist id="crmDatalist"></datalist>
                     </div>
@@ -385,6 +387,7 @@
         <!-- ================= TAB 3: PRODUK, LAPTOP & SPAREPART ================= -->
         <section id="page-product" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Tambah Produk / Sparepart -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-box-open"></i> Tambah Produk / Laptop / Sparepart
@@ -392,7 +395,7 @@
                     <form id="stock-form" class="space-y-3">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Kategori Barang</label>
-                            <select id="stockCategory" class="w-full border rounded-lg p-2 text-xs bg-white font-bold">
+                            <select id="stockCategory" class="w-full border rounded-lg p-2.5 text-sm bg-white font-bold focus:ring-2 focus:ring-maroon-700 focus:outline-none">
                                 <option value="Laptop Dijual">Laptop Dijual (Second / Baru)</option>
                                 <option value="Aksesoris">Aksesoris (Mouse/Tas/Charger)</option>
                                 <option value="Sparepart">Sparepart (SSD/RAM/LCD/Baterai)</option>
@@ -416,6 +419,7 @@
                     </form>
                 </div>
 
+                <!-- Tabel Katalog Produk (Lengkap Tombol Edit & Hapus) -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 class="text-lg font-bold text-maroon-700 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-boxes-stacked"></i> Stok Produk, Laptop & Sparepart Store
@@ -440,7 +444,83 @@
             </div>
         </section>
 
-        <!-- ================= TAB 4: KARYAWAN & JOBLIST ================= -->
+        <!-- ================= TAB 4: TRANSAKSI PENJUALAN PRODUK (NEW) ================= -->
+        <section id="page-transaction" class="tab-page hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Kasir Input Transaksi Penjualan Produk -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
+                    <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
+                        <i class="fa-solid fa-cash-register"></i> Kasir Penjualan Produk
+                    </h2>
+                    <form id="trans-form" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-semibold text-gray-600 uppercase mb-1">Pilih Customer (CRM)</label>
+                            <input type="text" id="transSearchCust" list="crmDatalist" placeholder="Ketik/Cari Pembeli..." required class="w-full border rounded-lg p-2.5 text-sm bg-amber-50 font-bold focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-600 uppercase mb-1">Pilih Produk / Barang</label>
+                            <select id="transSelectStock" onchange="autoFillStockPrice()" required class="w-full border rounded-lg p-2.5 text-sm bg-white font-semibold border-gray-300 focus:ring-2 focus:ring-maroon-700">
+                                <option value="">-- Pilih Barang dari Stok --</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block font-semibold text-gray-600 uppercase mb-1">Harga Satuan (Rp)</label>
+                                <input type="number" id="transUnitPrice" readonly required class="w-full border rounded-lg p-2.5 text-sm bg-gray-100 font-bold text-gray-700">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-gray-600 uppercase mb-1">Jumlah Beli (Qty)</label>
+                                <input type="number" id="transQty" value="1" min="1" oninput="calculateTransTotal()" required class="w-full border rounded-lg p-2.5 text-sm font-bold focus:ring-2 focus:ring-maroon-700">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-600 uppercase mb-1">Total Biaya (Rp)</label>
+                            <input type="number" id="transTotalPrice" readonly required class="w-full border rounded-lg p-2.5 text-base font-extrabold bg-emerald-50 text-emerald-800 border-emerald-300">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-600 uppercase mb-1">Tanggal Transaksi</label>
+                            <input type="date" id="transDate" required class="w-full border rounded-lg p-2.5 text-sm bg-amber-50 font-medium">
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-check"></i> Simpan Transaksi & Potong Stok
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tabel Riwayat Transaksi Penjualan Produk -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                        <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
+                            <i class="fa-solid fa-receipt"></i> Riwayat Transaksi Penjualan Produk Store
+                        </h2>
+                        <button onclick="exportTransactionsToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-[420px] overflow-y-auto table-scroll border rounded-lg">
+                        <table class="w-full text-xs text-left text-gray-600 relative">
+                            <thead class="uppercase bg-gray-100 text-gray-700 border-b sticky top-0 z-10 shadow-sm">
+                                <tr>
+                                    <th class="p-3">ID Transaksi</th>
+                                    <th class="p-3">Nama Pembeli</th>
+                                    <th class="p-3">Produk / Barang</th>
+                                    <th class="p-3 text-center">Qty</th>
+                                    <th class="p-3">Total Bayar</th>
+                                    <th class="p-3">Tgl Transaksi</th>
+                                    <th class="p-3 text-center">Cetak / Hapus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trans-table-body" class="divide-y divide-gray-100">
+                                <tr><td colspan="7" class="p-4 text-center text-gray-400">Belum ada riwayat transaksi produk.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: KARYAWAN & JOBLIST ================= -->
         <section id="page-karyawan" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
@@ -605,6 +685,45 @@
         </div>
     </div>
 
+    <!-- MODAL EDIT STOCK / PRODUK (NEW) -->
+    <div id="edit-stock-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Data Produk & Stok
+                </h3>
+                <button onclick="closeEditStockModal()" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="edit-stock-form" class="space-y-3 text-xs">
+                <input type="hidden" id="editStockKey">
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Kategori Barang</label>
+                    <select id="editStockCategory" class="w-full border rounded-lg p-2.5 text-xs bg-white font-bold">
+                        <option value="Laptop Dijual">Laptop Dijual (Second / Baru)</option>
+                        <option value="Aksesoris">Aksesoris (Mouse/Tas/Charger)</option>
+                        <option value="Sparepart">Sparepart (SSD/RAM/LCD/Baterai)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Nama Produk / Tipe Laptop</label>
+                    <input type="text" id="editStockName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Harga Jual (Rp)</label>
+                    <input type="number" id="editStockPrice" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none font-bold text-maroon-700">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 uppercase mb-1">Sisa Stok</label>
+                    <input type="number" id="editStockQty" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none font-bold">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeEditStockModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs font-bold hover:bg-maroon-800">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- FIREBASE REALTIME DATABASE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -627,13 +746,15 @@
         const customersRef = ref(db, 'crm_customers');
         const servicesRef = ref(db, 'service_orders');
         const stocksRef = ref(db, 'inventory_stocks');
+        const transactionsRef = ref(db, 'product_transactions');
         const employeesRef = ref(db, 'owner_employees');
 
         let rawCustomers = {};
         let rawServices = {};
         let rawStocks = {};
+        let rawTransactions = {};
         let rawEmployees = {};
-        let crmMap = {}; // Penampung pasangan nama-key customer CRM
+        let crmMap = {};
         let cardExpandedState = {};
         let chartInstance = null;
         let currentChartMode = 'daily';
@@ -643,6 +764,7 @@
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('crmDate').value = todayStr;
         document.getElementById('serviceInDate').value = todayStr;
+        document.getElementById('transDate').value = todayStr;
 
         // Realtime Listeners
         onValue(customersRef, (snapshot) => {
@@ -664,6 +786,12 @@
         onValue(stocksRef, (snapshot) => {
             rawStocks = snapshot.val() || {};
             renderStocks();
+            populateStockDropdown();
+        });
+
+        onValue(transactionsRef, (snapshot) => {
+            rawTransactions = snapshot.val() || {};
+            renderTransactions();
         });
 
         onValue(employeesRef, (snapshot) => {
@@ -725,17 +853,15 @@
             renderServices();
         };
 
-        // POPULATE DATALIST DENGAN SORT TERBARU KE TERLAMA (NEWEST FIRST)
         function populateCrmDatalist() {
             const datalist = document.getElementById('crmDatalist');
             datalist.innerHTML = '';
             crmMap = {};
 
-            // Urutkan kunci dari yang paling baru (terbaru di paling atas)
             const sortedKeys = Object.keys(rawCustomers).sort((a, b) => {
                 const timeA = rawCustomers[a].createdAt || 0;
                 const timeB = rawCustomers[b].createdAt || 0;
-                return timeB - timeA; // Descending
+                return timeB - timeA;
             });
 
             sortedKeys.forEach(k => {
@@ -749,7 +875,6 @@
             });
         }
 
-        // AUTO-FILL DATA CUSTOMER SAAT DI-KETIK / DIPIIH
         window.autoFillCustomerData = () => {
             const searchVal = document.getElementById('searchCrmCustomer').value.trim();
             const custKey = crmMap[searchVal];
@@ -759,10 +884,41 @@
                 document.getElementById('customerPhone').value = c.phone || '';
                 document.getElementById('deviceUnit').value = c.device || '';
             } else {
-                // Jika mengetik nama baru manual yang belum ada di CRM
                 document.getElementById('customerPhone').value = '';
                 document.getElementById('deviceUnit').value = '';
             }
+        };
+
+        // POPULATE DROPDOWN KASIR STOK BARANG
+        function populateStockDropdown() {
+            const dropdown = document.getElementById('transSelectStock');
+            dropdown.innerHTML = '<option value="">-- Pilih Barang dari Stok --</option>';
+
+            Object.keys(rawStocks).forEach(k => {
+                const item = rawStocks[k];
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.textContent = `${item.name} (Sisa: ${item.qty} Pcs) - Rp ${Number(item.price).toLocaleString('id-ID')}`;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        window.autoFillStockPrice = () => {
+            const stockKey = document.getElementById('transSelectStock').value;
+            if (stockKey && rawStocks[stockKey]) {
+                const item = rawStocks[stockKey];
+                document.getElementById('transUnitPrice').value = item.price || 0;
+                calculateTransTotal();
+            } else {
+                document.getElementById('transUnitPrice').value = '';
+                document.getElementById('transTotalPrice').value = '';
+            }
+        };
+
+        window.calculateTransTotal = () => {
+            const price = parseInt(document.getElementById('transUnitPrice').value) || 0;
+            const qty = parseInt(document.getElementById('transQty').value) || 1;
+            document.getElementById('transTotalPrice').value = price * qty;
         };
 
         // Submit CRM Customer Baru
@@ -1074,13 +1230,48 @@
             });
         });
 
+        // Open & Close Edit Modal Stock
+        window.openEditStockModal = (key) => {
+            const item = rawStocks[key];
+            if (!item) return;
+
+            document.getElementById('editStockKey').value = key;
+            document.getElementById('editStockCategory').value = item.category || 'Sparepart';
+            document.getElementById('editStockName').value = item.name || '';
+            document.getElementById('editStockPrice').value = item.price || 0;
+            document.getElementById('editStockQty').value = item.qty || 0;
+
+            document.getElementById('edit-stock-modal').classList.remove('hidden');
+        };
+
+        window.closeEditStockModal = () => {
+            document.getElementById('edit-stock-modal').classList.add('hidden');
+        };
+
+        document.getElementById('edit-stock-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('editStockKey').value;
+            if (!key) return;
+
+            const updateData = {
+                category: document.getElementById('editStockCategory').value,
+                name: document.getElementById('editStockName').value,
+                price: parseInt(document.getElementById('editStockPrice').value) || 0,
+                qty: parseInt(document.getElementById('editStockQty').value) || 0
+            };
+
+            update(ref(db, `inventory_stocks/${key}`), updateData).then(() => {
+                closeEditStockModal();
+                alert('Data Stok Produk Berhasil Diperbarui!');
+            });
+        });
+
         // Submit Service Card (Trello)
         document.getElementById('service-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const searchVal = document.getElementById('searchCrmCustomer').value.trim();
             const custKey = crmMap[searchVal];
             
-            // Ambil Nama Customer (Jika tidak terdaftar di CRM, gunakan teks yang diketik)
             let custName = searchVal.split(' - ')[0];
             if (custKey && rawCustomers[custKey]) {
                 custName = rawCustomers[custKey].name;
@@ -1106,6 +1297,61 @@
                 document.getElementById('service-form').reset();
                 document.getElementById('searchCrmCustomer').value = '';
                 document.getElementById('serviceInDate').value = todayStr;
+            });
+        });
+
+        // SUBMIT TRANSAKSI PENJUALAN PRODUK (AUTO-DEDUCT STOK)
+        document.getElementById('trans-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const stockKey = document.getElementById('transSelectStock').value;
+            const item = rawStocks[stockKey];
+
+            if (!item) {
+                alert('Silakan pilih produk yang tersedia dari stok!');
+                return;
+            }
+
+            const buyQty = parseInt(document.getElementById('transQty').value) || 1;
+            const currentQty = parseInt(item.qty) || 0;
+
+            if (buyQty > currentQty) {
+                alert(`Stok tidak mencukupi! Stok saat ini hanya ${currentQty} Pcs.`);
+                return;
+            }
+
+            const searchVal = document.getElementById('transSearchCust').value.trim();
+            const custKey = crmMap[searchVal];
+            let custName = searchVal.split(' - ')[0];
+            if (custKey && rawCustomers[custKey]) {
+                custName = rawCustomers[custKey].name;
+            }
+
+            const unitPrice = parseInt(document.getElementById('transUnitPrice').value) || 0;
+            const totalPrice = parseInt(document.getElementById('transTotalPrice').value) || 0;
+            const transDateVal = document.getElementById('transDate').value || todayStr;
+
+            const newTransaction = {
+                customerName: custName || 'Customer Toko',
+                productKey: stockKey,
+                productName: item.name,
+                category: item.category || 'Barang',
+                qty: buyQty,
+                unitPrice: unitPrice,
+                totalPrice: totalPrice,
+                transDate: transDateVal,
+                createdAt: Date.now()
+            };
+
+            // 1. Simpan Transaksi Penjualan
+            push(transactionsRef, newTransaction).then(() => {
+                // 2. Potong Sisa Stok Produk di Database Realtime
+                const updatedQty = Math.max(0, currentQty - buyQty);
+                update(ref(db, `inventory_stocks/${stockKey}`), { qty: updatedQty });
+
+                document.getElementById('trans-form').reset();
+                document.getElementById('transSearchCust').value = '';
+                document.getElementById('transDate').value = todayStr;
+                alert('Transaksi Penjualan Berhasil Disimpan & Stok Berhasil Dipotong!');
             });
         });
 
@@ -1279,28 +1525,9 @@
                 weeksMap[w] = 0;
             }
 
-            Object.keys(rawServices).forEach(k => {
-                const s = rawServices[k];
-                const cost = Number(s.estimatedCost) || 0;
-
-                if (s.status === 'Batal') return;
-
-                let itemDate = null;
-                let itemISO = '';
-
-                if (s.serviceInDate) {
-                    itemISO = s.serviceInDate;
-                    const parts = s.serviceInDate.split('-');
-                    if (parts.length === 3) {
-                        itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                    }
-                } else if (s.createdAt) {
-                    itemDate = new Date(s.createdAt);
-                    itemISO = itemDate.toISOString().split('T')[0];
-                }
-
+            // Gabungkan Omset dari Service + Penjualan Produk
+            const processIncome = (cost, itemDate, itemISO) => {
                 if (!itemDate) return;
-
                 const yr = itemDate.getFullYear();
                 const mo = itemDate.getMonth();
                 const wk = getWeekNumber(itemDate);
@@ -1318,6 +1545,44 @@
                 }
                 if (!yearsMap[yr]) yearsMap[yr] = 0;
                 yearsMap[yr] += cost;
+            };
+
+            // 1. Service Orders
+            Object.keys(rawServices).forEach(k => {
+                const s = rawServices[k];
+                if (s.status === 'Batal') return;
+                const cost = Number(s.estimatedCost) || 0;
+
+                let itemDate = null;
+                let itemISO = '';
+                if (s.serviceInDate) {
+                    itemISO = s.serviceInDate;
+                    const parts = s.serviceInDate.split('-');
+                    if (parts.length === 3) itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                } else if (s.createdAt) {
+                    itemDate = new Date(s.createdAt);
+                    itemISO = itemDate.toISOString().split('T')[0];
+                }
+
+                processIncome(cost, itemDate, itemISO);
+            });
+
+            // 2. Transaksi Penjualan Produk
+            Object.keys(rawTransactions).forEach(k => {
+                const t = rawTransactions[k];
+                const cost = Number(t.totalPrice) || 0;
+
+                let itemDate = null;
+                let itemISO = t.transDate || '';
+                if (t.transDate) {
+                    const parts = t.transDate.split('-');
+                    if (parts.length === 3) itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                } else if (t.createdAt) {
+                    itemDate = new Date(t.createdAt);
+                    itemISO = itemDate.toISOString().split('T')[0];
+                }
+
+                processIncome(cost, itemDate, itemISO);
             });
 
             document.getElementById('sum-daily').textContent = `Rp ${daily.toLocaleString('id-ID')}`;
@@ -1425,7 +1690,7 @@
             });
         };
 
-        // Update Status & Auto-Prompt Ubah Nominal Biaya + Auto Set Tgl Keluar jika "Diserahkan (Selesai Service)"
+        // Update Status & Auto-Prompt Ubah Nominal Biaya
         window.updateStatus = (id, newStatus) => {
             const currentService = rawServices[id];
             let currentCost = currentService ? Number(currentService.estimatedCost) || 0 : 0;
@@ -1467,6 +1732,7 @@
             });
         });
 
+        // RENDER KATALOG STOK PRODUK (LENGKAP EDIT & HAPUS)
         window.renderStocks = () => {
             const tableBody = document.getElementById('stock-table-body');
             tableBody.innerHTML = '';
@@ -1478,16 +1744,185 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 border-b';
                 tr.innerHTML = `
-                    <td class="p-3 font-bold text-xs"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full">${item.category || 'Sparepart'}</span></td>
+                    <td class="p-3 font-bold text-xs"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-200">${item.category || 'Sparepart'}</span></td>
                     <td class="p-3 font-semibold text-gray-800">${item.name}</td>
                     <td class="p-3 text-maroon-700 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
-                    <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500' : 'text-gray-700'}">${item.qty} Pcs</td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteStock('${key}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    <td class="p-3 font-semibold ${item.qty < 3 ? 'text-red-500 font-bold' : 'text-gray-700'}">${item.qty} Pcs</td>
+                    <td class="p-3 text-center space-x-1.5">
+                        <button onclick="openEditStockModal('${key}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Produk & Stok"><i class="fa-solid fa-pen-to-square text-base"></i></button>
+                        <button onclick="deleteStock('${key}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Produk"><i class="fa-solid fa-trash-can text-base"></i></button>
                     </td>
                 `;
                 tableBody.appendChild(tr);
             });
+        };
+
+        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK
+        window.renderTransactions = () => {
+            const body = document.getElementById('trans-table-body');
+            body.innerHTML = '';
+            const keys = Object.keys(rawTransactions).reverse();
+
+            if (keys.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Belum ada riwayat transaksi produk.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const t = rawTransactions[k];
+                const transDateText = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-emerald-50/50 border-b transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-gray-500">#TRX-${k.substring(1, 6).toUpperCase()}</td>
+                    <td class="p-3 font-bold text-gray-800">${t.customerName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${t.productName}</td>
+                    <td class="p-3 text-center font-bold text-gray-800">${t.qty} Pcs</td>
+                    <td class="p-3 font-extrabold text-emerald-700">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                    <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${transDateText}</span></td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="printTransactionReceipt('${k}')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Transaksi Produk">
+                            <i class="fa-solid fa-print"></i> Print Nota
+                        </button>
+                        <button onclick="deleteTransaction('${k}')" class="p-1 text-red-500 hover:text-red-700" title="Hapus Transaksi"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
+
+        // FUNGSI PRINT NOTA TRANSAKSI PENJUALAN PRODUK
+        window.printTransactionReceipt = (key) => {
+            const t = rawTransactions[key];
+            if (!t) return;
+
+            const transId = `#TRX-${key.substring(1, 6).toUpperCase()}`;
+            const transDate = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
+
+            const printWindow = window.open('', '_blank', 'width=800,height=900');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Nota Penjualan ${transId} - Paramount Star Computer</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; line-height: 1.4; }
+                        .receipt-box { border: 2px solid #800000; padding: 20px; border-radius: 10px; max-width: 700px; margin: 0 auto; }
+                        .header { text-align: center; border-bottom: 2px dashed #800000; padding-bottom: 12px; margin-bottom: 15px; }
+                        .header h1 { margin: 0; color: #800000; font-size: 20px; letter-spacing: 0.5px; }
+                        .header p { margin: 3px 0; font-size: 11px; color: #334155; font-weight: 500; }
+                        .title-badge { background: #800000; color: #fff; text-align: center; font-weight: bold; padding: 6px; border-radius: 5px; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; }
+                        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom: 15px; }
+                        .info-item span { font-weight: bold; color: #475569; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+                        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+                        th { background-color: #f1f5f9; color: #334155; }
+                        .total-row { font-weight: bold; font-size: 14px; background: #dcfce7; color: #15803d; }
+                        .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 11px; }
+                        .sig-box { width: 140px; border-top: 1px solid #475569; margin-top: 45px; }
+                        @media print {
+                            body { padding: 0; }
+                            .receipt-box { border: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-box">
+                        <div class="header">
+                            <h1>PARAMOUNT STAR COMPUTER (PSC)</h1>
+                            <p>Komplek Puri Indah Jatinangor Blok A3 nomor 21, Jalan sayang, Cikeruh, Jatinangor, Sumedang.</p>
+                            <p>Whatsapp / hotline : 0851-8824-3665</p>
+                        </div>
+
+                        <div class="title-badge">NOTA PENJUALAN PRODUK / SPAREPART</div>
+
+                        <div class="info-grid">
+                            <div>
+                                <div class="info-item"><span>No Transaksi:</span> ${transId}</div>
+                                <div class="info-item"><span>Nama Pembeli:</span> ${t.customerName}</div>
+                            </div>
+                            <div>
+                                <div class="info-item"><span>Tanggal Transaksi:</span> ${transDate}</div>
+                                <div class="info-item"><span>Status Pembayaran:</span> <strong style="color:#15803d;">LUNAS</strong></div>
+                            </div>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Produk / Barang</th>
+                                    <th style="text-align: center;">Qty</th>
+                                    <th style="text-align: right;">Harga Satuan (Rp)</th>
+                                    <th style="text-align: right;">Total Subtotal (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>${t.productName}</strong></td>
+                                    <td style="text-align: center;">${t.qty} Pcs</td>
+                                    <td style="text-align: right;">Rp ${Number(t.unitPrice).toLocaleString('id-ID')}</td>
+                                    <td style="text-align: right;">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="3" style="text-align: right;">TOTAL BAYAR:</td>
+                                    <td style="text-align: right;">Rp ${Number(t.totalPrice).toLocaleString('id-ID')}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="footer-signatures">
+                            <div>
+                                Pembeli / Customer
+                                <div class="sig-box">( ${t.customerName} )</div>
+                            </div>
+                            <div>
+                                Kasir PSC Store
+                                <div class="sig-box">( Paramount Star Computer )</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+
+        // EXPORT REKAP TRANSAKSI PRODUK KE EXCEL
+        window.exportTransactionsToExcel = () => {
+            const keys = Object.keys(rawTransactions).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada transaksi produk untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const t = rawTransactions[key];
+                return {
+                    "No": index + 1,
+                    "ID Transaksi": `#TRX-${key.substring(1, 6).toUpperCase()}`,
+                    "Nama Pembeli": t.customerName || '',
+                    "Nama Produk / Sparepart": t.productName || '',
+                    "Kategori": t.category || '',
+                    "Jumlah (Qty)": t.qty || 0,
+                    "Harga Satuan (Rp)": Number(t.unitPrice) || 0,
+                    "Total Bayar (Rp)": Number(t.totalPrice) || 0,
+                    "Tanggal Transaksi": t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt)
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi Penjualan");
+
+            const fileName = `Rekap_Transaksi_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
         };
 
         // Submit Karyawan
@@ -1531,6 +1966,7 @@
         window.deleteCustomer = (id) => { if (confirm('Hapus customer dari CRM?')) remove(ref(db, `crm_customers/${id}`)); };
         window.deleteOrder = (id) => { if (confirm('Hapus kartu servis ini?')) remove(ref(db, `service_orders/${id}`)); };
         window.deleteStock = (id) => { if (confirm('Hapus produk/laptop ini?')) remove(ref(db, `inventory_stocks/${id}`)); };
+        window.deleteTransaction = (id) => { if (confirm('Hapus riwayat transaksi ini?')) remove(ref(db, `product_transactions/${id}`)); };
         window.deleteEmployee = (id) => { if (confirm('Hapus karyawan ini?')) remove(ref(db, `owner_employees/${id}`)); };
     </script>
 </body>
