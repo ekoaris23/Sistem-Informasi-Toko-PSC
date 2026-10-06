@@ -169,9 +169,10 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-gray-600">
-                            <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b">
+                    <!-- TABEL DENGAN BATAS TINGGI (MAX-HEIGHT 380PX) DAN SCROLLBAR -->
+                    <div class="overflow-x-auto max-h-[380px] overflow-y-auto table-scroll border rounded-lg">
+                        <table class="w-full text-sm text-left text-gray-600 relative">
+                            <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b sticky top-0 z-10 shadow-sm">
                                 <tr>
                                     <th class="p-3">Nama</th>
                                     <th class="p-3">WhatsApp</th>
