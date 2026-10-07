@@ -28,7 +28,6 @@ let cardExpandedState = {};
 let chartInstance = null;
 let currentChartMode = 'daily';
 
-// Helpers DOM
 const $ = (id) => document.getElementById(id);
 const getVal = (id) => $(id)?.value || '';
 
@@ -56,7 +55,6 @@ const getWeekNumber = (d) => {
     return Math.ceil((((date - new Date(Date.UTC(date.getUTCFullYear(), 0, 1))) / 86400000) + 1) / 7);
 };
 
-// Realtime Listeners
 onValue(refs.customers, (s) => { rawData.customers = s.val() || {}; renderCustomers(); populateCrmDatalist(); });
 onValue(refs.services, (s) => {
     const sb = $('status-badge');
@@ -79,8 +77,10 @@ window.switchTab = (tabName) => {
     });
     $(`page-${tabName}`).classList.remove('hidden');
     const activeBtn = $(`tab-${tabName}`);
-    activeBtn.classList.add('border-maroon-700', 'text-maroon-700', 'font-bold');
-    activeBtn.classList.remove('border-transparent');
+    if (activeBtn) {
+        activeBtn.classList.add('border-maroon-700', 'text-maroon-700', 'font-bold');
+        activeBtn.classList.remove('border-transparent');
+    }
 };
 
 window.setChartMode = (mode) => {
@@ -137,7 +137,6 @@ window.calculateTransTotal = () => {
     $('transTotalPrice').value = (parseInt(getVal('transUnitPrice')) || 0) * (parseInt(getVal('transQty')) || 1);
 };
 
-// Form Submit Listeners
 $('customer-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     push(refs.customers, {
@@ -200,7 +199,6 @@ $('emp-form')?.addEventListener('submit', (e) => {
     }).then(() => $('emp-form').reset());
 });
 
-// Edit Form Submit Listeners
 $('edit-crm-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const key = getVal('editCrmKey'); if(!key) return;
@@ -231,7 +229,6 @@ $('edit-stock-form')?.addEventListener('submit', (e) => {
     }).then(() => { toggleModal('edit-stock-modal', false); alert('Data Stok Produk Berhasil Diperbarui!'); });
 });
 
-// Unified Export Excel
 window.exportToExcel = (type) => {
     let data = [], fileName = '', sheetName = '';
     if (type === 'crm') {
@@ -282,7 +279,6 @@ window.exportToExcel = (type) => {
     XLSX.writeFile(wb, fileName);
 };
 
-// Generic Receipt Printer
 function printReceipt(config) {
     const printWindow = window.open('', '_blank', 'width=800,height=900');
     printWindow.document.write(`
@@ -319,12 +315,10 @@ function printReceipt(config) {
                     <div>Kasir / Teknisi PSC<div class="sig-box">( Paramount Star Computer )</div></div>
                 </div>
             </div>
-            <script>
-                window.onload = function() { window.print(); };
-            </` + `script>
         </body></html>
     `);
     printWindow.document.close();
+    setTimeout(() => { printWindow.print(); }, 500);
 }
 
 window.printServiceReceipt = (key, receiptType) => {
@@ -395,7 +389,6 @@ window.printTransactionReceipt = (key) => {
     });
 };
 
-// Open Modal Handlers
 window.openEditCrmModal = (key) => {
     const c = rawData.customers[key]; if (!c) return;
     $('editCrmKey').value = key; $('editCrmName').value = c.name \vert{}\vert{} c.nama \vert{}\vert{} '';$('editCrmPhone').value = c.phone || c.whatsapp || ''; $('editCrmDevice').value = c.device \vert{}\vert{} c.perangkat \vert{}\vert{} '';$('editCrmSource').value = c.source || 'Google Maps'; $('editCrmNote').value = c.note \vert{}\vert{} c.catatan \vert{}\vert{} '';$('editCrmDate').value = c.chatDate || (c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : todayStr);
@@ -420,7 +413,6 @@ window.openEditStockModal = (key) => {
     toggleModal('edit-stock-modal', true);
 };
 
-// Render Kanban Board Cards
 function renderServices() {
     const cols = { 'Service Masuk': $('col-masuk'), 'Proses': $('col-proses'), 'Selesai':$('col-selesai'), 'Konfirmasi': $('col-konfirmasi'), 'Diambil':$('col-diambil'), 'Garansi': $('col-garansi'), 'Batal':$('col-batal') };
     const counts = { 'Service Masuk': 0, 'Proses': 0, 'Selesai': 0, 'Konfirmasi': 0, 'Diambil': 0, 'Garansi': 0, 'Batal': 0 };
@@ -495,7 +487,6 @@ function renderServices() {
     if($('cnt-batal'))$('cnt-batal').textContent = counts['Batal'];
 }
 
-// Render Customers Table
 function renderCustomers() {
     const body = $('customer-table-body'); if (!body) return;
     const query = getVal('searchCrmTable').toLowerCase().trim();
@@ -540,7 +531,6 @@ function renderCustomers() {
     body.innerHTML = ''; body.appendChild(frag);
 }
 
-// Render Summary Service Table
 function renderSummaryTable() {
     const body = $('summary-service-table'); if (!body) return;
     const query = getVal('searchServiceTable').toLowerCase().trim();
@@ -591,7 +581,6 @@ function renderSummaryTable() {
     body.innerHTML = ''; body.appendChild(frag);
 }
 
-// Render Stocks Table
 function renderStocks() {
     const body = $('stock-table-body'); if (!body) return;
     const query = getVal('searchStockTable').toLowerCase().trim();
@@ -636,7 +625,6 @@ function renderStocks() {
     body.innerHTML = ''; body.appendChild(frag);
 }
 
-// Render Transactions Table
 function renderTransactions() {
     const body = $('trans-table-body'); if (!body) return;
     const query = getVal('searchTransTable').toLowerCase().trim();
@@ -681,7 +669,6 @@ function renderTransactions() {
     body.innerHTML = ''; body.appendChild(frag);
 }
 
-// Render Employees Table
 function renderEmployees() {
     const body = $('emp-table-body'); if (!body) return;
     const keys = Object.keys(rawData.employees);
@@ -703,7 +690,6 @@ function renderEmployees() {
     body.innerHTML = ''; body.appendChild(frag);
 }
 
-// Financial Reports & Chart Rendering
 function renderFinancialReports() {
     const now = new Date();
     const todayISO = now.toISOString().split('T')[0];
@@ -814,14 +800,12 @@ window.updateStatus = (id, newStatus) => {
     update(ref(db, `service_orders/${id}`), updateData);
 };
 
-// Global Delete Handlers
 window.deleteCustomer = (id) => confirm('Hapus customer dari CRM?') && remove(ref(db, `crm_customers/${id}`));
 window.deleteOrder = (id) => confirm('Hapus kartu servis ini?') && remove(ref(db, `service_orders/${id}`));
 window.deleteStock = (id) => confirm('Hapus produk/laptop ini?') && remove(ref(db, `inventory_stocks/${id}`));
 window.deleteTransaction = (id) => confirm('Hapus riwayat transaksi ini?') && remove(ref(db, `product_transactions/${id}`));
 window.deleteEmployee = (id) => confirm('Hapus karyawan ini?') && remove(ref(db, `owner_employees/${id}`));
 
-// Export Fungsi Render ke Window Global
 window.renderCustomers = renderCustomers;
 window.renderServices = renderServices;
 window.renderSummaryTable = renderSummaryTable;
