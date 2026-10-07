@@ -11,7 +11,13 @@
             theme: {
                 extend: {
                     colors: {
-                        maroon: { 50: '#fdf2f2', 100: '#fde8e8', 600: '#800000', 700: '#660000', 800: '#4d0000' }
+                        maroon: {
+                            50: '#fdf2f2',
+                            100: '#fde8e8',
+                            600: '#800000',
+                            700: '#660000',
+                            800: '#4d0000',
+                        }
                     }
                 }
             }
@@ -19,13 +25,29 @@
     </script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js & SheetJS -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx) untuk Export Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        .kanban-scroll::-webkit-scrollbar, .column-scroll::-webkit-scrollbar, .table-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-        .kanban-scroll::-webkit-scrollbar-thumb, .column-scroll::-webkit-scrollbar-thumb, .table-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-        .kanban-scroll::-webkit-scrollbar-thumb:hover, .column-scroll::-webkit-scrollbar-thumb:hover, .table-scroll::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        /* Custom Scrollbar untuk Papan Trello dan Tabel */
+        .kanban-scroll::-webkit-scrollbar,
+        .column-scroll::-webkit-scrollbar,
+        .table-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb,
+        .column-scroll::-webkit-scrollbar-thumb,
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb:hover,
+        .column-scroll::-webkit-scrollbar-thumb:hover,
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col font-sans">
@@ -74,9 +96,10 @@
     <!-- Main Content Container -->
     <main class="container mx-auto p-4 md:p-6 flex-grow">
 
-        <!-- TAB 1: DATABASE CUSTOMER (CRM) -->
+        <!-- ================= TAB 1: DATABASE CUSTOMER (CRM) ================= -->
         <section id="page-customer" class="tab-page space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Input Customer Chatting WA Baru -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-user-plus"></i> Input Customer Chatting (WA)
@@ -118,16 +141,18 @@
                     </form>
                 </div>
 
+                <!-- Database Customer CRM Table -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-address-book"></i> Database Customer Chatting & Prospek Repeat Order
                         </h2>
-                        <button onclick="exportToExcel('crm')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                        <button onclick="exportCrmToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
                     </div>
 
+                    <!-- BARIS FILTER SEARCH & SORTING CRM -->
                     <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                         <div class="relative flex-grow min-w-[200px]">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
@@ -166,8 +191,9 @@
             </div>
         </section>
 
-        <!-- TAB 2: ALUR SERVICE LAPTOP -->
+        <!-- ================= TAB 2: ALUR SERVICE LAPTOP ================= -->
         <section id="page-service" class="tab-page hidden space-y-6">
+            <!-- Form Input Service Baru -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-md font-bold text-maroon-700 flex items-center gap-2">
@@ -294,16 +320,18 @@
                 </div>
             </div>
 
+            <!-- TABEL RANGKUMAN SERVICE DENGAN SEARCH & SORTING -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-table-list"></i> Tabel Rangkuman Data Service Toko PSC
                     </h3>
-                    <button onclick="exportToExcel('service')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                    <button onclick="exportServiceToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                         <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                     </button>
                 </div>
 
+                <!-- BARIS FILTER SEARCH & SORTING SERVICE TABLE -->
                 <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                     <div class="relative flex-grow min-w-[200px]">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
@@ -342,7 +370,7 @@
                 </div>
             </div>
 
-            <!-- GRAFIK & RINGKASAN -->
+            <!-- GRAFIK & RINGKASAN SERVICE -->
             <div class="space-y-4">
                 <h3 class="text-md font-bold text-maroon-700 flex items-center gap-2">
                     <i class="fa-solid fa-chart-line"></i> Laporan & Ringkasan Nominal Service
@@ -390,9 +418,10 @@
             </div>
         </section>
 
-        <!-- TAB 3: PRODUK, LAPTOP & SPAREPART -->
+        <!-- ================= TAB 3: PRODUK, LAPTOP & SPAREPART ================= -->
         <section id="page-product" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Tambah Produk / Sparepart -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-box-open"></i> Tambah Produk / Laptop / Sparepart
@@ -424,16 +453,18 @@
                     </form>
                 </div>
 
+                <!-- Tabel Katalog Produk -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-boxes-stacked"></i> Stok Produk, Laptop & Sparepart Store
                         </h2>
-                        <button onclick="exportToExcel('stocks')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                        <button onclick="exportStocksToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
                     </div>
 
+                    <!-- BARIS FILTER SEARCH & SORTING PRODUK TABLE -->
                     <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                         <div class="relative flex-grow min-w-[200px]">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
@@ -472,9 +503,10 @@
             </div>
         </section>
 
-        <!-- TAB 4: TRANSAKSI PENJUALAN PRODUK -->
+        <!-- ================= TAB 4: TRANSAKSI PENJUALAN PRODUK ================= -->
         <section id="page-transaction" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Kasir Input Transaksi Penjualan Produk -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
                     <h2 class="text-lg font-bold mb-4 text-maroon-700 flex items-center gap-2">
                         <i class="fa-solid fa-cash-register"></i> Kasir Penjualan Produk
@@ -514,16 +546,18 @@
                     </form>
                 </div>
 
+                <!-- Tabel Riwayat Transaksi -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <h2 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                             <i class="fa-solid fa-receipt"></i> Riwayat Transaksi Penjualan Produk Store
                         </h2>
-                        <button onclick="exportToExcel('transactions')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
+                        <button onclick="exportTransactionsToExcel()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-sm"></i> Export ke Excel
                         </button>
                     </div>
 
+                    <!-- BARIS FILTER SEARCH & SORTING TRANSAKSI TABLE -->
                     <div class="flex flex-wrap gap-2 items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200">
                         <div class="relative flex-grow min-w-[200px]">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
@@ -549,7 +583,7 @@
                                     <th class="p-3">Produk / Barang</th>
                                     <th class="p-3 text-center">Qty</th>
                                     <th class="p-3">Total Bayar</th>
-                                    <th class="p-3">Tanggal Transaksi</th>
+                                    <th class="p-3">Tgl Transaksi</th>
                                     <th class="p-3 text-center">Cetak / Hapus</th>
                                 </tr>
                             </thead>
@@ -562,7 +596,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: KARYAWAN & JOBLIST -->
+        <!-- ================= TAB 5: KARYAWAN & JOBLIST ================= -->
         <section id="page-karyawan" class="tab-page hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
@@ -619,7 +653,7 @@
                 <h3 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i> Edit Data Customer CRM
                 </h3>
-                <button onclick="toggleModal('edit-crm-modal', false)" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeEditCrmModal()" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="edit-crm-form" class="space-y-3">
                 <input type="hidden" id="editCrmKey">
@@ -654,7 +688,7 @@
                     <textarea id="editCrmNote" rows="2" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none"></textarea>
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="toggleModal('edit-crm-modal', false)" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
+                    <button type="button" onclick="closeEditCrmModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
                     <button type="submit" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs font-bold hover:bg-maroon-800">Simpan Perubahan</button>
                 </div>
             </form>
@@ -668,7 +702,7 @@
                 <h3 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i> Edit Kartu Service Unit
                 </h3>
-                <button onclick="toggleModal('edit-service-modal', false)" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeEditServiceModal()" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="edit-service-form" class="space-y-3 text-xs">
                 <input type="hidden" id="editServiceKey">
@@ -720,7 +754,7 @@
                     <input type="number" id="editServiceCost" required class="w-full border rounded-lg p-2.5 text-sm font-bold text-maroon-700 focus:ring-2 focus:ring-maroon-700 focus:outline-none bg-amber-50">
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="toggleModal('edit-service-modal', false)" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
+                    <button type="button" onclick="closeEditServiceModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
                     <button type="submit" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs font-bold hover:bg-maroon-800">Simpan Perubahan</button>
                 </div>
             </form>
@@ -734,7 +768,7 @@
                 <h3 class="text-lg font-bold text-maroon-700 flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i> Edit Data Produk & Stok
                 </h3>
-                <button onclick="toggleModal('edit-stock-modal', false)" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeEditStockModal()" class="text-gray-400 hover:text-red-500 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="edit-stock-form" class="space-y-3 text-xs">
                 <input type="hidden" id="editStockKey">
@@ -759,14 +793,1446 @@
                     <input type="number" id="editStockQty" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-maroon-700 focus:outline-none font-bold">
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="toggleModal('edit-stock-modal', false)" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
+                    <button type="button" onclick="closeEditStockModal()" class="px-4 py-2 border rounded-lg text-xs hover:bg-gray-100">Batal</button>
                     <button type="submit" class="px-4 py-2 bg-maroon-700 text-white rounded-lg text-xs font-bold hover:bg-maroon-800">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Menghubungkan ke file JavaScript eksternal -->
-    <script type="module" src="script.js"></script>
+    <!-- FIREBASE REALTIME DATABASE SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUv1FoZD1AhcD8FxeOvaTZ9XZJ_D3i3zc",
+            authDomain: "psc-service-system.firebaseapp.com",
+            databaseURL: "https://psc-service-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "psc-service-system",
+            storageBucket: "psc-service-system.firebasestorage.app",
+            messagingSenderId: "1060022500226",
+            appId: "1:1060022500226:web:bde4e4328e8e3d7ed1ed9b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Firebase References
+        const customersRef = ref(db, 'crm_customers');
+        const servicesRef = ref(db, 'service_orders');
+        const stocksRef = ref(db, 'inventory_stocks');
+        const transactionsRef = ref(db, 'product_transactions');
+        const employeesRef = ref(db, 'owner_employees');
+
+        let rawCustomers = {};
+        let rawServices = {};
+        let rawStocks = {};
+        let rawTransactions = {};
+        let rawEmployees = {};
+        let crmMap = {};
+        let cardExpandedState = {};
+        let chartInstance = null;
+        let currentChartMode = 'daily';
+
+        const statusBadge = document.getElementById('status-badge');
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('crmDate').value = todayStr;
+        document.getElementById('serviceInDate').value = todayStr;
+        document.getElementById('transDate').value = todayStr;
+
+        // HELPER FUNGSI UNTUK MEMBACA TANGGAL SECARA AKURAT (TIMESTAMP)
+        function getTimeValue(item, dateKey = 'serviceInDate') {
+            if (!item) return 0;
+            const dateVal = item[dateKey] || item.inDate || item.date || item.chatDate || item.transDate;
+            if (dateVal) {
+                const parsed = Date.parse(dateVal);
+                if (!isNaN(parsed)) return parsed;
+            }
+            return item.createdAt || 0;
+        }
+
+        // Realtime Listeners
+        onValue(customersRef, (snapshot) => {
+            rawCustomers = snapshot.val() || {};
+            renderCustomers();
+            populateCrmDatalist();
+        });
+
+        onValue(servicesRef, (snapshot) => {
+            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400"></span> Terhubung Realtime`;
+            statusBadge.className = 'text-xs bg-green-700 text-white font-semibold px-3 py-1 rounded-full flex items-center gap-1.5';
+
+            rawServices = snapshot.val() || {};
+            renderServices();
+            renderSummaryTable();
+            renderFinancialReports();
+        });
+
+        onValue(stocksRef, (snapshot) => {
+            rawStocks = snapshot.val() || {};
+            renderStocks();
+            populateStockDropdown();
+        });
+
+        onValue(transactionsRef, (snapshot) => {
+            rawTransactions = snapshot.val() || {};
+            renderTransactions();
+        });
+
+        onValue(employeesRef, (snapshot) => {
+            rawEmployees = snapshot.val() || {};
+            renderEmployees();
+        });
+
+        // Tab Switcher
+        window.switchTab = (tabName) => {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('border-maroon-700', 'text-maroon-700', 'font-bold');
+                b.classList.add('border-transparent');
+            });
+
+            document.getElementById(`page-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.add('border-maroon-700', 'text-maroon-700', 'font-bold');
+            activeBtn.classList.remove('border-transparent');
+        };
+
+        const formatDate = (val) => {
+            if (!val) return '-';
+            if (typeof val === 'string' && val.includes('-')) {
+                const parts = val.split('-');
+                if (parts.length === 3) {
+                    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+                    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                }
+            }
+            return new Date(val).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        };
+
+        function getWeekNumber(d) {
+            const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            const dayNum = date.getUTCDay() || 7;
+            date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+            return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+        }
+
+        window.setChartMode = (mode) => {
+            currentChartMode = mode;
+            ['daily', 'weekly', 'monthly', 'yearly'].forEach(m => {
+                const btn = document.getElementById(`btn-chart-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = 'px-3 py-1.5 rounded-md bg-white text-maroon-700 shadow font-bold transition';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-md text-gray-600 hover:text-maroon-700 transition';
+                    }
+                }
+            });
+            renderFinancialReports();
+        };
+
+        window.toggleCardCollapse = (key) => {
+            cardExpandedState[key] = !cardExpandedState[key];
+            renderServices();
+        };
+
+        function populateCrmDatalist() {
+            const datalist = document.getElementById('crmDatalist');
+            datalist.innerHTML = '';
+            crmMap = {};
+
+            const sortedKeys = Object.keys(rawCustomers).sort((a, b) => {
+                const timeA = rawCustomers[a].createdAt || 0;
+                const timeB = rawCustomers[b].createdAt || 0;
+                return timeB - timeA;
+            });
+
+            sortedKeys.forEach(k => {
+                const c = rawCustomers[k];
+                const custName = c.name || c.nama || 'Customer';
+                const custDev = c.device || c.perangkat || 'Perangkat';
+                const labelText = `${custName} - ${custDev}`;
+                crmMap[labelText] = k;
+
+                const opt = document.createElement('option');
+                opt.value = labelText;
+                datalist.appendChild(opt);
+            });
+        }
+
+        window.autoFillCustomerData = () => {
+            const searchVal = document.getElementById('searchCrmCustomer').value.trim();
+            const custKey = crmMap[searchVal];
+
+            if (custKey && rawCustomers[custKey]) {
+                const c = rawCustomers[custKey];
+                document.getElementById('customerPhone').value = c.phone || c.whatsapp || c.noHp || '';
+                document.getElementById('deviceUnit').value = c.device || c.perangkat || '';
+            } else {
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('deviceUnit').value = '';
+            }
+        };
+
+        function populateStockDropdown() {
+            const dropdown = document.getElementById('transSelectStock');
+            dropdown.innerHTML = '<option value="">-- Pilih Barang dari Stok --</option>';
+
+            Object.keys(rawStocks).forEach(k => {
+                const item = rawStocks[k];
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.textContent = `${item.name || item.nama} (Sisa: ${item.qty || 0} Pcs) - Rp ${Number(item.price || item.harga || 0).toLocaleString('id-ID')}`;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        window.autoFillStockPrice = () => {
+            const stockKey = document.getElementById('transSelectStock').value;
+            if (stockKey && rawStocks[stockKey]) {
+                const item = rawStocks[stockKey];
+                document.getElementById('transUnitPrice').value = item.price || item.harga || 0;
+                calculateTransTotal();
+            } else {
+                document.getElementById('transUnitPrice').value = '';
+                document.getElementById('transTotalPrice').value = '';
+            }
+        };
+
+        window.calculateTransTotal = () => {
+            const price = parseInt(document.getElementById('transUnitPrice').value) || 0;
+            const qty = parseInt(document.getElementById('transQty').value) || 1;
+            document.getElementById('transTotalPrice').value = price * qty;
+        };
+
+        // Submit CRM Customer Baru
+        document.getElementById('customer-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const chosenDate = document.getElementById('crmDate').value || todayStr;
+            const newCust = {
+                name: document.getElementById('crmName').value,
+                phone: document.getElementById('crmPhone').value,
+                device: document.getElementById('crmDevice').value,
+                source: document.getElementById('crmSource').value,
+                note: document.getElementById('crmNote').value,
+                chatDate: chosenDate,
+                createdAt: Date.now()
+            };
+
+            push(customersRef, newCust).then(() => {
+                document.getElementById('customer-form').reset();
+                document.getElementById('crmDate').value = todayStr;
+                alert('Customer Berhasil Ditambahkan ke CRM!');
+            });
+        });
+
+        // Export CRM Data ke Excel
+        window.exportCrmToExcel = () => {
+            const keys = Object.keys(rawCustomers);
+            if (keys.length === 0) {
+                alert('Belum ada data customer di CRM untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const c = rawCustomers[key];
+                return {
+                    "No": index + 1,
+                    "Nama Customer": c.name || c.nama || '',
+                    "No WhatsApp": c.phone || c.whatsapp || '',
+                    "Perangkat / Laptop": c.device || c.perangkat || '',
+                    "Asal Customer": c.source || 'Google Maps',
+                    "Catatan Chat": c.note || c.catatan || '',
+                    "Tanggal Chat": c.chatDate ? formatDate(c.chatDate) : (c.createdAt ? formatDate(c.createdAt) : '-'),
+                    "Waktu Input": c.createdAt ? new Date(c.createdAt).toLocaleString('id-ID') : '-'
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Database CRM");
+            XLSX.writeFile(workbook, `Database_Customer_CRM_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
+        };
+
+        // Export Rangkuman Data Service ke Excel
+        window.exportServiceToExcel = () => {
+            const keys = Object.keys(rawServices).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada data service untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const s = rawServices[key];
+                const custName = s.customerName || s.name || s.nama || '';
+                const device = s.deviceUnit || s.device || s.perangkat || '';
+                const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '';
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
+                return {
+                    "No": index + 1,
+                    "ID Service": `#PSC-${key.substring(1, 6).toUpperCase()}`,
+                    "Nama Customer": custName,
+                    "No WhatsApp": s.customerPhone || s.phone || '',
+                    "Type Laptop": device,
+                    "Kendala / Kerusakan": issue,
+                    "Tgl Masuk": s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-'),
+                    "Tgl Keluar": s.serviceOutDate ? formatDate(s.serviceOutDate) : '-',
+                    "Kedatangan": s.arrivalType || 'Langsung Toko',
+                    "Teknisi": s.techType || 'Internal',
+                    "Nominal Biaya (Rp)": cost,
+                    "Status saat ini": s.status === 'Diambil' ? 'Selesai Service' : (s.status || 'Service Masuk')
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Rangkuman Service");
+            XLSX.writeFile(workbook, `Rangkuman_Data_Service_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
+        };
+
+        // Export Stok Produk ke Excel
+        window.exportStocksToExcel = () => {
+            const keys = Object.keys(rawStocks).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada data stok produk untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const item = rawStocks[key];
+                return {
+                    "No": index + 1,
+                    "Kategori": item.category || 'Sparepart',
+                    "Nama Produk / Unit": item.name || item.nama || '',
+                    "Harga Jual (Rp)": Number(item.price || item.harga || 0),
+                    "Sisa Stok (Pcs)": Number(item.qty || item.stok || 0)
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Katalog Stok Produk");
+            XLSX.writeFile(workbook, `Katalog_Stok_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
+        };
+
+        // Export Rekap Transaksi Produk ke Excel
+        window.exportTransactionsToExcel = () => {
+            const keys = Object.keys(rawTransactions).reverse();
+            if (keys.length === 0) {
+                alert('Belum ada transaksi produk untuk di-export!');
+                return;
+            }
+
+            const exportData = keys.map((key, index) => {
+                const t = rawTransactions[key];
+                return {
+                    "No": index + 1,
+                    "ID Transaksi": `#TRX-${key.substring(1, 6).toUpperCase()}`,
+                    "Nama Pembeli": t.customerName || t.name || '',
+                    "Nama Produk / Sparepart": t.productName || t.namaProduk || '',
+                    "Kategori": t.category || '',
+                    "Jumlah (Qty)": t.qty || 0,
+                    "Harga Satuan (Rp)": Number(t.unitPrice || 0),
+                    "Total Bayar (Rp)": Number(t.totalPrice || t.total || 0),
+                    "Tanggal Transaksi": t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt)
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi Penjualan");
+            XLSX.writeFile(workbook, `Rekap_Transaksi_Produk_PSC_${new Date().toISOString().split('T')[0]}.xlsx`);
+        };
+
+        // Print Service Receipt
+        window.printServiceReceipt = (key, receiptType) => {
+            const s = rawServices[key];
+            if (!s) return;
+
+            const custName = s.customerName || s.name || s.nama || 'Customer';
+            const device = s.deviceUnit || s.device || s.perangkat || '-';
+            const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '-';
+            const totalCost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
+            const serviceId = `#PSC-${key.substring(1, 6).toUpperCase()}`;
+            const inDate = s.serviceInDate ? formatDate(s.serviceInDate) : '-';
+            const outDate = s.serviceOutDate ? formatDate(s.serviceOutDate) : 'Masih Diproses';
+
+            let dpAmount = 0;
+            if (receiptType === 'handover') {
+                const dpPrompt = prompt(`Masukkan Nominal Uang Muka / DP untuk unit ini (Atau ketik 0 jika belum ada DP):`, "0");
+                if (dpPrompt !== null) {
+                    dpAmount = parseInt(dpPrompt) || 0;
+                }
+            }
+
+            const remainingBalance = Math.max(0, totalCost - dpAmount);
+            const receiptTitle = receiptType === 'handover' ? 'NOTA BUKTI SERAH TERIMA UNIT SERVICE' : 'NOTA BUKTI PELUNASAN & SELESAI SERVICE';
+            const displayStatus = receiptType === 'handover' ? (s.status || 'Unit Diterima') : 'Selesai Service';
+
+            const printWindow = window.open('', '_blank', 'width=800,height=900');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${receiptTitle} ${serviceId} - Paramount Star Computer</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; line-height: 1.4; }
+                        .receipt-box { border: 2px solid #800000; padding: 20px; border-radius: 10px; max-width: 700px; margin: 0 auto; }
+                        .header { text-align: center; border-bottom: 2px dashed #800000; padding-bottom: 12px; margin-bottom: 15px; }
+                        .header h1 { margin: 0; color: #800000; font-size: 20px; letter-spacing: 0.5px; }
+                        .header p { margin: 3px 0; font-size: 11px; color: #334155; font-weight: 500; }
+                        .title-badge { background: #800000; color: #fff; text-align: center; font-weight: bold; padding: 6px; border-radius: 5px; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; }
+                        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom: 15px; }
+                        .info-item span { font-weight: bold; color: #475569; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+                        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+                        th { background-color: #f1f5f9; color: #334155; }
+                        .total-row { font-weight: bold; font-size: 13px; background: #fef3c7; color: #92400e; }
+                        .dp-row { font-weight: bold; font-size: 12px; background: #e0f2fe; color: #0369a1; }
+                        .rem-row { font-weight: bold; font-size: 13px; background: #dcfce7; color: #15803d; }
+                        .terms { font-size: 10px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 15px; }
+                        .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 11px; }
+                        .sig-box { width: 140px; border-top: 1px solid #475569; margin-top: 45px; }
+                        @media print { body { padding: 0; } .receipt-box { border: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-box">
+                        <div class="header">
+                            <h1>PARAMOUNT STAR COMPUTER (PSC)</h1>
+                            <p>Komplek Puri Indah Jatinangor Blok A3 nomor 21, Jalan sayang, Cikeruh, Jatinangor, Sumedang.</p>
+                            <p>Whatsapp / hotline : 0851-8824-3665</p>
+                        </div>
+                        <div class="title-badge">${receiptTitle}</div>
+                        <div class="info-grid">
+                            <div>
+                                <div class="info-item"><span>ID Service:</span> ${serviceId}</div>
+                                <div class="info-item"><span>Nama Customer:</span> ${custName}</div>
+                                <div class="info-item"><span>No WhatsApp:</span> ${s.customerPhone || s.phone || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="info-item"><span>Tanggal Masuk:</span> ${inDate}</div>
+                                <div class="info-item"><span>Tanggal Keluar:</span> ${outDate}</div>
+                                <div class="info-item"><span>Status Saat Ini:</span> <strong>${displayStatus}</strong></div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Perangkat / Unit</th>
+                                    <th>Kendala / Tindakan Perbaikan</th>
+                                    <th style="text-align: right;">Estimasi / Biaya (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>${device}</strong></td>
+                                    <td>${issue}</td>
+                                    <td style="text-align: right;">Rp ${totalCost.toLocaleString('id-ID')}</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="2" style="text-align: right;">TOTAL ESTIMASI BIAYA:</td>
+                                    <td style="text-align: right;">Rp ${totalCost.toLocaleString('id-ID')}</td>
+                                </tr>
+                                ${receiptType === 'handover' ? `
+                                    <tr class="dp-row">
+                                        <td colspan="2" style="text-align: right;">UANG MUKA / DP DITERIMA:</td>
+                                        <td style="text-align: right;">Rp ${dpAmount.toLocaleString('id-ID')}</td>
+                                    </tr>
+                                    <tr class="rem-row">
+                                        <td colspan="2" style="text-align: right;">SISA ESTIMASI PELUNASAN:</td>
+                                        <td style="text-align: right;">Rp ${remainingBalance.toLocaleString('id-ID')}</td>
+                                    </tr>
+                                ` : ''}
+                            </tbody>
+                        </table>
+                        <div class="terms">
+                            <strong>Syarat & Ketentuan Garansi Toko PSC:</strong><br>
+                            1. Garansi service berlaku selama 30 hari kalender sejak unit diserahkan.<br>
+                            2. Garansi BATAL jika segel rusak, terkena cairan, jatuh, terbentur, atau ada perbaikan pihak luar.<br>
+                            3. Wajib membawa nota serah terima ini saat pengambilan unit laptop.
+                        </div>
+                        <div class="footer-signatures">
+                            <div>Customer / Pemilik Unit<div class="sig-box">( ${custName} )</div></div>
+                            <div>Kasir / Teknisi PSC<div class="sig-box">( Paramount Star Computer )</div></div>
+                        </div>
+                    </div>
+                    <script>window.onload = function() { window.print(); };<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+
+        // Modal Edit CRM
+        window.openEditCrmModal = (key) => {
+            const c = rawCustomers[key];
+            if (!c) return;
+            document.getElementById('editCrmKey').value = key;
+            document.getElementById('editCrmName').value = c.name || c.nama || '';
+            document.getElementById('editCrmPhone').value = c.phone || c.whatsapp || '';
+            document.getElementById('editCrmDevice').value = c.device || c.perangkat || '';
+            document.getElementById('editCrmSource').value = c.source || 'Google Maps';
+            document.getElementById('editCrmNote').value = c.note || c.catatan || '';
+            document.getElementById('editCrmDate').value = c.chatDate || (c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : todayStr);
+            document.getElementById('edit-crm-modal').classList.remove('hidden');
+        };
+
+        window.closeEditCrmModal = () => {
+            document.getElementById('edit-crm-modal').classList.add('hidden');
+        };
+
+        document.getElementById('edit-crm-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('editCrmKey').value;
+            if (!key) return;
+
+            const updateData = {
+                name: document.getElementById('editCrmName').value,
+                phone: document.getElementById('editCrmPhone').value,
+                device: document.getElementById('editCrmDevice').value,
+                source: document.getElementById('editCrmSource').value,
+                note: document.getElementById('editCrmNote').value,
+                chatDate: document.getElementById('editCrmDate').value
+            };
+
+            update(ref(db, `crm_customers/${key}`), updateData).then(() => {
+                closeEditCrmModal();
+                alert('Data Customer CRM Berhasil Diperbarui!');
+            });
+        });
+
+        // Modal Edit Service Card
+        window.openEditServiceModal = (key) => {
+            const s = rawServices[key];
+            if (!s) return;
+
+            document.getElementById('editServiceKey').value = key;
+            document.getElementById('editServiceCustName').value = s.customerName || s.name || s.nama || '';
+            document.getElementById('editServiceCustPhone').value = s.customerPhone || s.phone || '';
+            document.getElementById('editServiceDevice').value = s.deviceUnit || s.device || s.perangkat || '';
+            document.getElementById('editServiceIssue').value = s.deviceIssue || s.issue || s.keluhan || s.kendala || '';
+            document.getElementById('editServiceInDate').value = s.serviceInDate || s.inDate || (s.createdAt ? new Date(s.createdAt).toISOString().split('T')[0] : todayStr);
+            document.getElementById('editServiceOutDate').value = s.serviceOutDate || s.outDate || '';
+            document.getElementById('editServiceArrival').value = s.arrivalType || 'Langsung';
+            document.getElementById('editServiceTech').value = s.techType || 'Internal';
+            document.getElementById('editServiceCost').value = s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0);
+
+            document.getElementById('edit-service-modal').classList.remove('hidden');
+        };
+
+        window.closeEditServiceModal = () => {
+            document.getElementById('edit-service-modal').classList.add('hidden');
+        };
+
+        document.getElementById('edit-service-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('editServiceKey').value;
+            if (!key) return;
+
+            const updateData = {
+                customerName: document.getElementById('editServiceCustName').value,
+                customerPhone: document.getElementById('editServiceCustPhone').value,
+                deviceUnit: document.getElementById('editServiceDevice').value,
+                deviceIssue: document.getElementById('editServiceIssue').value,
+                serviceInDate: document.getElementById('editServiceInDate').value,
+                serviceOutDate: document.getElementById('editServiceOutDate').value || '',
+                arrivalType: document.getElementById('editServiceArrival').value,
+                techType: document.getElementById('editServiceTech').value,
+                estimatedCost: parseInt(document.getElementById('editServiceCost').value) || 0
+            };
+
+            update(ref(db, `service_orders/${key}`), updateData).then(() => {
+                closeEditServiceModal();
+                alert('Kartu Service Berhasil Diperbarui!');
+            });
+        });
+
+        // Modal Edit Stock
+        window.openEditStockModal = (key) => {
+            const item = rawStocks[key];
+            if (!item) return;
+
+            document.getElementById('editStockKey').value = key;
+            document.getElementById('editStockCategory').value = item.category || 'Sparepart';
+            document.getElementById('editStockName').value = item.name || item.nama || '';
+            document.getElementById('editStockPrice').value = item.price || item.harga || 0;
+            document.getElementById('editStockQty').value = item.qty || item.stok || 0;
+
+            document.getElementById('edit-stock-modal').classList.remove('hidden');
+        };
+
+        window.closeEditStockModal = () => {
+            document.getElementById('edit-stock-modal').classList.add('hidden');
+        };
+
+        document.getElementById('edit-stock-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('editStockKey').value;
+            if (!key) return;
+
+            const updateData = {
+                category: document.getElementById('editStockCategory').value,
+                name: document.getElementById('editStockName').value,
+                price: parseInt(document.getElementById('editStockPrice').value) || 0,
+                qty: parseInt(document.getElementById('editStockQty').value) || 0
+            };
+
+            update(ref(db, `inventory_stocks/${key}`), updateData).then(() => {
+                closeEditStockModal();
+                alert('Data Stok Produk Berhasil Diperbarui!');
+            });
+        });
+
+        // Submit Service Card (Trello)
+        document.getElementById('service-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const searchVal = document.getElementById('searchCrmCustomer').value.trim();
+            const custKey = crmMap[searchVal];
+
+            let custName = searchVal.split(' - ')[0];
+            if (custKey && rawCustomers[custKey]) {
+                custName = rawCustomers[custKey].name || rawCustomers[custKey].nama;
+            }
+
+            const inDate = document.getElementById('serviceInDate').value || todayStr;
+
+            const newOrder = {
+                customerName: custName || 'Customer',
+                customerPhone: document.getElementById('customerPhone').value,
+                deviceUnit: document.getElementById('deviceUnit').value,
+                deviceIssue: document.getElementById('deviceIssue').value,
+                serviceInDate: inDate,
+                serviceOutDate: '',
+                arrivalType: document.getElementById('arrivalType').value,
+                techType: document.getElementById('techType').value,
+                estimatedCost: parseInt(document.getElementById('estimatedCost').value) || 0,
+                status: 'Service Masuk',
+                createdAt: Date.now()
+            };
+
+            push(servicesRef, newOrder).then(() => {
+                document.getElementById('service-form').reset();
+                document.getElementById('searchCrmCustomer').value = '';
+                document.getElementById('serviceInDate').value = todayStr;
+            });
+        });
+
+        // Submit Transaksi Penjualan Produk
+        document.getElementById('trans-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const stockKey = document.getElementById('transSelectStock').value;
+            const item = rawStocks[stockKey];
+
+            if (!item) {
+                alert('Silakan pilih produk yang tersedia dari stok!');
+                return;
+            }
+
+            const buyQty = parseInt(document.getElementById('transQty').value) || 1;
+            const currentQty = parseInt(item.qty || item.stok || 0);
+
+            if (buyQty > currentQty) {
+                alert(`Stok tidak mencukupi! Stok saat ini hanya ${currentQty} Pcs.`);
+                return;
+            }
+
+            const searchVal = document.getElementById('transSearchCust').value.trim();
+            const custKey = crmMap[searchVal];
+            let custName = searchVal.split(' - ')[0];
+            if (custKey && rawCustomers[custKey]) {
+                custName = rawCustomers[custKey].name || rawCustomers[custKey].nama;
+            }
+
+            const unitPrice = parseInt(document.getElementById('transUnitPrice').value) || 0;
+            const totalPrice = parseInt(document.getElementById('transTotalPrice').value) || 0;
+            const transDateVal = document.getElementById('transDate').value || todayStr;
+
+            const newTransaction = {
+                customerName: custName || 'Customer Toko',
+                productKey: stockKey,
+                productName: item.name || item.nama,
+                category: item.category || 'Barang',
+                qty: buyQty,
+                unitPrice: unitPrice,
+                totalPrice: totalPrice,
+                transDate: transDateVal,
+                createdAt: Date.now()
+            };
+
+            push(transactionsRef, newTransaction).then(() => {
+                const updatedQty = Math.max(0, currentQty - buyQty);
+                update(ref(db, `inventory_stocks/${stockKey}`), { qty: updatedQty });
+
+                document.getElementById('trans-form').reset();
+                document.getElementById('transSearchCust').value = '';
+                document.getElementById('transDate').value = todayStr;
+                alert('Transaksi Penjualan Berhasil Disimpan & Stok Berhasil Dipotong!');
+            });
+        });
+
+        // Render Trello Board Cards
+        window.renderServices = () => {
+            const cols = {
+                'Service Masuk': document.getElementById('col-masuk'),
+                'Proses': document.getElementById('col-proses'),
+                'Selesai': document.getElementById('col-selesai'),
+                'Konfirmasi': document.getElementById('col-konfirmasi'),
+                'Diambil': document.getElementById('col-diambil'),
+                'Garansi': document.getElementById('col-garansi'),
+                'Batal': document.getElementById('col-batal')
+            };
+
+            const counts = { 'Service Masuk': 0, 'Proses': 0, 'Selesai': 0, 'Konfirmasi': 0, 'Diambil': 0, 'Garansi': 0, 'Batal': 0 };
+
+            Object.keys(cols).forEach(k => { if (cols[k]) cols[k].innerHTML = ''; });
+
+            const query = (document.getElementById('searchBoard')?.value || '').toLowerCase();
+            const keys = Object.keys(rawServices).reverse();
+
+            keys.forEach(k => {
+                const s = rawServices[k];
+                const custName = s.customerName || s.name || s.nama || 'Customer';
+                const device = s.deviceUnit || s.device || s.perangkat || '-';
+                const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '-';
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
+                const match = custName.toLowerCase().includes(query) || device.toLowerCase().includes(query);
+                if (!match) return;
+
+                let st = s.status || 'Service Masuk';
+                if (!cols[st]) st = 'Service Masuk';
+                counts[st]++;
+
+                const cleanPhone = (s.customerPhone || s.phone || '').replace(/[^0-9]/g, '');
+                const waMessage = encodeURIComponent(`Halo Kak ${custName}, update unit ${device} saat ini: *${st === 'Diambil' ? 'Selesai Service' : st}*. Biaya: Rp ${cost.toLocaleString('id-ID')}. Salam, PSC Computer Jatinangor.`);
+                const inDateText = s.serviceInDate ? formatDate(s.serviceInDate) : (s.createdAt ? formatDate(s.createdAt) : '-');
+                const outDateText = s.serviceOutDate ? formatDate(s.serviceOutDate) : null;
+
+                const isExpanded = cardExpandedState[k] || false;
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-800 rounded-lg p-3 border border-slate-700 shadow hover:border-amber-500 transition text-xs space-y-2';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start font-bold text-white">
+                        <div class="pr-2">
+                            <span>${custName}</span>
+                            <div class="text-[10px] text-amber-300 font-normal flex flex-wrap items-center gap-1.5 mt-0.5">
+                                <span><i class="fa-regular fa-calendar-check text-[9px]"></i> Masuk: ${inDateText}</span>
+                                ${outDateText ? `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-flag-checkered text-[9px]"></i> Out: ${outDateText}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <a href="https://wa.me/${cleanPhone}?text=${waMessage}" target="_blank" class="text-green-400 hover:text-green-300 p-1" title="Chat WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></a>
+                            <button onclick="toggleCardCollapse('${k}')" class="text-slate-400 hover:text-amber-400 p-1 rounded transition" title="${isExpanded ? 'Ciutkan Kartu' : 'Buka Detail'}">
+                                <i class="fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-slate-300 font-semibold flex justify-between items-center">
+                        <span>${device}</span>
+                        ${!isExpanded ? `<span class="text-amber-400 font-bold text-[11px]">Rp ${cost.toLocaleString('id-ID')}</span>` : ''}
+                    </div>
+
+                    <div class="${isExpanded ? 'block' : 'hidden'} space-y-2 pt-1 border-t border-slate-700/60">
+                        <div class="text-slate-400 italic text-[11px]">${issue}</div>
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-700/60">
+                            <span>${s.techType || 'Internal'} | ${s.arrivalType || 'Toko'}</span>
+                            <span class="font-bold text-amber-400 text-xs">Rp ${cost.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="pt-1 flex justify-between items-center gap-1">
+                            <select onchange="updateStatus('${k}', this.value)" class="w-full bg-slate-900 text-slate-200 border border-slate-700 rounded p-1 text-[10px]">
+                                <option value="Service Masuk" ${st === 'Service Masuk' ? 'selected' : ''}>📥 Service Masuk</option>
+                                <option value="Proses" ${st === 'Proses' ? 'selected' : ''}>🛠️ Dikerjakan Teknisi</option>
+                                <option value="Selesai" ${st === 'Selesai' ? 'selected' : ''}>✅ Service Selesai</option>
+                                <option value="Konfirmasi" ${st === 'Konfirmasi' ? 'selected' : ''}>📞 Konfirmasi Customer</option>
+                                <option value="Diambil" ${st === 'Diambil' ? 'selected' : ''}>🤝 Diserahkan (Selesai Service)</option>
+                                <option value="Garansi" ${st === 'Garansi' ? 'selected' : ''}>🛡️ Klaim Garansi (Rp 0)</option>
+                                <option value="Batal" ${st === 'Batal' ? 'selected' : ''}>❌ Batal / Retur (Rp 0)</option>
+                            </select>
+                            <button onclick="openEditServiceModal('${k}')" class="text-amber-400 p-1 hover:text-amber-300" title="Edit Kartu Service"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteOrder('${k}')" class="text-rose-400 p-1 hover:text-rose-300" title="Hapus Kartu Service"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                `;
+
+                if (cols[st]) cols[st].appendChild(card);
+            });
+
+            document.getElementById('cnt-masuk').textContent = counts['Service Masuk'];
+            document.getElementById('cnt-proses').textContent = counts['Proses'];
+            document.getElementById('cnt-selesai').textContent = counts['Selesai'];
+            document.getElementById('cnt-konfirmasi').textContent = counts['Konfirmasi'];
+            document.getElementById('cnt-diambil').textContent = counts['Diambil'];
+            document.getElementById('cnt-garansi').textContent = counts['Garansi'];
+            document.getElementById('cnt-batal').textContent = counts['Batal'];
+        };
+
+        // RENDER CUSTOMERS CRM
+        window.renderCustomers = () => {
+            const body = document.getElementById('customer-table-body');
+            if (!body) return;
+            body.innerHTML = '';
+
+            const query = (document.getElementById('searchCrmTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortCrmTable')?.value || 'newest';
+
+            let keys = Object.keys(rawCustomers);
+
+            if (query) {
+                keys = keys.filter(k => {
+                    const c = rawCustomers[k];
+                    const name = (c.name || c.nama || '').toLowerCase();
+                    const phone = (c.phone || c.whatsapp || '').toLowerCase();
+                    const device = (c.device || c.perangkat || '').toLowerCase();
+                    const source = (c.source || '').toLowerCase();
+                    const note = (c.note || c.catatan || '').toLowerCase();
+
+                    return name.includes(query) || phone.includes(query) || device.includes(query) || source.includes(query) || note.includes(query);
+                });
+            }
+
+            keys.sort((a, b) => {
+                const cA = rawCustomers[a] || {};
+                const cB = rawCustomers[b] || {};
+
+                if (sortBy === 'newest') {
+                    return getTimeValue(cB, 'chatDate') - getTimeValue(cA, 'chatDate');
+                }
+                if (sortBy === 'oldest') {
+                    return getTimeValue(cA, 'chatDate') - getTimeValue(cB, 'chatDate');
+                }
+                if (sortBy === 'nameAsc') {
+                    const nameA = (cA.name || cA.nama || '').toLowerCase();
+                    const nameB = (cB.name || cB.nama || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                if (sortBy === 'nameDesc') {
+                    const nameA = (cA.name || cA.nama || '').toLowerCase();
+                    const nameB = (cB.name || cB.nama || '').toLowerCase();
+                    return nameB.localeCompare(nameA);
+                }
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Tidak ada customer yang sesuai pencarian.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const c = rawCustomers[k];
+                const custName = c.name || c.nama || 'Customer';
+                const phone = c.phone || c.whatsapp || '-';
+                const cleanPhone = phone.replace(/[^0-9]/g, '');
+                const displayDate = c.chatDate ? formatDate(c.chatDate) : formatDate(c.createdAt);
+                const sourceText = c.source || 'Google Maps';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-800">${custName}</td>
+                    <td class="p-3 text-gray-600">${phone}</td>
+                    <td class="p-3 font-medium text-gray-700">${c.device || c.perangkat || '-'}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold bg-amber-100 text-amber-800 rounded-full border border-amber-200">${sourceText}</span></td>
+                    <td class="p-3 text-gray-500 italic">${c.note || c.catatan || '-'}</td>
+                    <td class="p-3 text-xs text-gray-600 font-semibold">${displayDate}</td>
+                    <td class="p-3 text-center space-x-1.5">
+                        <a href="https://wa.me/${cleanPhone}" target="_blank" class="px-2.5 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 inline-flex items-center gap-1" title="Chat WA Promo">
+                            <i class="fa-brands fa-whatsapp"></i> Chat Promo
+                        </a>
+                        <button onclick="openEditCrmModal('${k}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Customer"><i class="fa-solid fa-pen-to-square text-base"></i></button>
+                        <button onclick="deleteCustomer('${k}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Customer"><i class="fa-solid fa-trash-can text-base"></i></button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
+
+        // RENDER SUMMARY SERVICE TABLE (DENGAN SEARCH & SORTING FIX)
+        function renderSummaryTable() {
+            const tableBody = document.getElementById('summary-service-table');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+
+            const query = (document.getElementById('searchServiceTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortServiceTable')?.value || 'newest';
+
+            let keys = Object.keys(rawServices || {});
+
+            // 1. FILTER SEARCH (FALLBACK PROPERTI)
+            if (query) {
+                keys = keys.filter(k => {
+                    const s = rawServices[k] || {};
+                    const idCode = `#PSC-${k.substring(1, 6).toUpperCase()}`.toLowerCase();
+                    const custName = (s.customerName || s.name || s.nama || '').toLowerCase();
+                    const device = (s.deviceUnit || s.device || s.perangkat || '').toLowerCase();
+                    const issue = (s.deviceIssue || s.issue || s.keluhan || s.kendala || '').toLowerCase();
+                    const statusText = s.status === 'Diambil' ? 'selesai service' : (s.status || '').toLowerCase();
+
+                    return idCode.includes(query) ||
+                           custName.includes(query) ||
+                           device.includes(query) ||
+                           issue.includes(query) ||
+                           statusText.includes(query);
+                });
+            }
+
+            // 2. LOGIKA SORTING PRESISI
+            keys.sort((a, b) => {
+                const sA = rawServices[a] || {};
+                const sB = rawServices[b] || {};
+
+                if (sortBy === 'newest') {
+                    return getTimeValue(sB, 'serviceInDate') - getTimeValue(sA, 'serviceInDate');
+                }
+                if (sortBy === 'oldest') {
+                    return getTimeValue(sA, 'serviceInDate') - getTimeValue(sB, 'serviceInDate');
+                }
+                if (sortBy === 'nameAsc') {
+                    const nameA = (sA.customerName || sA.name || sA.nama || '').toLowerCase();
+                    const nameB = (sB.customerName || sB.name || sB.nama || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                if (sortBy === 'costDesc') {
+                    const costA = Number(sA.estimatedCost !== undefined ? sA.estimatedCost : (sA.cost || sA.biaya || 0));
+                    const costB = Number(sB.estimatedCost !== undefined ? sB.estimatedCost : (sB.cost || sB.biaya || 0));
+                    return costB - costA;
+                }
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-400">Tidak ada data service yang cocok dengan kata kunci "${query}".</td></tr>`;
+                return;
+            }
+
+            // 3. RENDER BARIS TABEL
+            keys.forEach(k => {
+                const s = rawServices[k] || {};
+                
+                const custName = s.customerName || s.name || s.nama || 'Customer';
+                const device = s.deviceUnit || s.device || s.perangkat || '-';
+                const issue = s.deviceIssue || s.issue || s.keluhan || s.kendala || '-';
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+                
+                const inDateRaw = s.serviceInDate || s.inDate || s.date;
+                const inDateText = inDateRaw ? formatDate(inDateRaw) : (s.createdAt ? formatDate(s.createdAt) : '-');
+                
+                const outDateRaw = s.serviceOutDate || s.outDate;
+                const outDateText = outDateRaw ? formatDate(outDateRaw) : '-';
+
+                const rawStatus = s.status || 'Service Masuk';
+                const statusLabel = rawStatus === 'Diambil' ? 'Selesai Service' : rawStatus;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-amber-50/50 border-b transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-gray-500">#PSC-${k.substring(1, 6).toUpperCase()}</td>
+                    <td class="p-3 font-bold text-gray-800">${custName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${device}</td>
+                    <td class="p-3 text-gray-600 italic">${issue}</td>
+                    <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${inDateText}</span></td>
+                    <td class="p-3 text-xs font-semibold text-emerald-800"><span class="px-2 py-0.5 bg-emerald-50 rounded border border-emerald-200">${outDateText}</span></td>
+                    <td class="p-3 font-bold text-maroon-700">Rp ${cost.toLocaleString('id-ID')}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 text-[11px] font-bold ${rawStatus === 'Diambil' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-slate-100 text-slate-700'} rounded-full border">${statusLabel}</span></td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="printServiceReceipt('${k}', 'handover')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Bukti Serah Terima Unit">
+                                <i class="fa-solid fa-file-signature"></i> Nota Serah Terima
+                            </button>
+                            <button onclick="printServiceReceipt('${k}', 'done')" class="px-2.5 py-1 bg-maroon-700 hover:bg-maroon-800 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Pelunasan Service">
+                                <i class="fa-solid fa-print"></i> Nota Selesai
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // RENDER KATALOG STOK PRODUK
+        window.renderStocks = () => {
+            const tableBody = document.getElementById('stock-table-body');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+
+            const query = (document.getElementById('searchStockTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortStockTable')?.value || 'newest';
+
+            let keys = Object.keys(rawStocks);
+
+            if (query) {
+                keys = keys.filter(k => {
+                    const item = rawStocks[k];
+                    const name = (item.name || item.nama || '').toLowerCase();
+                    const category = (item.category || '').toLowerCase();
+                    return name.includes(query) || category.includes(query);
+                });
+            }
+
+            keys.sort((a, b) => {
+                const iA = rawStocks[a] || {};
+                const iB = rawStocks[b] || {};
+
+                if (sortBy === 'newest') return b.localeCompare(a);
+                if (sortBy === 'nameAsc') {
+                    const nameA = (iA.name || iA.nama || '').toLowerCase();
+                    const nameB = (iB.name || iB.nama || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                if (sortBy === 'priceDesc') return Number(iB.price || iB.harga || 0) - Number(iA.price || iA.harga || 0);
+                if (sortBy === 'priceAsc') return Number(iA.price || iA.harga || 0) - Number(iB.price || iB.harga || 0);
+                if (sortBy === 'qtyDesc') return Number(iB.qty || iB.stok || 0) - Number(iA.qty || iA.stok || 0);
+                if (sortBy === 'qtyAsc') return Number(iA.qty || iA.stok || 0) - Number(iB.qty || iB.stok || 0);
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-400">Tidak ada produk yang cocok dengan pencarian.</td></tr>`;
+                return;
+            }
+
+            keys.forEach((key) => {
+                const item = rawStocks[key];
+                const prodName = item.name || item.nama || 'Produk';
+                const price = Number(item.price || item.harga || 0);
+                const qty = Number(item.qty || item.stok || 0);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-xs"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-200">${item.category || 'Sparepart'}</span></td>
+                    <td class="p-3 font-semibold text-gray-800">${prodName}</td>
+                    <td class="p-3 text-maroon-700 font-bold">Rp ${price.toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-semibold ${qty < 3 ? 'text-red-500 font-bold' : 'text-gray-700'}">${qty} Pcs</td>
+                    <td class="p-3 text-center space-x-1.5">
+                        <button onclick="openEditStockModal('${key}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded" title="Edit Produk & Stok"><i class="fa-solid fa-pen-to-square text-base"></i></button>
+                        <button onclick="deleteStock('${key}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus Produk"><i class="fa-solid fa-trash-can text-base"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        };
+
+        // RENDER TABEL TRANSAKSI PENJUALAN PRODUK
+        window.renderTransactions = () => {
+            const body = document.getElementById('trans-table-body');
+            if (!body) return;
+            body.innerHTML = '';
+
+            const query = (document.getElementById('searchTransTable')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortTransTable')?.value || 'newest';
+
+            let keys = Object.keys(rawTransactions);
+
+            if (query) {
+                keys = keys.filter(k => {
+                    const t = rawTransactions[k];
+                    const trxCode = `#TRX-${k.substring(1, 6).toUpperCase()}`.toLowerCase();
+                    const custName = (t.customerName || t.name || '').toLowerCase();
+                    const prodName = (t.productName || t.namaProduk || '').toLowerCase();
+                    const dateText = (t.transDate || '').toLowerCase();
+
+                    return trxCode.includes(query) || custName.includes(query) || prodName.includes(query) || dateText.includes(query);
+                });
+            }
+
+            keys.sort((a, b) => {
+                const tA = rawTransactions[a] || {};
+                const tB = rawTransactions[b] || {};
+
+                if (sortBy === 'newest') {
+                    return getTimeValue(tB, 'transDate') - getTimeValue(tA, 'transDate');
+                }
+                if (sortBy === 'oldest') {
+                    return getTimeValue(tA, 'transDate') - getTimeValue(tB, 'transDate');
+                }
+                if (sortBy === 'priceDesc') {
+                    return Number(tB.totalPrice || tB.total || 0) - Number(tA.totalPrice || tA.total || 0);
+                }
+                if (sortBy === 'nameAsc') {
+                    const nameA = (tA.customerName || tA.name || '').toLowerCase();
+                    const nameB = (tB.customerName || tB.name || '').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                return 0;
+            });
+
+            if (keys.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Tidak ada riwayat transaksi yang cocok.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const t = rawTransactions[k];
+                const custName = t.customerName || t.name || 'Customer';
+                const prodName = t.productName || t.namaProduk || 'Produk';
+                const totalPrice = Number(t.totalPrice || t.total || 0);
+                const transDateText = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-emerald-50/50 border-b transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-gray-500">#TRX-${k.substring(1, 6).toUpperCase()}</td>
+                    <td class="p-3 font-bold text-gray-800">${custName}</td>
+                    <td class="p-3 font-semibold text-gray-700">${prodName}</td>
+                    <td class="p-3 text-center font-bold text-gray-800">${t.qty || 1} Pcs</td>
+                    <td class="p-3 font-extrabold text-emerald-700">Rp ${totalPrice.toLocaleString('id-ID')}</td>
+                    <td class="p-3 text-xs font-semibold text-amber-800"><span class="px-2 py-0.5 bg-amber-50 rounded border border-amber-200">${transDateText}</span></td>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="printTransactionReceipt('${k}')" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-[11px] font-bold shadow transition inline-flex items-center gap-1" title="Cetak Nota Transaksi Produk">
+                            <i class="fa-solid fa-print"></i> Print Nota
+                        </button>
+                        <button onclick="deleteTransaction('${k}')" class="p-1 text-red-500 hover:text-red-700" title="Hapus Transaksi"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
+
+        // Render Financial Reports & Chart
+        function renderFinancialReports() {
+            const now = new Date();
+            const todayISO = now.toISOString().split('T')[0];
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            const currentWeekNum = getWeekNumber(now);
+
+            document.getElementById('label-week-number').textContent = `Minggu ke-${currentWeekNum} tahun ini`;
+
+            let daily = 0, weekly = 0, monthly = 0, yearly = 0;
+
+            const daysMap = {};
+            const weeksMap = {};
+            const monthsMap = Array(12).fill(0);
+            const yearsMap = {};
+
+            const dayLabels = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(now.getDate() - i);
+                const iso = d.toISOString().split('T')[0];
+                const lbl = d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+                daysMap[iso] = 0;
+                dayLabels.push({ iso, lbl });
+            }
+
+            for (let w = 1; w <= currentWeekNum; w++) {
+                weeksMap[w] = 0;
+            }
+
+            const processIncome = (cost, itemDate, itemISO) => {
+                if (!itemDate) return;
+                const yr = itemDate.getFullYear();
+                const mo = itemDate.getMonth();
+                const wk = getWeekNumber(itemDate);
+
+                if (itemISO === todayISO) daily += cost;
+                if (yr === currentYear && wk === currentWeekNum) weekly += cost;
+                if (yr === currentYear && mo === currentMonth) monthly += cost;
+                if (yr === currentYear) yearly += cost;
+
+                if (daysMap[itemISO] !== undefined) daysMap[itemISO] += cost;
+                if (yr === currentYear) {
+                    if (!weeksMap[wk]) weeksMap[wk] = 0;
+                    weeksMap[wk] += cost;
+                    monthsMap[mo] += cost;
+                }
+                if (!yearsMap[yr]) yearsMap[yr] = 0;
+                yearsMap[yr] += cost;
+            };
+
+            // 1. Service Orders
+            Object.keys(rawServices).forEach(k => {
+                const s = rawServices[k];
+                if (s.status === 'Batal') return;
+                const cost = Number(s.estimatedCost !== undefined ? s.estimatedCost : (s.cost || s.biaya || 0));
+
+                let itemDate = null;
+                let itemISO = '';
+                if (s.serviceInDate) {
+                    itemISO = s.serviceInDate;
+                    const parts = s.serviceInDate.split('-');
+                    if (parts.length === 3) itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                } else if (s.createdAt) {
+                    itemDate = new Date(s.createdAt);
+                    itemISO = itemDate.toISOString().split('T')[0];
+                }
+
+                processIncome(cost, itemDate, itemISO);
+            });
+
+            // 2. Transaksi Penjualan Produk
+            Object.keys(rawTransactions).forEach(k => {
+                const t = rawTransactions[k];
+                const cost = Number(t.totalPrice || t.total || 0);
+
+                let itemDate = null;
+                let itemISO = t.transDate || '';
+                if (t.transDate) {
+                    const parts = t.transDate.split('-');
+                    if (parts.length === 3) itemDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                } else if (t.createdAt) {
+                    itemDate = new Date(t.createdAt);
+                    itemISO = itemDate.toISOString().split('T')[0];
+                }
+
+                processIncome(cost, itemDate, itemISO);
+            });
+
+            document.getElementById('sum-daily').textContent = `Rp ${daily.toLocaleString('id-ID')}`;
+            document.getElementById('sum-weekly').textContent = `Rp ${weekly.toLocaleString('id-ID')}`;
+            document.getElementById('sum-monthly').textContent = `Rp ${monthly.toLocaleString('id-ID')}`;
+            document.getElementById('sum-yearly').textContent = `Rp ${yearly.toLocaleString('id-ID')}`;
+
+            let chartLabels = [];
+            let chartData = [];
+            let barColor = '#3b82f6';
+
+            if (currentChartMode === 'daily') {
+                chartLabels = dayLabels.map(item => item.lbl);
+                chartData = dayLabels.map(item => daysMap[item.iso] || 0);
+                barColor = '#f59e0b';
+            } else if (currentChartMode === 'weekly') {
+                const weekKeys = Object.keys(weeksMap).sort((a, b) => parseInt(a) - parseInt(b));
+                chartLabels = weekKeys.map(w => `Minggu ${w}`);
+                chartData = weekKeys.map(w => weeksMap[w]);
+                barColor = '#3b82f6';
+            } else if (currentChartMode === 'monthly') {
+                chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                chartData = monthsMap;
+                barColor = '#16a34a';
+            } else if (currentChartMode === 'yearly') {
+                const yearKeys = Object.keys(yearsMap).sort((a, b) => parseInt(a) - parseInt(b));
+                if (yearKeys.length === 0) yearKeys.push(currentYear.toString());
+                chartLabels = yearKeys.map(y => `Tahun ${y}`);
+                chartData = yearKeys.map(y => yearsMap[y] || 0);
+                barColor = '#9333ea';
+            }
+
+            const ctx = document.getElementById('chartRevenueReport').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Omset Service & Penjualan (Rp)',
+                        data: chartData,
+                        backgroundColor: barColor,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Total: Rp ${Number(context.raw || 0).toLocaleString('id-ID')}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000).toLocaleString('id-ID') + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Status & Auto-Prompt Ubah Nominal Biaya
+        window.updateStatus = (id, newStatus) => {
+            const currentService = rawServices[id];
+            let currentCost = currentService ? Number(currentService.estimatedCost !== undefined ? currentService.estimatedCost : (currentService.cost || currentService.biaya || 0)) : 0;
+            const updateData = { status: newStatus };
+
+            if (newStatus === 'Diambil') {
+                updateData.serviceOutDate = new Date().toISOString().split('T')[0];
+            } else if (newStatus === 'Batal' || newStatus === 'Garansi') {
+                updateData.estimatedCost = 0;
+            } else if (newStatus === 'Konfirmasi') {
+                const promptVal = prompt(
+                    `Unit dipindah ke status "Konfirmasi Customer".\nEstimasi Biaya Awal: Rp ${currentCost.toLocaleString('id-ID')}\n\nMasukkan BIAYA REAL / BARU jika ada perubahan (Atau biarkan sama):`,
+                    currentCost
+                );
+
+                if (promptVal !== null && promptVal.trim() !== '') {
+                    const parsed = parseInt(promptVal);
+                    if (!isNaN(parsed) && parsed >= 0) {
+                        updateData.estimatedCost = parsed;
+                    }
+                }
+            }
+
+            update(ref(db, `service_orders/${id}`), updateData);
+        };
+
+        // Submit Stok Produk
+        document.getElementById('stock-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newStock = {
+                category: document.getElementById('stockCategory').value,
+                name: document.getElementById('stockName').value,
+                price: parseInt(document.getElementById('stockPrice').value) || 0,
+                qty: parseInt(document.getElementById('stockQty').value) || 0,
+            };
+
+            push(stocksRef, newStock).then(() => {
+                document.getElementById('stock-form').reset();
+            });
+        });
+
+        // Print Transaction Receipt
+        window.printTransactionReceipt = (key) => {
+            const t = rawTransactions[key];
+            if (!t) return;
+
+            const custName = t.customerName || t.name || 'Customer';
+            const prodName = t.productName || t.namaProduk || 'Produk';
+            const totalPrice = Number(t.totalPrice || t.total || 0);
+
+            const transId = `#TRX-${key.substring(1, 6).toUpperCase()}`;
+            const transDate = t.transDate ? formatDate(t.transDate) : formatDate(t.createdAt);
+
+            const printWindow = window.open('', '_blank', 'width=800,height=900');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Nota Penjualan ${transId} - Paramount Star Computer</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; color: #1e293b; line-height: 1.4; }
+                        .receipt-box { border: 2px solid #800000; padding: 20px; border-radius: 10px; max-width: 700px; margin: 0 auto; }
+                        .header { text-align: center; border-bottom: 2px dashed #800000; padding-bottom: 12px; margin-bottom: 15px; }
+                        .header h1 { margin: 0; color: #800000; font-size: 20px; letter-spacing: 0.5px; }
+                        .header p { margin: 3px 0; font-size: 11px; color: #334155; font-weight: 500; }
+                        .title-badge { background: #800000; color: #fff; text-align: center; font-weight: bold; padding: 6px; border-radius: 5px; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; }
+                        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom: 15px; }
+                        .info-item span { font-weight: bold; color: #475569; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+                        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+                        th { background-color: #f1f5f9; color: #334155; }
+                        .total-row { font-weight: bold; font-size: 14px; background: #dcfce7; color: #15803d; }
+                        .footer-signatures { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 11px; }
+                        .sig-box { width: 140px; border-top: 1px solid #475569; margin-top: 45px; }
+                        @media print { body { padding: 0; } .receipt-box { border: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-box">
+                        <div class="header">
+                            <h1>PARAMOUNT STAR COMPUTER (PSC)</h1>
+                            <p>Komplek Puri Indah Jatinangor Blok A3 nomor 21, Jalan sayang, Cikeruh, Jatinangor, Sumedang.</p>
+                            <p>Whatsapp / hotline : 0851-8824-3665</p>
+                        </div>
+                        <div class="title-badge">NOTA PENJUALAN PRODUK / SPAREPART</div>
+                        <div class="info-grid">
+                            <div>
+                                <div class="info-item"><span>No Transaksi:</span> ${transId}</div>
+                                <div class="info-item"><span>Nama Pembeli:</span> ${custName}</div>
+                            </div>
+                            <div>
+                                <div class="info-item"><span>Tanggal Transaksi:</span> ${transDate}</div>
+                                <div class="info-item"><span>Status Pembayaran:</span> <strong style="color:#15803d;">LUNAS</strong></div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Produk / Barang</th>
+                                    <th style="text-align: center;">Qty</th>
+                                    <th style="text-align: right;">Harga Satuan (Rp)</th>
+                                    <th style="text-align: right;">Total Subtotal (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>${prodName}</strong></td>
+                                    <td style="text-align: center;">${t.qty || 1} Pcs</td>
+                                    <td style="text-align: right;">Rp ${Number(t.unitPrice || 0).toLocaleString('id-ID')}</td>
+                                    <td style="text-align: right;">Rp ${totalPrice.toLocaleString('id-ID')}</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="3" style="text-align: right;">TOTAL BAYAR:</td>
+                                    <td style="text-align: right;">Rp ${totalPrice.toLocaleString('id-ID')}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="footer-signatures">
+                            <div>Pembeli / Customer<div class="sig-box">( ${custName} )</div></div>
+                            <div>Kasir PSC Store<div class="sig-box">( Paramount Star Computer )</div></div>
+                        </div>
+                    </div>
+                    <script>window.onload = function() { window.print(); };<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+
+        // Submit Karyawan
+        document.getElementById('emp-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newEmp = {
+                name: document.getElementById('empName').value,
+                address: document.getElementById('empAddress').value,
+                dob: document.getElementById('empDob').value,
+                edu: document.getElementById('empEdu').value,
+                role: document.getElementById('empRole').value,
+                salary: parseInt(document.getElementById('empSalary').value) || 0,
+                allowance: parseInt(document.getElementById('empAllowance').value) || 0,
+            };
+            push(employeesRef, newEmp).then(() => document.getElementById('emp-form').reset());
+        });
+
+        window.renderEmployees = () => {
+            const body = document.getElementById('emp-table-body');
+            body.innerHTML = '';
+            const keys = Object.keys(rawEmployees);
+            if (keys.length === 0) { body.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">Belum ada karyawan.</td></tr>`; return; }
+
+            keys.forEach(k => {
+                const e = rawEmployees[k];
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                tr.innerHTML = `
+                    <td class="p-2.5"><div class="font-bold text-gray-800">${e.name}</div><div class="text-[11px] text-gray-500">${e.role}</div></td>
+                    <td class="p-2.5"><div>${e.edu}</div><div class="text-[11px] text-gray-400">Lahir: ${e.dob}</div></td>
+                    <td class="p-2.5"><div class="font-semibold text-green-700">Gapok: Rp ${Number(e.salary).toLocaleString('id-ID')}</div></td>
+                    <td class="p-2.5 text-center">
+                        <button onclick="deleteEmployee('${k}')" class="p-1 text-red-500"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        };
+
+        // Delete Functions
+        window.deleteCustomer = (id) => { if (confirm('Hapus customer dari CRM?')) remove(ref(db, `crm_customers/${id}`)); };
+        window.deleteOrder = (id) => { if (confirm('Hapus kartu servis ini?')) remove(ref(db, `service_orders/${id}`)); };
+        window.deleteStock = (id) => { if (confirm('Hapus produk/laptop ini?')) remove(ref(db, `inventory_stocks/${id}`)); };
+        window.deleteTransaction = (id) => { if (confirm('Hapus riwayat transaksi ini?')) remove(ref(db, `product_transactions/${id}`)); };
+        window.deleteEmployee = (id) => { if (confirm('Hapus karyawan ini?')) remove(ref(db, `owner_employees/${id}`)); };
+    </script>
 </body>
 </html>
